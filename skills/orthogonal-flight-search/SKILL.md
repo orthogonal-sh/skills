@@ -1,0 +1,71 @@
+---
+name: flight-search
+description: Search and compare flight prices across airlines using web search and scraping
+---
+
+# Flight Search - Find and Compare Flights
+
+Search for flights and compare prices across airlines using Orthogonal APIs.
+
+## Workflow
+
+### Step 1: Search for Flights
+Use Tavily or Andi to search for flight options:
+
+```bash
+curl -X POST "https://api.orth.sh/v1/run/tavily/search" \
+  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "flights from SFO to NYC December 15 2024 round trip prices",
+    "search_depth": "advanced",
+    "include_answer": true
+  }'
+```
+
+### Step 2: Get Detailed Pricing
+Use Olostep AI answers for comprehensive flight info:
+
+```bash
+curl -X POST "https://api.orth.sh/v1/run/olostep/v1/answers" \
+  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question": "What are the cheapest flights from San Francisco to New York on December 15, 2024? Include airline names and prices."
+  }'
+```
+
+### Step 3: Extract from Travel Sites
+Use ScrapeGraph to extract structured flight data:
+
+```bash
+curl -X POST "https://api.orth.sh/v1/run/scrapegraph/v1/smartscraper" \
+  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "website_url": "https://www.google.com/travel/flights",
+    "user_prompt": "Extract flight options with prices, airlines, departure times, and durations"
+  }'
+```
+
+## Example Usage
+
+```bash
+# Quick flight search
+orth api run tavily /search --body '{
+  "query": "best flight deals LAX to London January 2025",
+  "include_answer": true
+}'
+
+# Get AI-powered flight comparison
+orth api run olostep /v1/answers --body '{
+  "question": "Compare Delta, United, and American flights from Chicago to Miami on Feb 1, 2025"
+}'
+```
+
+## Tips
+
+- Include specific dates for better results
+- Search for "flexible dates" to find deals
+- Compare one-way vs round-trip pricing
+- Check for airline sales and promotions
