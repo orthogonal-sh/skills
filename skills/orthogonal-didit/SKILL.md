@@ -129,4 +129,5 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show didit              # List all endpoints
+orth api show didit /v3/email/send   # Get endpoint details
 ```

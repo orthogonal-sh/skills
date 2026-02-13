@@ -210,4 +210,5 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show brand-dev              # List all endpoints
+orth api show brand-dev /v1/brand/fonts   # Get endpoint details
 ```

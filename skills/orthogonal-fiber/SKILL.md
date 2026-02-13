@@ -275,4 +275,5 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show fiber              # List all endpoints
+orth api show fiber /v1/natural-language-search/profiles   # Get endpoint details
 ```

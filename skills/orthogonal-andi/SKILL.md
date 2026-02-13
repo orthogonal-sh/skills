@@ -54,4 +54,5 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show andi              # List all endpoints
+orth api show andi /v1/search   # Get endpoint details
 ```

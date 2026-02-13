@@ -160,4 +160,5 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show exa              # List all endpoints
+orth api show exa /research   # Get endpoint details
 ```

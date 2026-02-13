@@ -65,4 +65,5 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show linkup              # List all endpoints
+orth api show linkup /search   # Get endpoint details
 ```

@@ -92,4 +92,5 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show riveter              # List all endpoints
+orth api show riveter /v1/scrape   # Get endpoint details
 ```

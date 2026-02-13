@@ -253,4 +253,5 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show shofo              # List all endpoints
+orth api show shofo /instagram/hashtag   # Get endpoint details
 ```

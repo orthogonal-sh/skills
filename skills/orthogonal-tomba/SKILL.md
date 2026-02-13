@@ -264,4 +264,5 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show tomba              # List all endpoints
+orth api show tomba /v1/phone-validator   # Get endpoint details
 ```

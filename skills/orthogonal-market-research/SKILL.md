@@ -93,7 +93,7 @@ orth api run perplexity /chat/completions --body '{
 
 ## Discover More
 
-For full endpoint details and parameters:
+List all endpoints, or add a path for parameter details:
 
 ```bash
 orth api show fiber
@@ -102,3 +102,5 @@ orth api show perplexity
 orth api show scrapegraph
 orth api show tavily 
 ```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

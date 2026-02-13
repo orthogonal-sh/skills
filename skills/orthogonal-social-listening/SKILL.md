@@ -94,7 +94,7 @@ orth api run tavily /search --body '{
 
 ## Discover More
 
-For full endpoint details and parameters:
+List all endpoints, or add a path for parameter details:
 
 ```bash
 orth api show exa
@@ -102,3 +102,5 @@ orth api show perplexity
 orth api show scrapegraph
 orth api show tavily 
 ```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

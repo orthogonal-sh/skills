@@ -181,4 +181,5 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show olostep              # List all endpoints
+orth api show olostep /v1/scrapes   # Get endpoint details
 ```

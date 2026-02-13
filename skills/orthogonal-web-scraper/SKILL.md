@@ -91,7 +91,7 @@ orth api run scrapegraph /v1/markdownify --body '{"website_url": "https://docs.o
 
 ## Discover More
 
-For full endpoint details and parameters:
+List all endpoints, or add a path for parameter details:
 
 ```bash
 orth api show olostep
@@ -99,3 +99,5 @@ orth api show riveter
 orth api show scrapegraph
 orth api show tavily 
 ```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

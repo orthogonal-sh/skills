@@ -229,4 +229,5 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show notte              # List all endpoints
+orth api show notte /sessions   # Get endpoint details
 ```

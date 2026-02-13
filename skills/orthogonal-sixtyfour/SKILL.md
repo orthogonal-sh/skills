@@ -106,4 +106,5 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show sixtyfour              # List all endpoints
+orth api show sixtyfour /find-email   # Get endpoint details
 ```

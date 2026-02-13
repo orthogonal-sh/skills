@@ -174,4 +174,5 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show scrapegraph              # List all endpoints
+orth api show scrapegraph /v1/smartscraper   # Get endpoint details
 ```

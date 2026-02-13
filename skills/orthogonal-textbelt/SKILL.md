@@ -60,4 +60,5 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show textbelt              # List all endpoints
+orth api show textbelt /text   # Get endpoint details
 ```

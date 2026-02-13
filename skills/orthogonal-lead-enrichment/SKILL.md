@@ -98,10 +98,12 @@ orth api run hunter /v2/companies/find --query "domain=stripe.com"
 
 ## Discover More
 
-For full endpoint details and parameters:
+List all endpoints, or add a path for parameter details:
 
 ```bash
 orth api show fiber
 orth api show hunter
 orth api show sixtyfour 
 ```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

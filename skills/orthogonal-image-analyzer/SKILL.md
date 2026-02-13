@@ -89,7 +89,7 @@ orth api run brand-dev /v1/brand/screenshot --query 'domain=openai.com'
 
 ## Discover More
 
-For full endpoint details and parameters:
+List all endpoints, or add a path for parameter details:
 
 ```bash
 orth api show brand-dev
@@ -98,3 +98,5 @@ orth api show perplexity
 orth api show riveter
 orth api show scrapegraph 
 ```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

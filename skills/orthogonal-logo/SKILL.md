@@ -37,4 +37,5 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show logo              # List all endpoints
+orth api show logo /search   # Get endpoint details
 ```

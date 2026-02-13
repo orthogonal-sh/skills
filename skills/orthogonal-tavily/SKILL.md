@@ -148,4 +148,5 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show tavily              # List all endpoints
+orth api show tavily /search   # Get endpoint details
 ```

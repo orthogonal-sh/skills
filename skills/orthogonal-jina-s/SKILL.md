@@ -36,4 +36,5 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show jina-s              # List all endpoints
+orth api show jina-s /   # Get endpoint details
 ```

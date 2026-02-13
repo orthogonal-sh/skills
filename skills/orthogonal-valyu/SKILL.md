@@ -199,4 +199,5 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show valyu              # List all endpoints
+orth api show valyu /v1/deepresearch   # Get endpoint details
 ```
