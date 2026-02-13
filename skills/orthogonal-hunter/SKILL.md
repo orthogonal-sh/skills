@@ -132,5 +132,4 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show hunter              # List all endpoints
-orth api show hunter <endpoint>   # Get endpoint parameters
 ```

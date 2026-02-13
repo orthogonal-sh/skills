@@ -295,5 +295,4 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show precip              # List all endpoints
-orth api show precip <endpoint>   # Get endpoint parameters
 ```

@@ -98,5 +98,8 @@ orth api run perplexity /chat/completions --body '{
 For full endpoint details and parameters:
 
 ```bash
-orth api show olostep perplexity precip tavily 
+orth api show olostep
+orth api show perplexity
+orth api show precip
+orth api show tavily 
 ```

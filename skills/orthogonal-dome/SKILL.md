@@ -271,5 +271,4 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show dome              # List all endpoints
-orth api show dome <endpoint>   # Get endpoint parameters
 ```

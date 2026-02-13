@@ -97,5 +97,8 @@ orth api run tavily /search --body '{
 For full endpoint details and parameters:
 
 ```bash
-orth api show exa perplexity scrapegraph tavily 
+orth api show exa
+orth api show perplexity
+orth api show scrapegraph
+orth api show tavily 
 ```

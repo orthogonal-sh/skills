@@ -182,5 +182,4 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show parallel              # List all endpoints
-orth api show parallel <endpoint>   # Get endpoint parameters
 ```

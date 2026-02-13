@@ -241,5 +241,4 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show nyne              # List all endpoints
-orth api show nyne <endpoint>   # Get endpoint parameters
 ```

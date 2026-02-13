@@ -94,5 +94,9 @@ orth api run riveter /v1/run --body '{
 For full endpoint details and parameters:
 
 ```bash
-orth api show linkup olostep perplexity riveter scrapegraph 
+orth api show linkup
+orth api show olostep
+orth api show perplexity
+orth api show riveter
+orth api show scrapegraph 
 ```

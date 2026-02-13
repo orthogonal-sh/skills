@@ -107,5 +107,8 @@ orth api run linkup /fetch --body '{"url": "https://competitor.com"}'
 For full endpoint details and parameters:
 
 ```bash
-orth api show linkup olostep scrapegraph textbelt 
+orth api show linkup
+orth api show olostep
+orth api show scrapegraph
+orth api show textbelt 
 ```

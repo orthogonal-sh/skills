@@ -264,5 +264,4 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show tomba              # List all endpoints
-orth api show tomba <endpoint>   # Get endpoint parameters
 ```

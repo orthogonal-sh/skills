@@ -105,5 +105,8 @@ orth api run fiber /v1/validate-email/single --body '{"email": "lead@company.com
 For full endpoint details and parameters:
 
 ```bash
-orth api show brand-dev fiber hunter sixtyfour 
+orth api show brand-dev
+orth api show fiber
+orth api show hunter
+orth api show sixtyfour 
 ```

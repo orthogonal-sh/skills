@@ -89,5 +89,7 @@ orth api run fiber /v1/natural-language-search/companies --body '{
 For full endpoint details and parameters:
 
 ```bash
-orth api show brand-dev fiber hunter 
+orth api show brand-dev
+orth api show fiber
+orth api show hunter 
 ```

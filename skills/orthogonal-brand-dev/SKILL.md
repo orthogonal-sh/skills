@@ -210,5 +210,4 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show brand-dev              # List all endpoints
-orth api show brand-dev <endpoint>   # Get endpoint parameters
 ```

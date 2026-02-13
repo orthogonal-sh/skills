@@ -344,5 +344,4 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show searchapi              # List all endpoints
-orth api show searchapi <endpoint>   # Get endpoint parameters
 ```

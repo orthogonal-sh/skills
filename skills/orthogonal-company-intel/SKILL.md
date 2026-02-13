@@ -117,5 +117,9 @@ orth api run tavily /search --body "{\"query\": \"$COMPANY news 2024\", \"includ
 For full endpoint details and parameters:
 
 ```bash
-orth api show brand-dev fiber perplexity scrapegraph tavily 
+orth api show brand-dev
+orth api show fiber
+orth api show perplexity
+orth api show scrapegraph
+orth api show tavily 
 ```

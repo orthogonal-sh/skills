@@ -48,5 +48,4 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show tavus              # List all endpoints
-orth api show tavus <endpoint>   # Get endpoint parameters
 ```

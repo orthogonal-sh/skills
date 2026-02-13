@@ -94,5 +94,7 @@ orth api run exa /search --body '{
 For full endpoint details and parameters:
 
 ```bash
-orth api show exa perplexity tavily 
+orth api show exa
+orth api show perplexity
+orth api show tavily 
 ```

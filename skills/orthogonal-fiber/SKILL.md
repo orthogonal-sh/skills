@@ -275,5 +275,4 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show fiber              # List all endpoints
-orth api show fiber <endpoint>   # Get endpoint parameters
 ```

@@ -92,5 +92,8 @@ orth api run sixtyfour /enrich-lead --body '{"lead_info": {"first_name": "John",
 For full endpoint details and parameters:
 
 ```bash
-orth api show brand-dev fiber hunter sixtyfour 
+orth api show brand-dev
+orth api show fiber
+orth api show hunter
+orth api show sixtyfour 
 ```

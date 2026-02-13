@@ -91,5 +91,8 @@ orth api run linkup /fetch --body '{"url": "https://api.openai.com/v1/models"}'
 For full endpoint details and parameters:
 
 ```bash
-orth api show linkup perplexity riveter scrapegraph 
+orth api show linkup
+orth api show perplexity
+orth api show riveter
+orth api show scrapegraph 
 ```

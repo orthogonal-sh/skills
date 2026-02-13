@@ -103,5 +103,8 @@ orth api run perplexity /chat/completions --body '{
 For full endpoint details and parameters:
 
 ```bash
-orth api show brand-dev linkup perplexity scrapegraph 
+orth api show brand-dev
+orth api show linkup
+orth api show perplexity
+orth api show scrapegraph 
 ```

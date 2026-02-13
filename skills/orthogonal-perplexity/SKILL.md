@@ -124,5 +124,4 @@ For full endpoint details and parameters:
 
 ```bash
 orth api show perplexity              # List all endpoints
-orth api show perplexity <endpoint>   # Get endpoint parameters
 ```
