@@ -9,30 +9,8 @@ Research market size, trends, competitors, and growth opportunities for any indu
 
 ## Workflow
 
-### Step 1: Market Overview
-Get comprehensive market analysis:
-
-```bash
-orth api run tavily /research --body '{
-  "input": "AI software market size 2024 growth projections trends key players competitive landscape"
-}'
-```
-
-### Step 2: Market Size & Statistics
-Find specific market data:
-
-```bash
-orth api run perplexity /chat/completions --body '{
-  "model": "sonar",
-  "messages": [{
-    "role": "user",
-    "content": "What is the current market size of the AI software industry? Include TAM, SAM, growth rate, and projections for 2025-2030 with sources."
-  }]
-}'
-```
-
-### Step 3: Identify Key Players
-Find competitors in the market:
+### Step 1: Identify Key Players
+Find companies in the market:
 
 ```bash
 orth api run fiber /v1/natural-language-search/companies --body '{
@@ -40,47 +18,45 @@ orth api run fiber /v1/natural-language-search/companies --body '{
 }'
 ```
 
-### Step 4: Analyze Trends
-Research emerging trends:
+### Step 2: Research Company Details
+Get detailed info on key players:
 
 ```bash
-orth api run tavily /search --body '{
-  "query": "emerging trends AI software industry 2024 2025 predictions experts",
-  "search_depth": "advanced",
-  "include_answer": true
+orth api run fiber /v1/company-search --body '{
+  "searchParams": {
+    "company_names": ["OpenAI", "Anthropic", "Cohere"],
+    "include_financials": true
+  }
 }'
 ```
 
-### Step 5: Customer Segments
-Understand target customers:
+### Step 3: Find Decision Makers
+Identify leadership at key companies:
 
 ```bash
-orth api run olostep /v1/answers --body '{
-  "task": "Who are the main customer segments for enterprise AI software? What are their pain points and buying criteria?"
-}'
-```
-
-### Step 6: Pricing Analysis
-Research pricing models:
-
-```bash
-orth api run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "Find and compare pricing for top AI software platforms - per seat, usage-based, enterprise pricing"
+orth api run fiber /v1/people-search --body '{
+  "searchParams": {
+    "company_names": ["OpenAI", "Anthropic"],
+    "job_titles": ["CEO", "CTO", "VP Product", "Head of Sales"]
+  }
 }'
 ```
 
 ## Example Usage
 
 ```bash
-# Quick market overview
-orth api run tavily /research --body '{
-  "input": "EdTech market analysis 2024 - size, growth, key players, trends, challenges"
+# Find companies by industry and size
+orth api run fiber /v1/natural-language-search/companies --body '{
+  "query": "EdTech companies with 50-500 employees founded after 2018"
 }'
 
-# Compare market segments
-orth api run perplexity /chat/completions --body '{
-  "model": "sonar",
-  "messages": [{"role": "user", "content": "Compare B2B vs B2C SaaS markets - size, growth rates, typical metrics, investment trends"}]
+# Search by specific criteria
+orth api run fiber /v1/company-search --body '{
+  "searchParams": {
+    "industries": ["Enterprise Software"],
+    "employee_count_min": 100,
+    "funding_stage": ["Series A", "Series B"]
+  }
 }'
 ```
 
@@ -97,10 +73,6 @@ List all endpoints, or add a path for parameter details:
 
 ```bash
 orth api show fiber
-orth api show olostep
-orth api show perplexity
-orth api show scrapegraph
-orth api show tavily 
 ```
 
 Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

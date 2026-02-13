@@ -33,20 +33,7 @@ Fetch and parse API docs:
 orth api run scrapegraph /v1/markdownify --body '{"website_url": "https://api.example.com/docs"}'
 ```
 
-### Step 4: Generate Test Cases
-Use AI to create test scenarios:
-
-```bash
-orth api run perplexity /chat/completions --body '{
-  "model": "sonar",
-  "messages": [{
-    "role": "user",
-    "content": "Generate comprehensive test cases for a REST API user endpoint that supports GET, POST, PUT, DELETE. Include edge cases and error scenarios."
-  }]
-}'
-```
-
-### Step 5: Validate Response Schema
+### Step 4: Validate Response Schema
 Check response structure:
 
 ```bash
@@ -69,12 +56,6 @@ orth api run scrapegraph /v1/smartscraper --body '{
   "user_prompt": "Extract API authentication methods and example curl commands"
 }'
 
-# Generate API test plan
-orth api run perplexity /chat/completions --body '{
-  "model": "sonar",
-  "messages": [{"role": "user", "content": "Create a test plan for testing a payment processing API"}]
-}'
-
 # Fetch API page
 orth api run linkup /fetch --body '{"url": "https://api.openai.com/v1/models"}'
 ```
@@ -92,9 +73,8 @@ List all endpoints, or add a path for parameter details:
 
 ```bash
 orth api show linkup
-orth api show perplexity
 orth api show riveter
-orth api show scrapegraph 
+orth api show scrapegraph
 ```
 
 Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

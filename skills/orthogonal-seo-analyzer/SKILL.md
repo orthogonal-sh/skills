@@ -26,30 +26,7 @@ orth api run scrapegraph /v1/smartscraper --body '{
 }'
 ```
 
-### Step 3: Analyze Competitor Keywords
-Research competitor SEO:
-
-```bash
-orth api run tavily /search --body '{
-  "query": "site:competitor.com top ranking pages keywords",
-  "search_depth": "advanced"
-}'
-```
-
-### Step 4: Find Content Gaps
-Identify missing keywords:
-
-```bash
-orth api run perplexity /chat/completions --body '{
-  "model": "sonar",
-  "messages": [{
-    "role": "user",
-    "content": "What keywords and topics should a SaaS productivity tool target for SEO? Include search volume estimates and difficulty."
-  }]
-}'
-```
-
-### Step 5: Get Backlink Ideas
+### Step 3: Get Backlink Ideas
 Find linking opportunities:
 
 ```bash
@@ -67,18 +44,6 @@ orth api run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://mysite.com",
   "user_prompt": "Analyze this page for SEO: title tag, meta description, heading structure, keyword usage, content length"
 }'
-
-# Find ranking keywords
-orth api run tavily /search --body '{
-  "query": "what keywords does notion.so rank for",
-  "include_answer": true
-}'
-
-# Get SEO recommendations
-orth api run perplexity /chat/completions --body '{
-  "model": "sonar",
-  "messages": [{"role": "user", "content": "Give me 10 SEO improvement tips for a B2B SaaS landing page"}]
-}'
 ```
 
 ## Tips
@@ -94,9 +59,8 @@ List all endpoints, or add a path for parameter details:
 
 ```bash
 orth api show exa
-orth api show perplexity
 orth api show scrapegraph
-orth api show tavily 
+orth api show tavily
 ```
 
 Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

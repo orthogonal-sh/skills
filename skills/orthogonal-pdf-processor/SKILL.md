@@ -47,15 +47,6 @@ Get readable markdown output:
 orth api run scrapegraph /v1/markdownify --body '{"website_url": "https://example.com/document.pdf"}'
 ```
 
-### Step 5: Ask Questions About PDF
-Use AI to answer questions:
-
-```bash
-orth api run olostep /v1/answers --body '{
-  "task": "What is the total revenue mentioned in this SEC filing? [url: https://example.com/10k.pdf]"
-}'
-```
-
 ## Example Usage
 
 ```bash
@@ -63,12 +54,6 @@ orth api run olostep /v1/answers --body '{
 orth api run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://example.com/annual-report.pdf",
   "user_prompt": "Extract revenue, profit, and key business metrics with their values"
-}'
-
-# Get research paper summary
-orth api run perplexity /chat/completions --body '{
-  "model": "sonar",
-  "messages": [{"role": "user", "content": "Summarize the key findings from this research paper: [url]"}]
 }'
 
 # Extract invoice data
@@ -95,10 +80,8 @@ List all endpoints, or add a path for parameter details:
 
 ```bash
 orth api show linkup
-orth api show olostep
-orth api show perplexity
 orth api show riveter
-orth api show scrapegraph 
+orth api show scrapegraph
 ```
 
 Example: `orth api show olostep /v1/scrapes` for endpoint parameters.
