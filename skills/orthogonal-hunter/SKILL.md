@@ -12,9 +12,7 @@ Find email addresses, verify deliverability, and discover companies.
 - **Domain Search**: Find all emails for a domain ($0.01)
 - **Email Finder**: Find email for a person at company ($0.01)
 - **Email Verifier**: Check if email is deliverable ($0.01)
-- **Person Lookup**: Get person info from email ($0.01)
 - **Company Lookup**: Get company info from domain ($0.01)
-- **Combined Lookup**: Get person + company from email ($0.01)
 - **Company Discovery**: Find companies matching criteria ($0.01)
 
 ## Usage
@@ -34,19 +32,9 @@ orth api run hunter /v2/email-finder --query domain=openai.com first_name=Sam la
 orth api run hunter /v2/email-verifier --query 'email=john@example.com'
 ```
 
-### Person Lookup ($0.01)
-```bash
-orth api run hunter /v2/people/find --query 'email=john@company.com'
-```
-
 ### Company Lookup ($0.01)
 ```bash
 orth api run hunter /v2/companies/find --query 'domain=anthropic.com'
-```
-
-### Combined Lookup ($0.01)
-```bash
-orth api run hunter /v2/combined/find --query 'email=jane@company.com'
 ```
 
 ### Discover Companies ($0.01)
