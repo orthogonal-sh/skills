@@ -13,8 +13,6 @@ Neural search engine for finding similar content, extracting pages, and deep res
 - **Find Similar**: Find pages similar to a URL ($0.01)
 - **Contents**: Extract full page contents ($0.01)
 - **Answer**: LLM answers backed by search ($0.01)
-- **Research**: Async deep research tasks ($0.01)
-
 ## Usage
 
 ### Neural Search ($0.01)
@@ -48,16 +46,6 @@ orth api run exa /contents --body '{
 ### Get LLM Answer ($0.01)
 ```bash
 orth api run exa /answer --body '{"query": "What are the best practices for prompt engineering?"}'
-```
-
-### Start Research Task ($0.01)
-```bash
-orth api run exa /research/v1 --body '{"query": "Comprehensive analysis of AI agent frameworks"}'
-```
-
-### Check Research Status ($0.01)
-```bash
-orth api run exa /research/v1/{researchId}
 ```
 
 ## Use Cases

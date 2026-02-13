@@ -13,7 +13,7 @@ Scrape websites, extract structured data, and convert content to usable formats.
 Extract content from a single page:
 
 ```bash
-orth api run olostep /v1/scrapes --body '{"url": "https://example.com/page"}'
+orth api run olostep /v1/scrapes --body '{"url_to_scrape": "https://example.com/page"}'
 ```
 
 ### Step 2: AI-Powered Extraction
@@ -31,14 +31,13 @@ Define a schema for consistent output:
 
 ```bash
 orth api run riveter /v1/run --body '{
-  "url": "https://example.com/products",
-  "schema": {
-    "products": [{
-      "name": "string",
-      "price": "number",
-      "description": "string",
-      "url": "string"
-    }]
+  "input": {
+    "urls": ["https://example.com/products"]
+  },
+  "output": {
+    "name": {"prompt": "Product name", "contexts": ["urls"]},
+    "price": {"prompt": "Product price", "contexts": ["urls"]},
+    "description": {"prompt": "Product description", "contexts": ["urls"]}
   }
 }'
 ```
@@ -48,7 +47,7 @@ Crawl multiple pages:
 
 ```bash
 orth api run olostep /v1/crawls --body '{
-  "url": "https://docs.example.com",
+  "start_url": "https://docs.example.com",
   "max_pages": 50
 }'
 ```

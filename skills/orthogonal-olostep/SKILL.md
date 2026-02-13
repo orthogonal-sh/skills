@@ -19,7 +19,7 @@ Powerful web scraping, crawling, and AI-powered content extraction.
 
 ### Scrape a Page ($0.01)
 ```bash
-orth api run olostep /v1/scrapes --body '{"url": "https://example.com/page"}'
+orth api run olostep /v1/scrapes --body '{"url_to_scrape": "https://example.com/page"}'
 ```
 
 ### Check Scrape Status
@@ -30,7 +30,7 @@ orth api run olostep /v1/scrapes/{scrape_id}
 ### Start a Crawl ($0.05)
 ```bash
 orth api run olostep /v1/crawls --body '{
-  "url": "https://example.com",
+  "start_url": "https://example.com",
   "max_pages": 100
 }'
 ```
@@ -38,16 +38,16 @@ orth api run olostep /v1/crawls --body '{
 ### Batch Scrape ($0.01)
 ```bash
 orth api run olostep /v1/batches --body '{
-  "urls": [
-    "https://example.com/page1",
-    "https://example.com/page2"
+  "items": [
+    {"url_to_scrape": "https://example.com/page1"},
+    {"url_to_scrape": "https://example.com/page2"}
   ]
 }'
 ```
 
 ### AI Answer ($0.05)
 ```bash
-orth api run olostep /v1/answers --body '{"question": "What are the latest AI developments?"}'
+orth api run olostep /v1/answers --body '{"task": "What are the latest AI developments?"}'
 ```
 
 ### Get Site Map ($0.01)

@@ -14,7 +14,7 @@ Get an overview of your destination:
 
 ```bash
 orth api run tavily /research --body '{
-  "query": "Complete travel guide to Tokyo Japan - best time to visit, neighborhoods, attractions, food, culture tips"
+  "input": "Complete travel guide to Tokyo Japan - best time to visit, neighborhoods, attractions, food, culture tips"
 }'
 ```
 
@@ -23,7 +23,7 @@ Search for flight options:
 
 ```bash
 orth api run olostep /v1/answers --body '{
-  "question": "What are the best flights from Los Angeles to Tokyo in March 2025? Compare prices and airlines."
+  "task": "What are the best flights from Los Angeles to Tokyo in March 2025? Compare prices and airlines."
 }'
 ```
 
@@ -68,7 +68,7 @@ orth api run perplexity /chat/completions --body '{
 Check weather for packing:
 
 ```bash
-orth api run precip /api/v1/daily --query lat=35.6762 lon=139.6503 start=2025-03-01 end=2025-03-07
+orth api run precip /api/v1/daily --query latitude=35.6762 longitude=139.6503 start=2025-03-01 end=2025-03-07
 ```
 
 ## Example Usage
@@ -76,7 +76,7 @@ orth api run precip /api/v1/daily --query lat=35.6762 lon=139.6503 start=2025-03
 ```bash
 # Quick destination research
 orth api run tavily /research --body '{
-  "query": "Barcelona Spain travel guide best neighborhoods beaches food nightlife"
+  "input": "Barcelona Spain travel guide best neighborhoods beaches food nightlife"
 }'
 
 # Budget trip planning

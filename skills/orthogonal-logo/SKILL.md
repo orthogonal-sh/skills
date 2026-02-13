@@ -15,12 +15,12 @@ Find company domains by searching brand names.
 
 ### Search for Domain ($0.01)
 ```bash
-orth api run logo /search --query 'query=Stripe'
+orth api run logo /search --query 'q=Stripe'
 ```
 
 ### Search Multiple
 ```bash
-orth api run logo /search --query 'query=OpenAI'
+orth api run logo /search --query 'q=OpenAI'
 ```
 
 ## Use Cases

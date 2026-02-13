@@ -48,7 +48,7 @@ Research commute times:
 
 ```bash
 orth api run olostep /v1/answers --body '{
-  "question": "How long is the commute from Mission District SF to Financial District by BART and by car during rush hour?"
+  "task": "How long is the commute from Mission District SF to Financial District by BART and by car during rush hour?"
 }'
 ```
 

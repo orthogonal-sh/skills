@@ -14,7 +14,7 @@ Get comprehensive information on your topic:
 
 ```bash
 orth api run tavily /research --body '{
-  "query": "Complete guide to AI agents in 2024 - how they work, use cases, frameworks, best practices"
+  "input": "Complete guide to AI agents in 2024 - how they work, use cases, frameworks, best practices"
 }'
 ```
 

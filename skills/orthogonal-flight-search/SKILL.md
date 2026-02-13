@@ -25,7 +25,7 @@ Use Olostep AI answers for comprehensive flight info:
 
 ```bash
 orth api run olostep /v1/answers --body '{
-  "question": "What are the cheapest flights from San Francisco to New York on December 15, 2024? Include airline names and prices."
+  "task": "What are the cheapest flights from San Francisco to New York on December 15, 2024? Include airline names and prices."
 }'
 ```
 
@@ -50,7 +50,7 @@ orth api run tavily /search --body '{
 
 # Get AI-powered flight comparison
 orth api run olostep /v1/answers --body '{
-  "question": "Compare Delta, United, and American flights from Chicago to Miami on Feb 1, 2025"
+  "task": "Compare Delta, United, and American flights from Chicago to Miami on Feb 1, 2025"
 }'
 ```
 

@@ -21,7 +21,7 @@ Use Tavily for comprehensive research:
 
 ```bash
 orth api run tavily /research --body '{
-  "query": "Notion company analysis - products, pricing, funding, team size, recent news, competitive advantages"
+  "input": "Notion company analysis - products, pricing, funding, team size, recent news, competitive advantages"
 }'
 ```
 
@@ -50,8 +50,10 @@ Find key people at the company:
 
 ```bash
 orth api run fiber /v1/people-search --body '{
-  "company_names": ["Notion"],
-  "job_titles": ["CEO", "CTO", "VP Product", "VP Engineering"]
+  "searchParams": {
+    "company_names": ["Notion"],
+    "job_titles": ["CEO", "CTO", "VP Product", "VP Engineering"]
+  }
 }'
 ```
 
@@ -71,7 +73,7 @@ orth api run tavily /search --body '{
 ```bash
 # Full competitor analysis
 orth api run tavily /research --body '{
-  "query": "Linear app complete analysis - product, pricing, investors, team, growth, market position vs Jira"
+  "input": "Linear app complete analysis - product, pricing, investors, team, growth, market position vs Jira"
 }'
 
 # Compare multiple competitors

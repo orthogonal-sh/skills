@@ -14,9 +14,11 @@ Use Fiber to search for jobs:
 
 ```bash
 orth api run fiber /v1/job-search --body '{
-  "job_titles": ["Software Engineer", "Full Stack Developer"],
-  "locations": ["San Francisco", "Remote"],
-  "experience_level": "senior"
+  "searchParams": {
+    "job_titles": ["Software Engineer", "Full Stack Developer"],
+    "locations": ["San Francisco", "Remote"],
+    "experience_level": "senior"
+  }
 }'
 ```
 
@@ -25,7 +27,9 @@ Get company information for interesting roles:
 
 ```bash
 orth api run fiber /v1/company-search --body '{
-  "company_names": ["Stripe", "Figma", "Notion"]
+  "searchParams": {
+    "company_names": ["Stripe", "Figma", "Notion"]
+  }
 }'
 ```
 
@@ -41,8 +45,10 @@ Find people at the company to network with:
 
 ```bash
 orth api run fiber /v1/people-search --body '{
-  "company_names": ["Stripe"],
-  "job_titles": ["Engineering Manager", "VP Engineering", "CTO"]
+  "searchParams": {
+    "company_names": ["Stripe"],
+    "job_titles": ["Engineering Manager", "VP Engineering", "CTO"]
+  }
 }'
 ```
 
@@ -58,9 +64,11 @@ orth api run hunter /v2/email-finder --query domain=stripe.com first_name=John l
 ```bash
 # Search for remote AI jobs
 orth api run fiber /v1/job-search --body '{
-  "job_titles": ["Machine Learning Engineer", "AI Engineer"],
-  "locations": ["Remote"],
-  "keywords": ["LLM", "generative AI"]
+  "searchParams": {
+    "job_titles": ["Machine Learning Engineer", "AI Engineer"],
+    "locations": ["Remote"],
+    "keywords": ["LLM", "generative AI"]
+  }
 }'
 
 # Research a company

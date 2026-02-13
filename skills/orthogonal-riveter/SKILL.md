@@ -24,30 +24,30 @@ orth api run riveter /v1/scrape --body '{"url": "https://example.com/article"}'
 ### Structured Extraction ($0.01)
 ```bash
 orth api run riveter /v1/run --body '{
-  "url": "https://example.com/products",
-  "schema": {
-    "products": [{
-      "name": "string",
-      "price": "number",
-      "description": "string"
-    }]
+  "input": {
+    "urls": ["https://example.com/products"]
+  },
+  "output": {
+    "name": {"prompt": "Product name", "contexts": ["urls"]},
+    "price": {"prompt": "Product price", "contexts": ["urls"], "format": "number"},
+    "description": {"prompt": "Product description", "contexts": ["urls"]}
   }
 }'
 ```
 
 ### Check Run Status (free)
 ```bash
-orth api run riveter /v1/run_status --query 'run_id=abc123'
+orth api run riveter /v1/run_status --query 'run_key=abc123'
 ```
 
 ### Get Run Data (free)
 ```bash
-orth api run riveter /v1/run_data --query 'run_id=abc123'
+orth api run riveter /v1/run_data --query 'run_key=abc123'
 ```
 
 ### Stop a Run (free)
 ```bash
-orth api run riveter /v1/stop_run --body '{"run_id": "abc123"}'
+orth api run riveter /v1/stop_run --query 'run_key=abc123'
 ```
 
 ## Use Cases

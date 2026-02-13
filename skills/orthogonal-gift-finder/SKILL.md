@@ -69,7 +69,7 @@ orth api run tavily /search --body '{
 
 # Experience gifts
 orth api run olostep /v1/answers --body '{
-  "question": "Best experience gift ideas in San Francisco - cooking classes, spa, adventures"
+  "task": "Best experience gift ideas in San Francisco - cooking classes, spa, adventures"
 }'
 ```
 

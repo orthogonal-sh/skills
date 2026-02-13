@@ -47,14 +47,14 @@ orth api run brand-dev /v1/brand/screenshot --query 'domain=github.com'
 
 ### NAICS Classification ($0.03)
 ```bash
-orth api run brand-dev /v1/brand/naics --query 'domain=openai.com'
+orth api run brand-dev /v1/brand/naics --query 'input=openai.com'
 ```
 
 ### AI Query ($0.03)
 ```bash
 orth api run brand-dev /v1/brand/ai/query --body '{
   "domain": "anthropic.com",
-  "query": "What products does this company offer?"
+  "data_to_extract": [{"name": "products", "description": "What products does this company offer?"}]
 }'
 ```
 

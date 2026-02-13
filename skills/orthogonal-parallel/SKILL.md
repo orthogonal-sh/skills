@@ -28,8 +28,8 @@ orth api run parallel /chat/completions --body '{
 ### Start Task Run ($0.01)
 ```bash
 orth api run parallel /v1/tasks/runs --body '{
-  "task": "Research the competitive landscape of AI coding assistants",
-  "depth": "comprehensive"
+  "processor": "base",
+  "input": "Research the competitive landscape of AI coding assistants"
 }'
 ```
 
@@ -38,7 +38,7 @@ orth api run parallel /v1/tasks/runs --body '{
 > Note: The beta search endpoint requires a custom header (`parallel-beta: true`). If `orth api run` does not support `--header`, use the SDK or direct HTTP request instead.
 
 ```bash
-orth api run parallel /v1beta/search --body '{"query": "AI agent frameworks comparison 2024"}'
+orth api run parallel /v1beta/search --body '{"objective": "AI agent frameworks comparison 2024"}'
 ```
 
 ## Use Cases

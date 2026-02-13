@@ -41,8 +41,8 @@ orth api run scrapegraph /v1/searchscraper --body '{
 ### Crawl with AI ($0.04)
 ```bash
 orth api run scrapegraph /v1/crawl --body '{
-  "website_url": "https://docs.example.com",
-  "user_prompt": "Extract all API endpoints and their descriptions"
+  "url": "https://docs.example.com",
+  "prompt": "Extract all API endpoints and their descriptions"
 }'
 ```
 

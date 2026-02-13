@@ -29,8 +29,7 @@ orth api run tavily /search --body '{
 ### Deep Research ($0.50)
 ```bash
 orth api run tavily /research --body '{
-  "query": "Compare different AI agent frameworks for production use",
-  "max_results": 20
+  "input": "Compare different AI agent frameworks for production use"
 }'
 ```
 

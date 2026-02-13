@@ -42,9 +42,12 @@ Get info for personalized outreach:
 
 ```bash
 orth api run sixtyfour /enrich-lead --body '{
-  "first_name": "John",
-  "last_name": "Doe",
-  "company": "Stripe"
+  "lead_info": {
+    "first_name": "John",
+    "last_name": "Doe",
+    "company": "Stripe"
+  },
+  "struct": {"email": "Work email", "phone": "Phone number"}
 }'
 ```
 
@@ -60,9 +63,11 @@ orth api run brand-dev /v1/brand/retrieve --query 'domain=stripe.com'
 ```bash
 # 1. Find target companies
 orth api run fiber /v1/company-search --body '{
-  "industries": ["SaaS"],
-  "employee_count_min": 50,
-  "employee_count_max": 500
+  "searchParams": {
+    "industries": ["SaaS"],
+    "employee_count_min": 50,
+    "employee_count_max": 500
+  }
 }'
 
 # 2. Get emails for each company
@@ -72,7 +77,7 @@ orth api run hunter /v2/domain-search --query 'domain=company.com'
 orth api run hunter /v2/email-verifier --query 'email=person@company.com'
 
 # 4. Enrich for personalization
-orth api run sixtyfour /enrich-lead --body '{"first_name": "John", "last_name": "Doe", "company": "Company"}'
+orth api run sixtyfour /enrich-lead --body '{"lead_info": {"first_name": "John", "last_name": "Doe", "company": "Company"}, "struct": {"email": "Work email"}}'
 ```
 
 ## Tips

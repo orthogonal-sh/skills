@@ -66,7 +66,7 @@ orth api run dome /matching-markets/sports
 
 ### Crypto Prices from Binance ($0.01)
 ```bash
-orth api run dome /crypto-prices/binance --query 'symbol=BTCUSDT'
+orth api run dome /crypto-prices/binance --query 'currency=btcusdt'
 ```
 
 ## Use Cases

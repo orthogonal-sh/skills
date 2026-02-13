@@ -31,13 +31,11 @@ Get structured table data:
 
 ```bash
 orth api run riveter /v1/run --body '{
-  "url": "https://example.com/report.pdf",
-  "schema": {
-    "tables": [{
-      "title": "string",
-      "headers": ["string"],
-      "rows": [["string"]]
-    }]
+  "input": {
+    "urls": ["https://example.com/report.pdf"]
+  },
+  "output": {
+    "tables": {"prompt": "Extract all tables with titles, headers, and rows", "contexts": ["urls"]}
   }
 }'
 ```
@@ -54,7 +52,7 @@ Use AI to answer questions:
 
 ```bash
 orth api run olostep /v1/answers --body '{
-  "question": "What is the total revenue mentioned in this SEC filing? [url: https://example.com/10k.pdf]"
+  "task": "What is the total revenue mentioned in this SEC filing? [url: https://example.com/10k.pdf]"
 }'
 ```
 
@@ -75,8 +73,12 @@ orth api run perplexity /chat/completions --body '{
 
 # Extract invoice data
 orth api run riveter /v1/run --body '{
-  "url": "https://example.com/invoice.pdf",
-  "schema": {"vendor": "string", "amount": "number", "date": "string", "items": [{"description": "string", "price": "number"}]}
+  "input": {"urls": ["https://example.com/invoice.pdf"]},
+  "output": {
+    "vendor": {"prompt": "Vendor name", "contexts": ["urls"]},
+    "amount": {"prompt": "Total amount", "contexts": ["urls"]},
+    "date": {"prompt": "Invoice date", "contexts": ["urls"]}
+  }
 }'
 ```
 

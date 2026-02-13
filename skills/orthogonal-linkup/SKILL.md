@@ -17,8 +17,9 @@ Search the web and fetch content from any URL.
 ### Search the Web ($0.01)
 ```bash
 orth api run linkup /search --body '{
-  "query": "latest AI developments 2024",
-  "depth": "standard"
+  "q": "latest AI developments 2024",
+  "depth": "standard",
+  "outputType": "sourcedAnswer"
 }'
 ```
 

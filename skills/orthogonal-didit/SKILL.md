@@ -18,32 +18,32 @@ Verify user identities through phone/email OTP codes and screen against AML data
 
 ### Send Phone OTP ($0.30)
 ```bash
-orth api run didit /v3/phone/send/ --body '{"phone_number": "+1234567890"}'
+orth api run didit /v3/phone/send --body '{"phone_number": "+1234567890"}'
 ```
 
 ### Verify Phone OTP (free)
 ```bash
-orth api run didit /v3/phone/check/ --body '{"phone_number": "+1234567890", "code": "123456"}'
+orth api run didit /v3/phone/check --body '{"phone_number": "+1234567890", "code": "123456"}'
 ```
 
 ### Send Email OTP ($0.04)
 ```bash
-orth api run didit /v3/email/send/ --body '{"email": "user@example.com"}'
+orth api run didit /v3/email/send --body '{"email": "user@example.com"}'
 ```
 
 ### Verify Email OTP (free)
 ```bash
-orth api run didit /v3/email/check/ --body '{"email": "user@example.com", "code": "123456"}'
+orth api run didit /v3/email/check --body '{"email": "user@example.com", "code": "123456"}'
 ```
 
 ### Database Validation ($0.31)
 ```bash
-orth api run didit /v3/database-validation/ --body '{"first_name": "John", "last_name": "Doe", "date_of_birth": "1990-01-15"}'
+orth api run didit /v3/database-validation --body '{"issuing_state": "ESP", "validation_type": "one_by_one", "identification_number": "12345678A"}'
 ```
 
 ### AML Screening ($0.36)
 ```bash
-orth api run didit /v3/aml/ --body '{"name": "John Doe", "type": "individual"}'
+orth api run didit /v3/aml --body '{"full_name": "John Doe", "entity_type": "person"}'
 ```
 
 ## Use Cases

@@ -56,7 +56,7 @@ Check for known vulnerabilities:
 
 ```bash
 orth api run olostep /v1/answers --body '{
-  "question": "What are the OWASP Top 10 vulnerabilities to check for in Python web applications?"
+  "task": "What are the OWASP Top 10 vulnerabilities to check for in Python web applications?"
 }'
 ```
 

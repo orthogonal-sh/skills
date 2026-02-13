@@ -38,7 +38,7 @@ Search for local showtimes:
 
 ```bash
 orth api run olostep /v1/answers --body '{
-  "question": "What are the showtimes for Dune Part 2 at AMC theaters in San Francisco this weekend?"
+  "task": "What are the showtimes for Dune Part 2 at AMC theaters in San Francisco this weekend?"
 }'
 ```
 

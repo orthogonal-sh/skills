@@ -21,7 +21,7 @@ Get comprehensive company analysis:
 
 ```bash
 orth api run tavily /research --body '{
-  "query": "Stripe company complete analysis - history, products, revenue, funding, team, competitive position, recent news, future plans"
+  "input": "Stripe company complete analysis - history, products, revenue, funding, team, competitive position, recent news, future plans"
 }'
 ```
 
@@ -30,8 +30,10 @@ Get info on key executives:
 
 ```bash
 orth api run fiber /v1/people-search --body '{
-  "company_names": ["Stripe"],
-  "job_titles": ["CEO", "CTO", "CFO", "COO", "VP", "Head of"]
+  "searchParams": {
+    "company_names": ["Stripe"],
+    "job_titles": ["CEO", "CTO", "CFO", "COO", "VP", "Head of"]
+  }
 }'
 ```
 
@@ -74,7 +76,9 @@ Track company growth:
 
 ```bash
 orth api run fiber /v1/company-search --body '{
-  "company_names": ["Stripe"]
+  "searchParams": {
+    "company_names": ["Stripe"]
+  }
 }'
 ```
 
@@ -89,10 +93,10 @@ COMPANY="Stripe"
 orth api run brand-dev /v1/brand/retrieve --query "domain=$DOMAIN"
 
 # 2. Deep research
-orth api run tavily /research --body "{\"query\": \"$COMPANY complete company analysis\"}"
+orth api run tavily /research --body "{\"input\": \"$COMPANY complete company analysis\"}"
 
 # 3. Leadership team
-orth api run fiber /v1/people-search --body "{\"company_names\": [\"$COMPANY\"], \"job_titles\": [\"CEO\", \"CTO\", \"CFO\"]}"
+orth api run fiber /v1/people-search --body "{\"searchParams\": {\"company_names\": [\"$COMPANY\"], \"job_titles\": [\"CEO\", \"CTO\", \"CFO\"]}}"
 
 # 4. Funding
 orth api run perplexity /chat/completions --body "{\"model\": \"sonar\", \"messages\": [{\"role\": \"user\", \"content\": \"$COMPANY funding history and investors\"}]}"

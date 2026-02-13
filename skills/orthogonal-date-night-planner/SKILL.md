@@ -38,7 +38,7 @@ Search for pre or post-dinner activities:
 
 ```bash
 orth api run olostep /v1/answers --body '{
-  "question": "What are unique date night activities in San Francisco this weekend? Comedy shows, jazz clubs, rooftop bars, or experiences."
+  "task": "What are unique date night activities in San Francisco this weekend? Comedy shows, jazz clubs, rooftop bars, or experiences."
 }'
 ```
 
@@ -56,7 +56,7 @@ orth api run tavily /search --body '{
 Check weather for outdoor activities:
 
 ```bash
-orth api run precip /api/v1/hourly --query lat=37.7749 lon=-122.4194 start=2024-02-14 end=2024-02-15
+orth api run precip /api/v1/hourly --query latitude=37.7749 longitude=-122.4194 start=2024-02-14 end=2024-02-15
 ```
 
 ## Example Usage
@@ -76,7 +76,7 @@ orth api run tavily /search --body '{
 
 # Outdoor date ideas
 orth api run olostep /v1/answers --body '{
-  "question": "Best sunset spots and romantic outdoor activities in San Diego"
+  "task": "Best sunset spots and romantic outdoor activities in San Diego"
 }'
 ```
 

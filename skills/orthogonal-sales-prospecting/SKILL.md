@@ -23,9 +23,11 @@ Search for people at target companies:
 
 ```bash
 orth api run fiber /v1/people-search --body '{
-  "job_titles": ["CTO", "VP Engineering", "Head of Engineering"],
-  "company_names": ["Stripe", "Figma", "Notion"],
-  "locations": ["San Francisco"]
+  "searchParams": {
+    "job_titles": ["CTO", "VP Engineering", "Head of Engineering"],
+    "company_names": ["Stripe", "Figma", "Notion"],
+    "locations": ["San Francisco"]
+  }
 }'
 ```
 
@@ -41,9 +43,11 @@ Find email for a specific person:
 
 ```bash
 orth api run sixtyfour /find-email --body '{
-  "first_name": "Sarah",
-  "last_name": "Chen",
-  "domain": "stripe.com"
+  "lead": {
+    "first_name": "Sarah",
+    "last_name": "Chen",
+    "domain": "stripe.com"
+  }
 }'
 ```
 
@@ -66,16 +70,20 @@ orth api run brand-dev /v1/brand/retrieve --query 'domain=stripe.com'
 ```bash
 # 1. Find companies (Fiber)
 orth api run fiber /v1/company-search --body '{
-  "industries": ["Software", "SaaS"],
-  "employee_count_min": 50,
-  "employee_count_max": 500,
-  "locations": ["San Francisco", "New York"]
+  "searchParams": {
+    "industries": ["Software", "SaaS"],
+    "employee_count_min": 50,
+    "employee_count_max": 500,
+    "locations": ["San Francisco", "New York"]
+  }
 }'
 
 # 2. Find decision makers (Fiber)
 orth api run fiber /v1/people-search --body '{
-  "job_titles": ["VP Sales", "Head of Sales", "CRO"],
-  "company_domains": ["company1.com", "company2.com"]
+  "searchParams": {
+    "job_titles": ["VP Sales", "Head of Sales", "CRO"],
+    "company_domains": ["company1.com", "company2.com"]
+  }
 }'
 
 # 3. Get emails (Hunter)

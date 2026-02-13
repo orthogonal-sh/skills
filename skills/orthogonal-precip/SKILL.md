@@ -21,37 +21,37 @@ Access hyperlocal weather data including precipitation, temperature, wind, soil 
 
 ### Hourly Precipitation ($0.01)
 ```bash
-orth api run precip /api/v1/hourly --query lat=37.7749 lon=-122.4194 start=2024-01-01 end=2024-01-07
+orth api run precip /api/v1/hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-07
 ```
 
 ### Daily Precipitation ($0.01)
 ```bash
-orth api run precip /api/v1/daily --query lat=37.7749 lon=-122.4194 start=2024-01-01 end=2024-01-31
+orth api run precip /api/v1/daily --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-31
 ```
 
 ### Last 48 Hours ($0.01)
 ```bash
-orth api run precip /api/v1/last-48 --query lat=37.7749 lon=-122.4194
+orth api run precip /api/v1/last-48 --query latitude=37.7749 longitude=-122.4194
 ```
 
 ### Temperature Hourly ($0.01)
 ```bash
-orth api run precip /api/v1/temperature-hourly --query lat=37.7749 lon=-122.4194 start=2024-01-01 end=2024-01-02
+orth api run precip /api/v1/temperature-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
 ### Wind Speed ($0.01)
 ```bash
-orth api run precip /api/v1/wind-speed-hourly --query lat=37.7749 lon=-122.4194 start=2024-01-01 end=2024-01-02
+orth api run precip /api/v1/wind-speed-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
 ### Soil Moisture ($0.01)
 ```bash
-orth api run precip /api/v1/soil-moisture-hourly --query lat=37.7749 lon=-122.4194 start=2024-01-01 end=2024-01-02
+orth api run precip /api/v1/soil-moisture-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
 ### Recent Rain Event ($0.01)
 ```bash
-orth api run precip /api/v1/recent-rain --query lat=37.7749 lon=-122.4194
+orth api run precip /api/v1/recent-rain --query latitude=37.7749 longitude=-122.4194
 ```
 
 ### Weather Embed ($0.10)

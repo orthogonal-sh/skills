@@ -60,7 +60,7 @@ orth api run perplexity /chat/completions --body '{
 
 # Find cuisine-specific dishes
 orth api run olostep /v1/answers --body '{
-  "question": "Best authentic Thai curry recipes for beginners"
+  "task": "Best authentic Thai curry recipes for beginners"
 }'
 ```
 

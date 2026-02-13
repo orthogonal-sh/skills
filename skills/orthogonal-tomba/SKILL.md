@@ -50,7 +50,7 @@ orth api run tomba /v1/companies/find --query 'domain=anthropic.com'
 
 ### Domain Suggestions ($0.01)
 ```bash
-orth api run tomba /v1/domain-suggestions --query 'company=Google'
+orth api run tomba /v1/domain-suggestions --query 'query=Google'
 ```
 
 ## Use Cases

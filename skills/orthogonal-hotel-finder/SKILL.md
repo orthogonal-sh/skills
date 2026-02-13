@@ -54,7 +54,7 @@ orth api run tavily /search --body '{
 
 # Get local recommendations
 orth api run olostep /v1/answers --body '{
-  "question": "What are the best family-friendly hotels near Disneyland with shuttle service?"
+  "task": "What are the best family-friendly hotels near Disneyland with shuttle service?"
 }'
 ```
 

@@ -14,7 +14,7 @@ Get comprehensive market analysis:
 
 ```bash
 orth api run tavily /research --body '{
-  "query": "AI software market size 2024 growth projections trends key players competitive landscape"
+  "input": "AI software market size 2024 growth projections trends key players competitive landscape"
 }'
 ```
 
@@ -56,7 +56,7 @@ Understand target customers:
 
 ```bash
 orth api run olostep /v1/answers --body '{
-  "question": "Who are the main customer segments for enterprise AI software? What are their pain points and buying criteria?"
+  "task": "Who are the main customer segments for enterprise AI software? What are their pain points and buying criteria?"
 }'
 ```
 
@@ -74,7 +74,7 @@ orth api run scrapegraph /v1/searchscraper --body '{
 ```bash
 # Quick market overview
 orth api run tavily /research --body '{
-  "query": "EdTech market analysis 2024 - size, growth, key players, trends, challenges"
+  "input": "EdTech market analysis 2024 - size, growth, key players, trends, challenges"
 }'
 
 # Compare market segments

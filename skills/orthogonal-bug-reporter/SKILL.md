@@ -61,7 +61,7 @@ Search for temporary fixes:
 
 ```bash
 orth api run olostep /v1/answers --body '{
-  "question": "What are workarounds for React state not updating on click events?"
+  "task": "What are workarounds for React state not updating on click events?"
 }'
 ```
 

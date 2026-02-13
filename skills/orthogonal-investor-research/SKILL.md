@@ -14,8 +14,10 @@ Find investors in your space:
 
 ```bash
 orth api run fiber /v1/investor-search --body '{
-  "investment_stages": ["Seed", "Series A"],
-  "industries": ["AI", "SaaS", "Developer Tools"]
+  "searchParams": {
+    "investment_stages": ["Seed", "Series A"],
+    "industries": ["AI", "SaaS", "Developer Tools"]
+  }
 }'
 ```
 
@@ -47,8 +49,10 @@ Get contact info for partners:
 
 ```bash
 orth api run fiber /v1/people-search --body '{
-  "company_names": ["Sequoia Capital"],
-  "job_titles": ["Partner", "General Partner", "Principal"]
+  "searchParams": {
+    "company_names": ["Sequoia Capital"],
+    "job_titles": ["Partner", "General Partner", "Principal"]
+  }
 }'
 ```
 
@@ -57,9 +61,11 @@ Find email for outreach:
 
 ```bash
 orth api run sixtyfour /find-email --body '{
-  "first_name": "Alfred",
-  "last_name": "Lin",
-  "company": "Sequoia Capital"
+  "lead": {
+    "first_name": "Alfred",
+    "last_name": "Lin",
+    "company": "Sequoia Capital"
+  }
 }'
 ```
 
@@ -79,14 +85,16 @@ orth api run tavily /search --body '{
 ```bash
 # Find AI-focused investors
 orth api run fiber /v1/investor-search --body '{
-  "industries": ["AI", "Machine Learning"],
-  "investment_stages": ["Seed"],
-  "locations": ["San Francisco", "New York"]
+  "searchParams": {
+    "industries": ["AI", "Machine Learning"],
+    "investment_stages": ["Seed"],
+    "locations": ["San Francisco", "New York"]
+  }
 }'
 
 # Research specific investor
 orth api run tavily /research --body '{
-  "query": "First Round Capital - investment thesis, notable exits, typical check size, portfolio companies"
+  "input": "First Round Capital - investment thesis, notable exits, typical check size, portfolio companies"
 }'
 
 # Find angels in your space
