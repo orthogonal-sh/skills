@@ -95,3 +95,11 @@ orth api run hunter /v2/companies/find --query "domain=stripe.com"
 - Use multiple sources for better coverage
 - LinkedIn URLs dramatically improve match rates
 - Cache results to avoid duplicate lookups
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show fiber hunter sixtyfour 
+```

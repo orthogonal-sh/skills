@@ -88,3 +88,11 @@ orth api run scrapegraph /v1/markdownify --body '{"website_url": "https://docs.o
 - Define schemas for consistent data
 - Respect rate limits and robots.txt
 - Cache results to avoid duplicate requests
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show olostep riveter scrapegraph tavily 
+```

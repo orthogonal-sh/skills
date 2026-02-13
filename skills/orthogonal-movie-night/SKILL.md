@@ -74,3 +74,11 @@ orth api run perplexity /chat/completions --body '{
 - Include rating preferences (PG, R, etc.)
 - Check multiple theaters for best times
 - Look for IMAX or Dolby showings for big releases
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show olostep perplexity scrapegraph tavily 
+```

@@ -95,3 +95,11 @@ orth api run exa /search --body '{
 - Track their job postings for strategic insights
 - Monitor their social media and blog
 - Analyze their customer reviews
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show brand-dev exa fiber perplexity scrapegraph tavily 
+```

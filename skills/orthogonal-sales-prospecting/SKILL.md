@@ -99,3 +99,11 @@ orth api run fiber /v1/validate-email/single --body '{"email": "lead@company.com
 - Verify all emails before adding to sequences
 - Personalize outreach with company context
 - Track email engagement for list optimization
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show brand-dev fiber hunter sixtyfour 
+```

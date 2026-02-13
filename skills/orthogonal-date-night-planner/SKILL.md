@@ -86,3 +86,11 @@ orth api run olostep /v1/answers --body '{
 - Plan the logistics (parking, Uber, walking distance)
 - Have a backup plan for weather
 - Mix familiar favorites with new experiences
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show olostep perplexity precip tavily 
+```

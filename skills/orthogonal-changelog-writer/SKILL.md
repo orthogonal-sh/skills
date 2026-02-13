@@ -83,3 +83,11 @@ orth api run scrapegraph /v1/smartscraper --body '{
 - **Removed**: Removed features
 - **Fixed**: Bug fixes
 - **Security**: Security fixes
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show exa linkup perplexity scrapegraph tavily 
+```

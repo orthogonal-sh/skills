@@ -101,3 +101,11 @@ orth api run linkup /fetch --body '{"url": "https://competitor.com"}'
 3. **Login/Auth**: Authentication working
 4. **Critical Features**: Core functionality
 5. **Status Page**: Official service status
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show linkup olostep scrapegraph textbelt 
+```

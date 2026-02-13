@@ -79,3 +79,11 @@ orth api run olostep /v1/answers --body '{
 - Think about experiences, not just physical items
 - Check for gift cards if unsure
 - Look for personalization options
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show olostep perplexity scrapegraph tavily 
+```

@@ -88,3 +88,11 @@ orth api run exa /search --body '{
 - Gather multiple sources for credibility
 - Look for unique angles not covered elsewhere
 - Include data and statistics when possible
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show exa perplexity tavily 
+```

@@ -88,3 +88,11 @@ orth api run riveter /v1/run --body '{
 - Use schemas for consistent structured output
 - Handle multi-page documents in chunks
 - Verify extracted numbers against source
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show linkup olostep perplexity riveter scrapegraph 
+```

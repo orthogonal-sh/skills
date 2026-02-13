@@ -64,3 +64,11 @@ orth api run olostep /v1/answers --body '{
 - Include amenity requirements (pool, gym, breakfast)
 - Check cancellation policies
 - Compare booking sites for best rates
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show olostep perplexity scrapegraph tavily 
+```

@@ -97,3 +97,11 @@ orth api run perplexity /chat/completions --body '{
 - Check error handling endpoints
 - Verify SSL certificates
 - Test from multiple regions if possible
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show brand-dev linkup perplexity scrapegraph 
+```

@@ -60,3 +60,11 @@ orth api run olostep /v1/answers --body '{
 - Search for "flexible dates" to find deals
 - Compare one-way vs round-trip pricing
 - Check for airline sales and promotions
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show olostep scrapegraph tavily 
+```

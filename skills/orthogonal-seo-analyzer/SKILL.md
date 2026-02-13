@@ -87,3 +87,11 @@ orth api run perplexity /chat/completions --body '{
 - Analyze top 3 competitors for each target keyword
 - Prioritize pages with existing traffic for optimization
 - Track rankings over time to measure progress
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show exa perplexity scrapegraph tavily 
+```
