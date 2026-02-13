@@ -167,3 +167,12 @@ orth api run scrapegraph /v1/smartscraper/{request_id}
 3. **Price Monitoring**: Track prices across e-commerce sites
 4. **Content Conversion**: Convert web pages to markdown for LLMs
 5. **Site Analysis**: Map site structure and content
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show scrapegraph              # List all endpoints
+orth api show scrapegraph <endpoint>   # Get endpoint parameters
+```

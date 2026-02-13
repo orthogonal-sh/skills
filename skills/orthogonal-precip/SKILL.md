@@ -288,3 +288,12 @@ orth api run precip /api/v1/relative-humidity-hourly --query latitude=37.7749 lo
 3. **Event Planning**: Check precipitation forecasts for outdoor events
 4. **Research**: Access historical weather data for analysis
 5. **IoT/Smart Home**: Integrate weather data into automation
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show precip              # List all endpoints
+orth api show precip <endpoint>   # Get endpoint parameters
+```

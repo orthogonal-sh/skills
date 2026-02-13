@@ -85,3 +85,12 @@ orth api run riveter /v1/stop_run --query 'run_key=abc123'
 2. **Job Listings**: Gather job postings with structured fields
 3. **News Aggregation**: Extract articles with title, date, content
 4. **Price Monitoring**: Track prices across competitor sites
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show riveter              # List all endpoints
+orth api show riveter <endpoint>   # Get endpoint parameters
+```

@@ -53,3 +53,12 @@ orth api run textbelt /text --body '{
 3. **Reminders**: Appointment and event reminders
 4. **Updates**: Order and delivery updates
 5. **Marketing**: Promotional messages (with consent)
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show textbelt              # List all endpoints
+orth api show textbelt <endpoint>   # Get endpoint parameters
+```

@@ -175,3 +175,12 @@ orth api run parallel /v1/tasks/runs --body '{
 2. **OpenAI Drop-in**: Use with existing OpenAI SDK code
 3. **Competitive Analysis**: Research competitors and market
 4. **Due Diligence**: Gather information for investment decisions
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show parallel              # List all endpoints
+orth api show parallel <endpoint>   # Get endpoint parameters
+```

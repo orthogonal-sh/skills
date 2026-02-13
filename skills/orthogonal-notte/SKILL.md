@@ -222,3 +222,12 @@ orth api run notte /sessions/{session_id}/page/scrape --body '{}'
 3. **Testing**: Run automated browser tests
 4. **AI Agents**: Deploy autonomous agents for web tasks
 5. **Monitoring**: Track website changes and content
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show notte              # List all endpoints
+orth api show notte <endpoint>   # Get endpoint parameters
+```

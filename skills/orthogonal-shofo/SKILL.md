@@ -246,3 +246,12 @@ orth api run shofo /x/post --query 'url=https://x.com/OpenAI/status/123456'
 3. **Competitive Analysis**: Track competitor social media activity
 4. **Content Research**: Discover trending content and hashtags
 5. **Lead Generation**: Find prospects through social profiles
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show shofo              # List all endpoints
+orth api show shofo <endpoint>   # Get endpoint parameters
+```

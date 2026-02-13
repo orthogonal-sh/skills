@@ -29,3 +29,12 @@ orth api run jina-s / --query 'q=latest%20AI%20news'
 2. **Information Gathering**: Get relevant web results
 3. **Fact Checking**: Find sources for verification
 4. **Technical Lookup**: Search documentation and guides
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show jina-s              # List all endpoints
+orth api show jina-s <endpoint>   # Get endpoint parameters
+```

@@ -192,3 +192,12 @@ orth api run valyu /v1/deepresearch/batches/{id}/tasks
 3. **Market Analysis**: Research markets and competitors
 4. **Due Diligence**: Gather information for decisions
 5. **Knowledge Base Building**: Collect structured information
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show valyu              # List all endpoints
+orth api show valyu <endpoint>   # Get endpoint parameters
+```

@@ -264,3 +264,12 @@ orth api run dome /kalshi/markets --query 'search=fed%20rate'
 3. **Portfolio Tracking**: Monitor positions and P&L
 4. **Arbitrage**: Find price differences across platforms
 5. **Forecasting**: Use market prices as probability estimates
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show dome              # List all endpoints
+orth api show dome <endpoint>   # Get endpoint parameters
+```
