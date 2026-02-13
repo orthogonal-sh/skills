@@ -13,72 +13,57 @@ Research topics thoroughly for creating high-quality articles, blog posts, and s
 Get comprehensive information on your topic:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavily/research" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "Complete guide to AI agents in 2024 - how they work, use cases, frameworks, best practices"
-  }'
+orth api run tavily /research --body '{
+  "input": "Complete guide to AI agents in 2024 - how they work, use cases, frameworks, best practices"
+}'
 ```
 
 ### Step 2: Find Related Content
 See what's already published:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/exa/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "best articles about AI agents and autonomous systems",
-    "num_results": 20,
-    "contents": {"text": true}
-  }'
+orth api run exa /search --body '{
+  "query": "best articles about AI agents and autonomous systems",
+  "num_results": 20,
+  "contents": {"text": true}
+}'
 ```
 
 ### Step 3: Get Expert Opinions
 Find quotes and expert takes:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/perplexity/chat/completions" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "sonar",
-    "messages": [{
-      "role": "user",
-      "content": "What do AI researchers and industry experts say about the future of AI agents? Include specific quotes and sources."
-    }]
-  }'
+orth api run perplexity /chat/completions --body '{
+  "model": "sonar",
+  "messages": [{
+    "role": "user",
+    "content": "What do AI researchers and industry experts say about the future of AI agents? Include specific quotes and sources."
+  }]
+}'
 ```
 
 ### Step 4: Find Statistics
 Get data and stats to support your content:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavily/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "AI agents market size statistics growth projections 2024 2025",
-    "search_depth": "advanced",
-    "include_answer": true
-  }'
+orth api run tavily /search --body '{
+  "query": "AI agents market size statistics growth projections 2024 2025",
+  "search_depth": "advanced",
+  "include_answer": true
+}'
 ```
 
 ### Step 5: Generate Outline
 Get help structuring your content:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/perplexity/chat/completions" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "sonar",
-    "messages": [{
-      "role": "user",
-      "content": "Create a detailed outline for a comprehensive blog post about AI agents. Include sections, key points, and suggested word counts."
-    }]
-  }'
+orth api run perplexity /chat/completions --body '{
+  "model": "sonar",
+  "messages": [{
+    "role": "user",
+    "content": "Create a detailed outline for a comprehensive blog post about AI agents. Include sections, key points, and suggested word counts."
+  }]
+}'
 ```
 
 ## Example Usage

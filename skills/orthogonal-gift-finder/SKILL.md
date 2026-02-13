@@ -13,55 +13,43 @@ Find thoughtful gift ideas based on the recipient, occasion, and your budget.
 Search for gift suggestions:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavily/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "best birthday gift ideas for 30 year old man who likes technology under $100",
-    "search_depth": "advanced",
-    "include_answer": true
-  }'
+orth api run tavily /search --body '{
+  "query": "best birthday gift ideas for 30 year old man who likes technology under $100",
+  "search_depth": "advanced",
+  "include_answer": true
+}'
 ```
 
 ### Step 2: Get Personalized Recommendations
 Use Perplexity for tailored suggestions:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/perplexity/chat/completions" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "sonar",
-    "messages": [{
-      "role": "user",
-      "content": "Suggest 10 unique gift ideas for my mom who loves gardening and cooking. Budget $50-150. Include where to buy."
-    }]
-  }'
+orth api run perplexity /chat/completions --body '{
+  "model": "sonar",
+  "messages": [{
+    "role": "user",
+    "content": "Suggest 10 unique gift ideas for my mom who loves gardening and cooking. Budget $50-150. Include where to buy."
+  }]
+}'
 ```
 
 ### Step 3: Compare Products
 Search for specific products and prices:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/scrapegraph/v1/searchscraper" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "user_prompt": "Find the best wireless earbuds under $100 with good reviews and compare prices across Amazon, Best Buy"
-  }'
+orth api run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "Find the best wireless earbuds under $100 with good reviews and compare prices across Amazon, Best Buy"
+}'
 ```
 
 ### Step 4: Get Product Details
 Extract detailed product information:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/scrapegraph/v1/smartscraper" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "website_url": "https://www.amazon.com/dp/B08XYZ",
-    "user_prompt": "Extract product name, price, features, ratings, and top reviews"
-  }'
+orth api run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://www.amazon.com/dp/B08XYZ",
+  "user_prompt": "Extract product name, price, features, ratings, and top reviews"
+}'
 ```
 
 ## Example Usage
@@ -81,7 +69,7 @@ orth api run tavily /search --body '{
 
 # Experience gifts
 orth api run olostep /v1/answers --body '{
-  "question": "Best experience gift ideas in San Francisco - cooking classes, spa, adventures"
+  "task": "Best experience gift ideas in San Francisco - cooking classes, spa, adventures"
 }'
 ```
 

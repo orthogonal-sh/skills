@@ -13,43 +13,34 @@ Find recipes based on available ingredients, dietary needs, or cuisine preferenc
 Use Tavily to find recipes matching your criteria:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavily/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "easy chicken recipes with rice and vegetables under 30 minutes",
-    "search_depth": "advanced",
-    "include_answer": true
-  }'
+orth api run tavily /search --body '{
+  "query": "easy chicken recipes with rice and vegetables under 30 minutes",
+  "search_depth": "advanced",
+  "include_answer": true
+}'
 ```
 
 ### Step 2: Get Recipe Suggestions
 Use Perplexity for personalized recipe ideas:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/perplexity/chat/completions" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "sonar",
-    "messages": [{
-      "role": "user",
-      "content": "I have chicken breast, garlic, lemon, and olive oil. What are 5 recipes I can make? Include cooking times."
-    }]
-  }'
+orth api run perplexity /chat/completions --body '{
+  "model": "sonar",
+  "messages": [{
+    "role": "user",
+    "content": "I have chicken breast, garlic, lemon, and olive oil. What are 5 recipes I can make? Include cooking times."
+  }]
+}'
 ```
 
 ### Step 3: Extract Full Recipe
 Use ScrapeGraph to get complete recipe details:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/scrapegraph/v1/smartscraper" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "website_url": "https://www.allrecipes.com/recipe/example",
-    "user_prompt": "Extract the full recipe including ingredients list, step-by-step instructions, cooking time, and servings"
-  }'
+orth api run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://www.allrecipes.com/recipe/example",
+  "user_prompt": "Extract the full recipe including ingredients list, step-by-step instructions, cooking time, and servings"
+}'
 ```
 
 ## Example Usage
@@ -69,7 +60,7 @@ orth api run perplexity /chat/completions --body '{
 
 # Find cuisine-specific dishes
 orth api run olostep /v1/answers --body '{
-  "question": "Best authentic Thai curry recipes for beginners"
+  "task": "Best authentic Thai curry recipes for beginners"
 }'
 ```
 

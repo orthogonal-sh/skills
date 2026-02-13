@@ -9,30 +9,18 @@ Simple, fast web search using Jina's search foundation.
 
 ## Capabilities
 
-- **Search**: Get search engine results pages (SERP) ($0.01)
+- **Search**: Use s ($0.01)
 
 ## Usage
 
-### Web Search ($0.01)
-```bash
-curl "https://api.orth.sh/v1/run/jina-s/?q=latest%20AI%20news" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
-```
+### Search ($0.01)
+Use s.jina.ai to search the web and get SERP
 
-### Search with Options
-```bash
-curl "https://api.orth.sh/v1/run/jina-s/?q=machine%20learning%20tutorials&num=10" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
-```
-
-## CLI Usage
+Parameters:
+- q (string) - Search query
 
 ```bash
-# Simple search
-orth api run jina-s / --query 'q=best%20programming%20languages'
-
-# Technical search
-orth api run jina-s / --query 'q=kubernetes%20deployment%20guide'
+orth api run jina-s / --query 'q=latest%20AI%20news'
 ```
 
 ## Use Cases

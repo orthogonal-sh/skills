@@ -13,64 +13,47 @@ Extract text, tables, and structured data from PDF documents.
 Use Linkup to fetch PDF URLs:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/linkup/fetch" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://example.com/document.pdf"}'
+orth api run linkup /fetch --body '{"url": "https://example.com/document.pdf"}'
 ```
 
 ### Step 2: Extract with AI
 Use ScrapeGraph to extract specific content:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/scrapegraph/v1/smartscraper" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "website_url": "https://example.com/report.pdf",
-    "user_prompt": "Extract all financial figures, tables, and key metrics from this document"
-  }'
+orth api run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://example.com/report.pdf",
+  "user_prompt": "Extract all financial figures, tables, and key metrics from this document"
+}'
 ```
 
 ### Step 3: Extract Tables
 Get structured table data:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/riveter/v1/run" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "url": "https://example.com/report.pdf",
-    "schema": {
-      "tables": [{
-        "title": "string",
-        "headers": ["string"],
-        "rows": [["string"]]
-      }]
-    }
-  }'
+orth api run riveter /v1/run --body '{
+  "input": {
+    "urls": ["https://example.com/report.pdf"]
+  },
+  "output": {
+    "tables": {"prompt": "Extract all tables with titles, headers, and rows", "contexts": ["urls"]}
+  }
+}'
 ```
 
 ### Step 4: Convert to Markdown
 Get readable markdown output:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/scrapegraph/v1/markdownify" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"website_url": "https://example.com/document.pdf"}'
+orth api run scrapegraph /v1/markdownify --body '{"website_url": "https://example.com/document.pdf"}'
 ```
 
 ### Step 5: Ask Questions About PDF
 Use AI to answer questions:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/olostep/v1/answers" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "question": "What is the total revenue mentioned in this SEC filing? [url: https://example.com/10k.pdf]"
-  }'
+orth api run olostep /v1/answers --body '{
+  "task": "What is the total revenue mentioned in this SEC filing? [url: https://example.com/10k.pdf]"
+}'
 ```
 
 ## Example Usage
@@ -90,8 +73,12 @@ orth api run perplexity /chat/completions --body '{
 
 # Extract invoice data
 orth api run riveter /v1/run --body '{
-  "url": "https://example.com/invoice.pdf",
-  "schema": {"vendor": "string", "amount": "number", "date": "string", "items": [{"description": "string", "price": "number"}]}
+  "input": {"urls": ["https://example.com/invoice.pdf"]},
+  "output": {
+    "vendor": {"prompt": "Vendor name", "contexts": ["urls"]},
+    "amount": {"prompt": "Total amount", "contexts": ["urls"]},
+    "date": {"prompt": "Invoice date", "contexts": ["urls"]}
+  }
 }'
 ```
 

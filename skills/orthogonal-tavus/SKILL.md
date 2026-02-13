@@ -9,36 +9,29 @@ Create real-time video conversations with AI-powered digital personas.
 
 ## Capabilities
 
-- **List Personas**: Get available AI personas ($0.01)
-- **Start Conversation**: Begin a real-time video call with AI ($0.02)
+- **List Personas**: This endpoint returns a list of all Personas ($0.01)
+- **Create Conversation**: This endpoint starts a real-time video conversation with your AI replica, powered by a persona that allows it to see, hear, and respond like a human ($0.02)
 
 ## Usage
 
-### List Available Personas ($0.01)
-```bash
-curl "https://api.orth.sh/v1/run/tavus/v2/personas" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
-```
-
-### Start Video Conversation ($0.02)
-```bash
-curl -X POST "https://api.orth.sh/v1/run/tavus/v2/conversations" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "persona_id": "your-persona-id",
-    "conversation_name": "Customer Support Call"
-  }'
-```
-
-## CLI Usage
+### List Personas ($0.01)
+This endpoint returns a list of all Personas. You can first list the Personas to choose which one you'd like to create a conversation with. Then, using the Create Conversation endpoint, you can start a conversation with that persona providing the persona ID.
 
 ```bash
-# List all personas
 orth api run tavus /v2/personas
+```
 
-# Start a conversation
-orth api run tavus /v2/conversations --body '{"persona_id": "abc123", "conversation_name": "Demo Call"}'
+### Create Conversation ($0.02)
+This endpoint starts a real-time video conversation with your AI replica, powered by a persona that allows it to see, hear, and respond like a human. Provide the most relevant persona_id obtained from the List Personas endpoint.
+
+Parameters:
+- persona_id* (string) - p1b06420cfdc
+
+```bash
+orth api run tavus /v2/conversations --body '{
+  "persona_id": "your-persona-id",
+  "conversation_name": "Customer Support Call"
+}'
 ```
 
 ## Use Cases

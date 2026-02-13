@@ -13,76 +13,57 @@ Scrape websites, extract structured data, and convert content to usable formats.
 Extract content from a single page:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/olostep/v1/scrapes" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://example.com/page"}'
+orth api run olostep /v1/scrapes --body '{"url_to_scrape": "https://example.com/page"}'
 ```
 
 ### Step 2: AI-Powered Extraction
 Extract specific data using natural language:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/scrapegraph/v1/smartscraper" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "website_url": "https://example.com/products",
-    "user_prompt": "Extract all product names, prices, descriptions, and image URLs"
-  }'
+orth api run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://example.com/products",
+  "user_prompt": "Extract all product names, prices, descriptions, and image URLs"
+}'
 ```
 
 ### Step 3: Structured Extraction
 Define a schema for consistent output:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/riveter/v1/run" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "url": "https://example.com/products",
-    "schema": {
-      "products": [{
-        "name": "string",
-        "price": "number",
-        "description": "string",
-        "url": "string"
-      }]
-    }
-  }'
+orth api run riveter /v1/run --body '{
+  "input": {
+    "urls": ["https://example.com/products"]
+  },
+  "output": {
+    "name": {"prompt": "Product name", "contexts": ["urls"]},
+    "price": {"prompt": "Product price", "contexts": ["urls"]},
+    "description": {"prompt": "Product description", "contexts": ["urls"]}
+  }
+}'
 ```
 
 ### Step 4: Crawl Entire Site
 Crawl multiple pages:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/olostep/v1/crawls" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "url": "https://docs.example.com",
-    "max_pages": 50
-  }'
+orth api run olostep /v1/crawls --body '{
+  "start_url": "https://docs.example.com",
+  "max_pages": 50
+}'
 ```
 
 ### Step 5: Convert to Markdown
 Get clean markdown output:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/scrapegraph/v1/markdownify" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"website_url": "https://example.com/article"}'
+orth api run scrapegraph /v1/markdownify --body '{"website_url": "https://example.com/article"}'
 ```
 
 ### Step 6: Get Site Map
 Discover all URLs on a site:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavily/map" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://example.com"}'
+orth api run tavily /map --body '{"url": "https://example.com"}'
 ```
 
 ## Example Usage

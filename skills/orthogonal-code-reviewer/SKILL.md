@@ -13,66 +13,51 @@ Review code for bugs, security issues, performance problems, and best practices.
 Get code from GitHub or other sources:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/linkup/fetch" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://raw.githubusercontent.com/user/repo/main/file.py"}'
+orth api run linkup /fetch --body '{"url": "https://raw.githubusercontent.com/user/repo/main/file.py"}'
 ```
 
 ### Step 2: Get AI Code Review
 Use Perplexity for comprehensive review:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/perplexity/chat/completions" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "sonar",
-    "messages": [{
-      "role": "user",
-      "content": "Review this Python code for bugs, security issues, and improvements:\n\n```python\ndef process_user_input(data):\n    query = f\"SELECT * FROM users WHERE id = {data['id']}\"\n    return db.execute(query)\n```"
-    }]
-  }'
+orth api run perplexity /chat/completions --body '{
+  "model": "sonar",
+  "messages": [{
+    "role": "user",
+    "content": "Review this Python code for bugs, security issues, and improvements:\n\n```python\ndef process_user_input(data):\n    query = f\"SELECT * FROM users WHERE id = {data['\''id'\'']}\"\n    return db.execute(query)\n```"
+  }]
+}'
 ```
 
 ### Step 3: Check for Best Practices
 Research language-specific best practices:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavily/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "Python best practices security SQL injection prevention 2024",
-    "search_depth": "advanced",
-    "include_answer": true
-  }'
+orth api run tavily /search --body '{
+  "query": "Python best practices security SQL injection prevention 2024",
+  "search_depth": "advanced",
+  "include_answer": true
+}'
 ```
 
 ### Step 4: Find Similar Solutions
 Look for better implementations:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/exa/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "Python parameterized queries SQL best implementation example",
-    "num_results": 10,
-    "contents": {"text": true}
-  }'
+orth api run exa /search --body '{
+  "query": "Python parameterized queries SQL best implementation example",
+  "num_results": 10,
+  "contents": {"text": true}
+}'
 ```
 
 ### Step 5: Security Audit
 Check for known vulnerabilities:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/olostep/v1/answers" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "question": "What are the OWASP Top 10 vulnerabilities to check for in Python web applications?"
-  }'
+orth api run olostep /v1/answers --body '{
+  "task": "What are the OWASP Top 10 vulnerabilities to check for in Python web applications?"
+}'
 ```
 
 ## Example Usage

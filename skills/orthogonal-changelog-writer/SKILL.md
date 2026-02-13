@@ -13,65 +13,50 @@ Generate professional changelogs from git commits, PRs, and release information.
 Get recent commits from GitHub:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/linkup/fetch" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://github.com/user/repo/commits/main"}'
+orth api run linkup /fetch --body '{"url": "https://github.com/user/repo/commits/main"}'
 ```
 
 ### Step 2: Extract PR Information
 Get PR details and descriptions:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/scrapegraph/v1/smartscraper" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "website_url": "https://github.com/user/repo/pulls?state=closed",
-    "user_prompt": "Extract PR titles, numbers, descriptions, and labels for recently merged PRs"
-  }'
+orth api run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://github.com/user/repo/pulls?state=closed",
+  "user_prompt": "Extract PR titles, numbers, descriptions, and labels for recently merged PRs"
+}'
 ```
 
 ### Step 3: Generate Changelog
 Use AI to write formatted changelog:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/perplexity/chat/completions" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "sonar",
-    "messages": [{
-      "role": "user",
-      "content": "Write a professional changelog entry for version 2.1.0 based on these commits:\n\n- feat: add OAuth support\n- fix: resolve memory leak in parser\n- docs: update API documentation\n- chore: upgrade dependencies\n\nUse Keep a Changelog format with categories: Added, Changed, Fixed, Removed"
-    }]
-  }'
+orth api run perplexity /chat/completions --body '{
+  "model": "sonar",
+  "messages": [{
+    "role": "user",
+    "content": "Write a professional changelog entry for version 2.1.0 based on these commits:\n\n- feat: add OAuth support\n- fix: resolve memory leak in parser\n- docs: update API documentation\n- chore: upgrade dependencies\n\nUse Keep a Changelog format with categories: Added, Changed, Fixed, Removed"
+  }]
+}'
 ```
 
 ### Step 4: Research Changelog Standards
 Find best practices:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavily/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "changelog best practices keepachangelog semantic versioning",
-    "include_answer": true
-  }'
+orth api run tavily /search --body '{
+  "query": "changelog best practices keepachangelog semantic versioning",
+  "include_answer": true
+}'
 ```
 
 ### Step 5: Find Good Examples
 Learn from other projects:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/exa/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "excellent open source project changelog examples CHANGELOG.md",
-    "num_results": 10
-  }'
+orth api run exa /search --body '{
+  "query": "excellent open source project changelog examples CHANGELOG.md",
+  "num_results": 10
+}'
 ```
 
 ## Example Usage

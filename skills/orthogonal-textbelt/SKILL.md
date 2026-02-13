@@ -9,36 +9,35 @@ Send SMS messages via simple HTTP API.
 
 ## Capabilities
 
-- **Send SMS**: Send text messages ($0.03)
-- **Check Status**: Check delivery status (free)
+- **Status**: Checking SMS delivery status (free)
+- **Send an SMS**: Send an SMS using HTTP POST ($0.025)
 
 ## Usage
 
-### Send SMS ($0.03)
+### Status (free)
+Checking SMS delivery status
+
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/textbelt/text" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "phone": "+1234567890",
-    "message": "Hello from Orthogonal!"
-  }'
+orth api run textbelt /status/{message_id}
 ```
 
-### Check Delivery Status (free)
+### Send an SMS ($0.025)
+Send an SMS using HTTP POST.
+Note: No Urls in text message.
+Max 800 characters
+
+Parameters:
+- phone* (string) - A phone number.  If you're in the U.S. or Canada, you can just send a normal 10-digit phone number with area code.  Outside the U.S., it is best to send the phone number in E.164 format with your country code.
+- message* (string) - The content of your SMS.
+- sender (string) - Optionally, the name of the business/organization you represent.  This field is for regulatory purposes and is not visible to the end user in most countries. If not set, sender will default to your account-wide sender name.
+- replyWebhookUrl (string) - U.S. phone numbers only: Textbelt lets you receive replies to SMS you've sent. Replies are sent by webhook, meaning you will have to set up an HTTP or HTTPS route on your website that will process inbound SMS.This will send an SMS.  If the recipient responds, Textbelt will send an HTTP POST request to the specified endpoint (in this case, https://my.site/api/handleSmsReply).  The webhook payload is application/json encoded.  Your server must interpret it like any other HTTP POST request with a JSON payload.  The JSON payload contains the following:  textId: The ID of the original text that began the conversation.  fromNumber:  The phone number of the user that sent the reply (you can use this, for example, to send them a response depending on their reply).  text: The content of their reply. Here's an example payload:  {   "textId": "123456",   "fromNumber": "+1555123456",   "text": "Here is my reply" }
+- webhookData (string) - Endpoint supports a webhookData field.  This data is passed as data in the webhook request. There is a maximum length of 100 characters in the webhookData field.
+
 ```bash
-curl "https://api.orth.sh/v1/run/textbelt/status/{message_id}" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
-```
-
-## CLI Usage
-
-```bash
-# Send a text message
-orth api run textbelt /text --body '{"phone": "+1234567890", "message": "Your code is 123456"}'
-
-# Check delivery status
-orth api run textbelt /status/{id}
+orth api run textbelt /text --body '{
+  "phone": "+1234567890",
+  "message": "Hello from Orthogonal!"
+}'
 ```
 
 ## Limitations

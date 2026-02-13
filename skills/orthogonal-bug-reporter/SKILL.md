@@ -13,71 +13,56 @@ Create detailed, actionable bug reports with all necessary information for debug
 Search for related issues or solutions:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavily/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "React useState not updating TypeError common causes solutions",
-    "search_depth": "advanced",
-    "include_answer": true
-  }'
+orth api run tavily /search --body '{
+  "query": "React useState not updating TypeError common causes solutions",
+  "search_depth": "advanced",
+  "include_answer": true
+}'
 ```
 
 ### Step 2: Find Similar Issues
 Check if issue is known:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/exa/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "site:github.com/issues React useState batch updates bug",
-    "num_results": 20
-  }'
+orth api run exa /search --body '{
+  "query": "site:github.com/issues React useState batch updates bug",
+  "num_results": 20
+}'
 ```
 
 ### Step 3: Get Environment Info
 Research version compatibility:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/perplexity/chat/completions" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "sonar",
-    "messages": [{
-      "role": "user",
-      "content": "What are common compatibility issues between React 18 and older npm packages? What environment info should I include in a bug report?"
-    }]
-  }'
+orth api run perplexity /chat/completions --body '{
+  "model": "sonar",
+  "messages": [{
+    "role": "user",
+    "content": "What are common compatibility issues between React 18 and older npm packages? What environment info should I include in a bug report?"
+  }]
+}'
 ```
 
 ### Step 4: Generate Bug Report
 Create comprehensive bug report:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/perplexity/chat/completions" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "sonar",
-    "messages": [{
-      "role": "user",
-      "content": "Help me write a detailed GitHub bug report for this issue:\n\nProblem: Button click doesn'\''t update state\nWhat I tried: useState, useReducer\nExpected: State updates on click\nActual: Nothing happens\n\nInclude: summary, environment, steps to reproduce, expected vs actual, possible causes"
-    }]
-  }'
+orth api run perplexity /chat/completions --body '{
+  "model": "sonar",
+  "messages": [{
+    "role": "user",
+    "content": "Help me write a detailed GitHub bug report for this issue:\n\nProblem: Button click doesn'\''t update state\nWhat I tried: useState, useReducer\nExpected: State updates on click\nActual: Nothing happens\n\nInclude: summary, environment, steps to reproduce, expected vs actual, possible causes"
+  }]
+}'
 ```
 
 ### Step 5: Find Workarounds
 Search for temporary fixes:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/olostep/v1/answers" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "question": "What are workarounds for React state not updating on click events?"
-  }'
+orth api run olostep /v1/answers --body '{
+  "task": "What are workarounds for React state not updating on click events?"
+}'
 ```
 
 ## Bug Report Template
