@@ -19,69 +19,40 @@ Powerful web scraping, crawling, and AI-powered content extraction.
 
 ### Scrape a Page ($0.01)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/olostep/v1/scrapes" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://example.com/page"}'
+orth api run olostep /v1/scrapes --body '{"url": "https://example.com/page"}'
 ```
 
 ### Check Scrape Status
 ```bash
-curl "https://api.orth.sh/v1/run/olostep/v1/scrapes/{scrape_id}" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run olostep /v1/scrapes/{scrape_id}
 ```
 
 ### Start a Crawl ($0.05)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/olostep/v1/crawls" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "url": "https://example.com",
-    "max_pages": 100
-  }'
+orth api run olostep /v1/crawls --body '{
+  "url": "https://example.com",
+  "max_pages": 100
+}'
 ```
 
 ### Batch Scrape ($0.01)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/olostep/v1/batches" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "urls": [
-      "https://example.com/page1",
-      "https://example.com/page2"
-    ]
-  }'
+orth api run olostep /v1/batches --body '{
+  "urls": [
+    "https://example.com/page1",
+    "https://example.com/page2"
+  ]
+}'
 ```
 
 ### AI Answer ($0.05)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/olostep/v1/answers" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"question": "What are the latest AI developments?"}'
+orth api run olostep /v1/answers --body '{"question": "What are the latest AI developments?"}'
 ```
 
 ### Get Site Map ($0.01)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/olostep/v1/maps" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://example.com"}'
-```
-
-## CLI Usage
-
-```bash
-# Scrape a single page
-orth api run olostep /v1/scrapes --body '{"url": "https://news.ycombinator.com"}'
-
-# Start a crawl
-orth api run olostep /v1/crawls --body '{"url": "https://docs.example.com", "max_pages": 50}'
-
-# Get AI answer from web
-orth api run olostep /v1/answers --body '{"question": "Who founded OpenAI?"}'
+orth api run olostep /v1/maps --body '{"url": "https://example.com"}'
 ```
 
 ## Use Cases

@@ -16,29 +16,15 @@ Send SMS messages via simple HTTP API.
 
 ### Send SMS ($0.03)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/textbelt/text" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "phone": "+1234567890",
-    "message": "Hello from Orthogonal!"
-  }'
+orth api run textbelt /text --body '{
+  "phone": "+1234567890",
+  "message": "Hello from Orthogonal!"
+}'
 ```
 
 ### Check Delivery Status (free)
 ```bash
-curl "https://api.orth.sh/v1/run/textbelt/status/{message_id}" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
-```
-
-## CLI Usage
-
-```bash
-# Send a text message
-orth api run textbelt /text --body '{"phone": "+1234567890", "message": "Your code is 123456"}'
-
-# Check delivery status
-orth api run textbelt /status/{id}
+orth api run textbelt /status/{message_id}
 ```
 
 ## Limitations

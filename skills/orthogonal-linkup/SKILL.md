@@ -16,31 +16,15 @@ Search the web and fetch content from any URL.
 
 ### Search the Web ($0.01)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/linkup/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "latest AI developments 2024",
-    "depth": "standard"
-  }'
+orth api run linkup /search --body '{
+  "query": "latest AI developments 2024",
+  "depth": "standard"
+}'
 ```
 
 ### Fetch URL Content ($0.01)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/linkup/fetch" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://example.com/article"}'
-```
-
-## CLI Usage
-
-```bash
-# Search the web
-orth api run linkup /search --body '{"query": "best programming languages 2024"}'
-
-# Fetch content from URL
-orth api run linkup /fetch --body '{"url": "https://news.ycombinator.com"}'
+orth api run linkup /fetch --body '{"url": "https://example.com/article"}'
 ```
 
 ## Use Cases

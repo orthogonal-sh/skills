@@ -18,60 +18,36 @@ Scrape web pages and extract data into your defined structure.
 
 ### Simple Scrape ($0.01)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/riveter/v1/scrape" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://example.com/article"}'
+orth api run riveter /v1/scrape --body '{"url": "https://example.com/article"}'
 ```
 
 ### Structured Extraction ($0.01)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/riveter/v1/run" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "url": "https://example.com/products",
-    "schema": {
-      "products": [{
-        "name": "string",
-        "price": "number",
-        "description": "string"
-      }]
-    }
-  }'
+orth api run riveter /v1/run --body '{
+  "url": "https://example.com/products",
+  "schema": {
+    "products": [{
+      "name": "string",
+      "price": "number",
+      "description": "string"
+    }]
+  }
+}'
 ```
 
 ### Check Run Status (free)
 ```bash
-curl "https://api.orth.sh/v1/run/riveter/v1/run_status?run_id=abc123" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run riveter /v1/run_status --query 'run_id=abc123'
 ```
 
 ### Get Run Data (free)
 ```bash
-curl "https://api.orth.sh/v1/run/riveter/v1/run_data?run_id=abc123" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run riveter /v1/run_data --query 'run_id=abc123'
 ```
 
 ### Stop a Run (free)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/riveter/v1/stop_run" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"run_id": "abc123"}'
-```
-
-## CLI Usage
-
-```bash
-# Simple text extraction
-orth api run riveter /v1/scrape --body '{"url": "https://news.ycombinator.com"}'
-
-# Extract products with schema
-orth api run riveter /v1/run --body '{
-  "url": "https://store.example.com",
-  "schema": {"items": [{"name": "string", "price": "number"}]}
-}'
+orth api run riveter /v1/stop_run --body '{"run_id": "abc123"}'
 ```
 
 ## Use Cases

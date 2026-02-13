@@ -21,75 +21,52 @@ Access data from Polymarket and Kalshi prediction markets.
 
 ### Search Polymarket Markets ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/dome/polymarket/markets?search=election" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run dome /polymarket/markets --query 'search=election'
 ```
 
 ### Search Kalshi Markets ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/dome/kalshi/markets?search=fed%20rate" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run dome /kalshi/markets --query 'search=fed%20rate'
 ```
 
 ### Get Market Price ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/dome/polymarket/market-price/{token_id}" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run dome /polymarket/market-price/{token_id}
 ```
 
 ### Get Kalshi Price ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/dome/kalshi/market-price/{market_ticker}" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run dome /kalshi/market-price/{market_ticker}
 ```
 
 ### Historical Candlesticks ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/dome/polymarket/candlesticks/{condition_id}?interval=1h" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run dome /polymarket/candlesticks/{condition_id} --query 'interval=1h'
 ```
 
 ### Order History ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/dome/polymarket/orders?market={market_id}" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run dome /polymarket/orders --query 'market={market_id}'
 ```
 
 ### Wallet Positions ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/dome/polymarket/positions/wallet/{wallet_address}" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run dome /polymarket/positions/wallet/{wallet_address}
 ```
 
 ### Wallet P&L ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/dome/polymarket/wallet/pnl/{wallet_address}" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run dome /polymarket/wallet/pnl/{wallet_address}
 ```
 
 ### Sports Markets ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/dome/matching-markets/sports" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run dome /matching-markets/sports
 ```
 
 ### Crypto Prices from Binance ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/dome/crypto-prices/binance?symbol=BTCUSDT" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
-```
-
-## CLI Usage
-
-```bash
-# Find election markets
-orth api run dome /polymarket/markets --query 'search=2024%20election'
-
-# Get market price history
-orth api run dome /polymarket/candlesticks/{condition_id} --query 'interval=1d'
-
-# Check wallet positions
-orth api run dome /polymarket/positions/wallet/{address}
+orth api run dome /crypto-prices/binance --query 'symbol=BTCUSDT'
 ```
 
 ## Use Cases

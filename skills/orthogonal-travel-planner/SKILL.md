@@ -13,78 +13,62 @@ Create comprehensive travel plans including flights, hotels, activities, and day
 Get an overview of your destination:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavily/research" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "Complete travel guide to Tokyo Japan - best time to visit, neighborhoods, attractions, food, culture tips"
-  }'
+orth api run tavily /research --body '{
+  "query": "Complete travel guide to Tokyo Japan - best time to visit, neighborhoods, attractions, food, culture tips"
+}'
 ```
 
 ### Step 2: Find Flights
 Search for flight options:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/olostep/v1/answers" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "question": "What are the best flights from Los Angeles to Tokyo in March 2025? Compare prices and airlines."
-  }'
+orth api run olostep /v1/answers --body '{
+  "question": "What are the best flights from Los Angeles to Tokyo in March 2025? Compare prices and airlines."
+}'
 ```
 
 ### Step 3: Find Accommodations
 Search for hotels by neighborhood:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/perplexity/chat/completions" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "sonar",
-    "messages": [{
-      "role": "user",
-      "content": "Best hotels in Shibuya Tokyo for tourists. Include price ranges and what each area is best for."
-    }]
-  }'
+orth api run perplexity /chat/completions --body '{
+  "model": "sonar",
+  "messages": [{
+    "role": "user",
+    "content": "Best hotels in Shibuya Tokyo for tourists. Include price ranges and what each area is best for."
+  }]
+}'
 ```
 
 ### Step 4: Plan Activities
 Get activity and attraction recommendations:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavily/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "best things to do in Tokyo 5 days itinerary must-see attractions hidden gems",
-    "search_depth": "advanced",
-    "include_answer": true
-  }'
+orth api run tavily /search --body '{
+  "query": "best things to do in Tokyo 5 days itinerary must-see attractions hidden gems",
+  "search_depth": "advanced",
+  "include_answer": true
+}'
 ```
 
 ### Step 5: Create Itinerary
 Generate a day-by-day plan:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/perplexity/chat/completions" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "sonar",
-    "messages": [{
-      "role": "user",
-      "content": "Create a detailed 5-day Tokyo itinerary. Day 1: Shibuya/Harajuku, Day 2: Historic sites, etc. Include specific attractions, restaurants, and time estimates."
-    }]
-  }'
+orth api run perplexity /chat/completions --body '{
+  "model": "sonar",
+  "messages": [{
+    "role": "user",
+    "content": "Create a detailed 5-day Tokyo itinerary. Day 1: Shibuya/Harajuku, Day 2: Historic sites, etc. Include specific attractions, restaurants, and time estimates."
+  }]
+}'
 ```
 
 ### Step 6: Get Weather Info
 Check weather for packing:
 
 ```bash
-curl "https://api.orth.sh/v1/run/precip/api/v1/daily?lat=35.6762&lon=139.6503&start=2025-03-01&end=2025-03-07" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run precip /api/v1/daily --query lat=35.6762 lon=139.6503 start=2025-03-01 end=2025-03-07
 ```
 
 ## Example Usage

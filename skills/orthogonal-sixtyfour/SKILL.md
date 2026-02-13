@@ -18,61 +18,36 @@ Find contact information and enrich lead data using AI-powered discovery.
 
 ### Find Email ($0.05)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/sixtyfour/find-email" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "first_name": "John",
-    "last_name": "Doe",
-    "company": "Acme Inc",
-    "domain": "acme.com"
-  }'
+orth api run sixtyfour /find-email --body '{
+  "first_name": "John",
+  "last_name": "Doe",
+  "company": "Acme Inc",
+  "domain": "acme.com"
+}'
 ```
 
 ### Find Phone ($0.30)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/sixtyfour/find-phone" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "first_name": "John",
-    "last_name": "Doe",
-    "company": "Acme Inc"
-  }'
+orth api run sixtyfour /find-phone --body '{
+  "first_name": "John",
+  "last_name": "Doe",
+  "company": "Acme Inc"
+}'
 ```
 
 ### Enrich Company ($0.10)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/sixtyfour/enrich-company" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"domain": "acme.com"}'
+orth api run sixtyfour /enrich-company --body '{"domain": "acme.com"}'
 ```
 
 ### Enrich Lead ($0.10)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/sixtyfour/enrich-lead" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "first_name": "John",
-    "last_name": "Doe",
-    "company": "Acme Inc",
-    "linkedin_url": "https://linkedin.com/in/johndoe"
-  }'
-```
-
-## CLI Usage
-
-```bash
-# Find email for a lead
-orth api run sixtyfour /find-email --body '{"first_name": "John", "last_name": "Doe", "domain": "acme.com"}'
-
-# Enrich company data
-orth api run sixtyfour /enrich-company --body '{"domain": "stripe.com"}'
-
-# Full lead enrichment
-orth api run sixtyfour /enrich-lead --body '{"first_name": "Jane", "last_name": "Smith", "company": "OpenAI"}'
+orth api run sixtyfour /enrich-lead --body '{
+  "first_name": "John",
+  "last_name": "Doe",
+  "company": "Acme Inc",
+  "linkedin_url": "https://linkedin.com/in/johndoe"
+}'
 ```
 
 ## Use Cases

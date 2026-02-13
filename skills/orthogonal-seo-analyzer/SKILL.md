@@ -13,65 +13,50 @@ Analyze websites for SEO performance, keywords, content quality, and competitor 
 Map the website structure:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavily/map" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://example.com"}'
+orth api run tavily /map --body '{"url": "https://example.com"}'
 ```
 
 ### Step 2: Extract Page Content
 Get content for analysis:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/scrapegraph/v1/smartscraper" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "website_url": "https://example.com",
-    "user_prompt": "Extract page title, meta description, headings (H1, H2, H3), main content, and internal links"
-  }'
+orth api run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://example.com",
+  "user_prompt": "Extract page title, meta description, headings (H1, H2, H3), main content, and internal links"
+}'
 ```
 
 ### Step 3: Analyze Competitor Keywords
 Research competitor SEO:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavily/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "site:competitor.com top ranking pages keywords",
-    "search_depth": "advanced"
-  }'
+orth api run tavily /search --body '{
+  "query": "site:competitor.com top ranking pages keywords",
+  "search_depth": "advanced"
+}'
 ```
 
 ### Step 4: Find Content Gaps
 Identify missing keywords:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/perplexity/chat/completions" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "sonar",
-    "messages": [{
-      "role": "user",
-      "content": "What keywords and topics should a SaaS productivity tool target for SEO? Include search volume estimates and difficulty."
-    }]
-  }'
+orth api run perplexity /chat/completions --body '{
+  "model": "sonar",
+  "messages": [{
+    "role": "user",
+    "content": "What keywords and topics should a SaaS productivity tool target for SEO? Include search volume estimates and difficulty."
+  }]
+}'
 ```
 
 ### Step 5: Get Backlink Ideas
 Find linking opportunities:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/exa/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "blogs and websites that accept guest posts about productivity software",
-    "num_results": 20
-  }'
+orth api run exa /search --body '{
+  "query": "blogs and websites that accept guest posts about productivity software",
+  "num_results": 20
+}'
 ```
 
 ## Example Usage

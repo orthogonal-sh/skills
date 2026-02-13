@@ -13,83 +13,65 @@ Research venture capitalists, angel investors, and their investment patterns.
 Find investors in your space:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/fiber/v1/investor-search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "investment_stages": ["Seed", "Series A"],
-    "industries": ["AI", "SaaS", "Developer Tools"]
-  }'
+orth api run fiber /v1/investor-search --body '{
+  "investment_stages": ["Seed", "Series A"],
+  "industries": ["AI", "SaaS", "Developer Tools"]
+}'
 ```
 
 ### Step 2: Research Investment Thesis
 Understand investor focus:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/perplexity/chat/completions" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "sonar",
-    "messages": [{
-      "role": "user",
-      "content": "What is Andreessen Horowitz investment thesis for AI companies? What do they look for in founders and startups?"
-    }]
-  }'
+orth api run perplexity /chat/completions --body '{
+  "model": "sonar",
+  "messages": [{
+    "role": "user",
+    "content": "What is Andreessen Horowitz investment thesis for AI companies? What do they look for in founders and startups?"
+  }]
+}'
 ```
 
 ### Step 3: Find Portfolio Companies
 See their existing investments:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/exa/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "Sequoia Capital portfolio companies AI 2023 2024",
-    "num_results": 30
-  }'
+orth api run exa /search --body '{
+  "query": "Sequoia Capital portfolio companies AI 2023 2024",
+  "num_results": 30
+}'
 ```
 
 ### Step 4: Find Partner Contacts
 Get contact info for partners:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/fiber/v1/people-search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "company_names": ["Sequoia Capital"],
-    "job_titles": ["Partner", "General Partner", "Principal"]
-  }'
+orth api run fiber /v1/people-search --body '{
+  "company_names": ["Sequoia Capital"],
+  "job_titles": ["Partner", "General Partner", "Principal"]
+}'
 ```
 
 ### Step 5: Get Partner Email
 Find email for outreach:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/sixtyfour/find-email" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "first_name": "Alfred",
-    "last_name": "Lin",
-    "company": "Sequoia Capital"
-  }'
+orth api run sixtyfour /find-email --body '{
+  "first_name": "Alfred",
+  "last_name": "Lin",
+  "company": "Sequoia Capital"
+}'
 ```
 
 ### Step 6: Recent Activity
 Track recent investments:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavily/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "Sequoia Capital recent investments 2024 AI startups announcements",
-    "search_depth": "advanced",
-    "include_answer": true
-  }'
+orth api run tavily /search --body '{
+  "query": "Sequoia Capital recent investments 2024 AI startups announcements",
+  "search_depth": "advanced",
+  "include_answer": true
+}'
 ```
 
 ## Example Usage

@@ -16,29 +16,15 @@ Create real-time video conversations with AI-powered digital personas.
 
 ### List Available Personas ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/tavus/v2/personas" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run tavus /v2/personas
 ```
 
 ### Start Video Conversation ($0.02)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavus/v2/conversations" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "persona_id": "your-persona-id",
-    "conversation_name": "Customer Support Call"
-  }'
-```
-
-## CLI Usage
-
-```bash
-# List all personas
-orth api run tavus /v2/personas
-
-# Start a conversation
-orth api run tavus /v2/conversations --body '{"persona_id": "abc123", "conversation_name": "Demo Call"}'
+orth api run tavus /v2/conversations --body '{
+  "persona_id": "your-persona-id",
+  "conversation_name": "Customer Support Call"
+}'
 ```
 
 ## Use Cases

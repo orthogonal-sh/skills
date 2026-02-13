@@ -21,68 +21,42 @@ Find email addresses, verify deliverability, and discover companies.
 
 ### Domain Search ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/hunter/v2/domain-search?domain=stripe.com" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run hunter /v2/domain-search --query 'domain=stripe.com'
 ```
 
 ### Find Email ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/hunter/v2/email-finder?domain=openai.com&first_name=Sam&last_name=Altman" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run hunter /v2/email-finder --query domain=openai.com first_name=Sam last_name=Altman
 ```
 
 ### Verify Email ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/hunter/v2/email-verifier?email=john@example.com" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run hunter /v2/email-verifier --query 'email=john@example.com'
 ```
 
 ### Person Lookup ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/hunter/v2/people/find?email=john@company.com" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run hunter /v2/people/find --query 'email=john@company.com'
 ```
 
 ### Company Lookup ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/hunter/v2/companies/find?domain=anthropic.com" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run hunter /v2/companies/find --query 'domain=anthropic.com'
 ```
 
 ### Combined Lookup ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/hunter/v2/combined/find?email=jane@company.com" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run hunter /v2/combined/find --query 'email=jane@company.com'
 ```
 
 ### Discover Companies ($0.01)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/hunter/v2/discover" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"query": "AI startups in San Francisco"}'
+orth api run hunter /v2/discover --body '{"query": "AI startups in San Francisco"}'
 ```
 
 ### Email Count ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/hunter/v2/email-count?domain=google.com" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
-```
-
-## CLI Usage
-
-```bash
-# Find all emails for a domain
-orth api run hunter /v2/domain-search --query 'domain=notion.so'
-
-# Find specific person's email
-orth api run hunter /v2/email-finder --query 'domain=stripe.com&first_name=Patrick&last_name=Collison'
-
-# Verify email deliverability
-orth api run hunter /v2/email-verifier --query 'email=test@company.com'
-
-# Discover companies
-orth api run hunter /v2/discover --body '{"query": "fintech startups NYC"}'
+orth api run hunter /v2/email-count --query 'domain=google.com'
 ```
 
 ## Use Cases

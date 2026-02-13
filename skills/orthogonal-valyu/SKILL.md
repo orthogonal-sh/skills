@@ -19,61 +19,32 @@ Search the web, get AI answers, extract content, and run deep research tasks.
 
 ### Search ($0.01)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/valyu/v1/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"query": "AI agent frameworks comparison"}'
+orth api run valyu /v1/search --body '{"query": "AI agent frameworks comparison"}'
 ```
 
 ### Get AI Answer ($0.01)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/valyu/v1/answer" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"query": "What are the best practices for building AI agents?"}'
+orth api run valyu /v1/answer --body '{"query": "What are the best practices for building AI agents?"}'
 ```
 
 ### Extract Content ($0.01)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/valyu/v1/contents" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"urls": ["https://example.com/article"]}'
+orth api run valyu /v1/contents --body '{"urls": ["https://example.com/article"]}'
 ```
 
 ### Start Deep Research ($0.01)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/valyu/v1/deepresearch/tasks" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"query": "Comprehensive analysis of vector databases market"}'
+orth api run valyu /v1/deepresearch/tasks --body '{"query": "Comprehensive analysis of vector databases market"}'
 ```
 
 ### Check Research Status ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/valyu/v1/deepresearch/tasks/{id}/status" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run valyu /v1/deepresearch/tasks/{id}/status
 ```
 
 ### Create Research Batch ($0.01)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/valyu/v1/deepresearch/batches" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Competitor Research"}'
-```
-
-## CLI Usage
-
-```bash
-# Quick search
-orth api run valyu /v1/search --body '{"query": "latest LLM developments"}'
-
-# Get AI answer
-orth api run valyu /v1/answer --body '{"query": "How does RAG work?"}'
-
-# Start deep research
-orth api run valyu /v1/deepresearch/tasks --body '{"query": "AI startup landscape 2024"}'
+orth api run valyu /v1/deepresearch/batches --body '{"name": "Competitor Research"}'
 ```
 
 ## Use Cases

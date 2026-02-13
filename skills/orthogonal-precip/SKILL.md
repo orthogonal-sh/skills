@@ -21,63 +21,42 @@ Access hyperlocal weather data including precipitation, temperature, wind, soil 
 
 ### Hourly Precipitation ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/precip/api/v1/hourly?lat=37.7749&lon=-122.4194&start=2024-01-01&end=2024-01-07" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run precip /api/v1/hourly --query lat=37.7749 lon=-122.4194 start=2024-01-01 end=2024-01-07
 ```
 
 ### Daily Precipitation ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/precip/api/v1/daily?lat=37.7749&lon=-122.4194&start=2024-01-01&end=2024-01-31" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run precip /api/v1/daily --query lat=37.7749 lon=-122.4194 start=2024-01-01 end=2024-01-31
 ```
 
 ### Last 48 Hours ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/precip/api/v1/last-48?lat=37.7749&lon=-122.4194" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run precip /api/v1/last-48 --query lat=37.7749 lon=-122.4194
 ```
 
 ### Temperature Hourly ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/precip/api/v1/temperature-hourly?lat=37.7749&lon=-122.4194&start=2024-01-01&end=2024-01-02" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run precip /api/v1/temperature-hourly --query lat=37.7749 lon=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
 ### Wind Speed ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/precip/api/v1/wind-speed-hourly?lat=37.7749&lon=-122.4194&start=2024-01-01&end=2024-01-02" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run precip /api/v1/wind-speed-hourly --query lat=37.7749 lon=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
 ### Soil Moisture ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/precip/api/v1/soil-moisture-hourly?lat=37.7749&lon=-122.4194&start=2024-01-01&end=2024-01-02" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run precip /api/v1/soil-moisture-hourly --query lat=37.7749 lon=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
 ### Recent Rain Event ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/precip/api/v1/recent-rain?lat=37.7749&lon=-122.4194" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run precip /api/v1/recent-rain --query lat=37.7749 lon=-122.4194
 ```
 
 ### Weather Embed ($0.10)
 ```bash
-curl "https://api.orth.sh/v1/run/precip/embed/location?lat=37.7749&lon=-122.4194" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
-```
-
-## CLI Usage
-
-```bash
-# Get hourly precipitation data
-orth api run precip /api/v1/hourly --query 'lat=40.7128&lon=-74.0060&start=2024-01-01&end=2024-01-07'
-
-# Check last 48 hours of rain
-orth api run precip /api/v1/last-48 --query 'lat=34.0522&lon=-118.2437'
-
-# Get soil moisture for agriculture
-orth api run precip /api/v1/soil-moisture-daily --query 'lat=38.5816&lon=-121.4944&start=2024-01-01&end=2024-01-31'
+orth api run precip /embed/location --query lat=37.7749 lon=-122.4194
 ```
 
 ## Use Cases

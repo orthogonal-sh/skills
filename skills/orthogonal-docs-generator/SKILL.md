@@ -13,64 +13,49 @@ Generate high-quality documentation from code, APIs, and specifications.
 Fetch and analyze code:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/linkup/fetch" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://raw.githubusercontent.com/user/repo/main/src/api.py"}'
+orth api run linkup /fetch --body '{"url": "https://raw.githubusercontent.com/user/repo/main/src/api.py"}'
 ```
 
 ### Step 2: Generate API Documentation
 Use AI to create comprehensive docs:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/perplexity/chat/completions" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "sonar",
-    "messages": [{
-      "role": "user",
-      "content": "Generate comprehensive API documentation for this Python code. Include: function signatures, parameters, return types, examples, and error handling:\n\n[paste code]"
-    }]
-  }'
+orth api run perplexity /chat/completions --body '{
+  "model": "sonar",
+  "messages": [{
+    "role": "user",
+    "content": "Generate comprehensive API documentation for this Python code. Include: function signatures, parameters, return types, examples, and error handling:\n\n[paste code]"
+  }]
+}'
 ```
 
 ### Step 3: Research Best Practices
 Find documentation standards:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavily/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "API documentation best practices examples OpenAPI Swagger 2024",
-    "search_depth": "advanced",
-    "include_answer": true
-  }'
+orth api run tavily /search --body '{
+  "query": "API documentation best practices examples OpenAPI Swagger 2024",
+  "search_depth": "advanced",
+  "include_answer": true
+}'
 ```
 
 ### Step 4: Find Similar Docs
 Learn from good documentation:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/exa/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "excellent API documentation examples developer-friendly",
-    "num_results": 10,
-    "contents": {"text": true}
-  }'
+orth api run exa /search --body '{
+  "query": "excellent API documentation examples developer-friendly",
+  "num_results": 10,
+  "contents": {"text": true}
+}'
 ```
 
 ### Step 5: Convert Existing Docs
 Transform documentation format:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/scrapegraph/v1/markdownify" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"website_url": "https://docs.example.com/api"}'
+orth api run scrapegraph /v1/markdownify --body '{"website_url": "https://docs.example.com/api"}'
 ```
 
 ## Example Usage

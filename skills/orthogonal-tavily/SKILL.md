@@ -19,73 +19,44 @@ Comprehensive web search, crawling, content extraction, and deep research.
 
 ### Search ($0.02)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavily/search" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "latest developments in AI agents",
-    "search_depth": "advanced",
-    "include_answer": true
-  }'
+orth api run tavily /search --body '{
+  "query": "latest developments in AI agents",
+  "search_depth": "advanced",
+  "include_answer": true
+}'
 ```
 
 ### Deep Research ($0.50)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavily/research" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "Compare different AI agent frameworks for production use",
-    "max_results": 20
-  }'
+orth api run tavily /research --body '{
+  "query": "Compare different AI agent frameworks for production use",
+  "max_results": 20
+}'
 ```
 
 ### Check Research Status (free)
 ```bash
-curl "https://api.orth.sh/v1/run/tavily/research/{request_id}" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run tavily /research/{request_id}
 ```
 
 ### Extract Content ($0.01)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavily/extract" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "urls": ["https://example.com/article1", "https://example.com/article2"]
-  }'
+orth api run tavily /extract --body '{
+  "urls": ["https://example.com/article1", "https://example.com/article2"]
+}'
 ```
 
 ### Crawl Website ($0.01)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavily/crawl" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "url": "https://docs.example.com",
-    "max_depth": 3
-  }'
+orth api run tavily /crawl --body '{
+  "url": "https://docs.example.com",
+  "max_depth": 3
+}'
 ```
 
 ### Map Website ($0.01)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/tavily/map" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://example.com"}'
-```
-
-## CLI Usage
-
-```bash
-# Quick search
-orth api run tavily /search --body '{"query": "best practices for RAG systems", "include_answer": true}'
-
-# Deep research
-orth api run tavily /research --body '{"query": "AI startup funding trends 2024"}'
-
-# Extract from multiple URLs
-orth api run tavily /extract --body '{"urls": ["https://news.ycombinator.com"]}'
+orth api run tavily /map --body '{"url": "https://example.com"}'
 ```
 
 ## Use Cases

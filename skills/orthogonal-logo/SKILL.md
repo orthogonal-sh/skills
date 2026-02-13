@@ -15,24 +15,12 @@ Find company domains by searching brand names.
 
 ### Search for Domain ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/logo/search?query=Stripe" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run logo /search --query 'query=Stripe'
 ```
 
 ### Search Multiple
 ```bash
-curl "https://api.orth.sh/v1/run/logo/search?query=OpenAI" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
-```
-
-## CLI Usage
-
-```bash
-# Find domain for a company
-orth api run logo /search --query 'query=Anthropic'
-
-# Search for brand
-orth api run logo /search --query 'query=Notion'
+orth api run logo /search --query 'query=OpenAI'
 ```
 
 ## Use Cases

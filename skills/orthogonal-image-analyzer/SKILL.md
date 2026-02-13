@@ -13,65 +13,52 @@ Analyze images to extract text, describe content, and detect objects using AI.
 Fetch image content:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/linkup/fetch" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://example.com/image.jpg"}'
+orth api run linkup /fetch --body '{"url": "https://example.com/image.jpg"}'
 ```
 
 ### Step 2: Extract Text (OCR)
 Use AI to extract text from images:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/scrapegraph/v1/smartscraper" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "website_url": "https://example.com/screenshot.png",
-    "user_prompt": "Extract all visible text from this image"
-  }'
+orth api run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://example.com/screenshot.png",
+  "user_prompt": "Extract all visible text from this image"
+}'
 ```
 
 ### Step 3: Describe Image Content
 Get detailed image descriptions:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/perplexity/chat/completions" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "sonar",
-    "messages": [{
-      "role": "user",
-      "content": "Describe the contents of this image in detail: https://example.com/image.jpg"
-    }]
-  }'
+orth api run perplexity /chat/completions --body '{
+  "model": "sonar",
+  "messages": [{
+    "role": "user",
+    "content": "Describe the contents of this image in detail: https://example.com/image.jpg"
+  }]
+}'
 ```
 
 ### Step 4: Extract Structured Data
 Get specific data from images:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/riveter/v1/run" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "url": "https://example.com/receipt.jpg",
-    "schema": {
-      "store_name": "string",
-      "date": "string",
-      "items": [{"name": "string", "price": "number"}],
-      "total": "number"
-    }
-  }'
+orth api run riveter /v1/run --body '{
+  "url": "https://example.com/receipt.jpg",
+  "schema": {
+    "store_name": "string",
+    "date": "string",
+    "items": [{"name": "string", "price": "number"}],
+    "total": "number"
+  }
+}'
 ```
 
 ### Step 5: Capture Website Screenshots
 Get screenshots of web pages:
 
 ```bash
-curl "https://api.orth.sh/v1/run/brand-dev/v1/brand/screenshot?domain=stripe.com" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run brand-dev /v1/brand/screenshot --query 'domain=stripe.com'
 ```
 
 ## Example Usage

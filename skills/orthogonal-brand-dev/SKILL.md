@@ -22,80 +22,55 @@ Extract comprehensive brand information from any domain - logos, colors, fonts, 
 
 ### Get Brand Info ($0.03)
 ```bash
-curl "https://api.orth.sh/v1/run/brand-dev/v1/brand/retrieve?domain=stripe.com" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run brand-dev /v1/brand/retrieve --query 'domain=stripe.com'
 ```
 
 ### Get Simplified Brand ($0.03)
 ```bash
-curl "https://api.orth.sh/v1/run/brand-dev/v1/brand/retrieve-simplified?domain=notion.so" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run brand-dev /v1/brand/retrieve-simplified --query 'domain=notion.so'
 ```
 
 ### Extract Style Guide ($0.03)
 ```bash
-curl "https://api.orth.sh/v1/run/brand-dev/v1/brand/styleguide?domain=linear.app" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run brand-dev /v1/brand/styleguide --query 'domain=linear.app'
 ```
 
 ### Get Font Information ($0.03)
 ```bash
-curl "https://api.orth.sh/v1/run/brand-dev/v1/brand/fonts?domain=vercel.com" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run brand-dev /v1/brand/fonts --query 'domain=vercel.com'
 ```
 
 ### Capture Screenshot ($0.03)
 ```bash
-curl "https://api.orth.sh/v1/run/brand-dev/v1/brand/screenshot?domain=github.com" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run brand-dev /v1/brand/screenshot --query 'domain=github.com'
 ```
 
 ### NAICS Classification ($0.03)
 ```bash
-curl "https://api.orth.sh/v1/run/brand-dev/v1/brand/naics?domain=openai.com" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run brand-dev /v1/brand/naics --query 'domain=openai.com'
 ```
 
 ### AI Query ($0.03)
 ```bash
-curl -X POST "https://api.orth.sh/v1/run/brand-dev/v1/brand/ai/query" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "domain": "anthropic.com",
-    "query": "What products does this company offer?"
-  }'
+orth api run brand-dev /v1/brand/ai/query --body '{
+  "domain": "anthropic.com",
+  "query": "What products does this company offer?"
+}'
 ```
 
 ### Find by Company Name ($0.03)
 ```bash
-curl "https://api.orth.sh/v1/run/brand-dev/v1/brand/retrieve-by-name?name=Stripe" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run brand-dev /v1/brand/retrieve-by-name --query 'name=Stripe'
 ```
 
 ### Find by Email ($0.03)
 ```bash
-curl "https://api.orth.sh/v1/run/brand-dev/v1/brand/retrieve-by-email?email=john@stripe.com" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run brand-dev /v1/brand/retrieve-by-email --query 'email=john@stripe.com'
 ```
 
 ### Find by Stock Ticker ($0.03)
 ```bash
-curl "https://api.orth.sh/v1/run/brand-dev/v1/brand/retrieve-by-ticker?ticker=AAPL" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
-```
-
-## CLI Usage
-
-```bash
-# Get comprehensive brand data
-orth api run brand-dev /v1/brand/retrieve --query 'domain=figma.com'
-
-# Extract style guide
-orth api run brand-dev /v1/brand/styleguide --query 'domain=tailwindcss.com'
-
-# Custom AI extraction
-orth api run brand-dev /v1/brand/ai/query --body '{"domain": "shopify.com", "query": "What is their pricing?"}'
+orth api run brand-dev /v1/brand/retrieve-by-ticker --query 'ticker=AAPL'
 ```
 
 ## Use Cases

@@ -15,24 +15,12 @@ Fast, high-quality search with intelligent ranking, instant answers, and researc
 
 ### Web Search ($0.01)
 ```bash
-curl "https://api.orth.sh/v1/run/andi/v1/search?query=how%20does%20RAG%20work" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
+orth api run andi /v1/search --query 'query=how%20does%20RAG%20work'
 ```
 
 ### Search with Options
 ```bash
-curl "https://api.orth.sh/v1/run/andi/v1/search?query=best%20programming%20languages%202024&limit=10" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY"
-```
-
-## CLI Usage
-
-```bash
-# Simple search
-orth api run andi /v1/search --query 'query=latest%20AI%20news'
-
-# Search for technical content
-orth api run andi /v1/search --query 'query=kubernetes%20best%20practices'
+orth api run andi /v1/search --query query=best%20programming%20languages%202024 limit=10
 ```
 
 ## Use Cases
