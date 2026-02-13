@@ -9,54 +9,113 @@ Find email addresses, verify deliverability, and discover companies.
 
 ## Capabilities
 
-- **Domain Search**: Find all emails for a domain ($0.01)
-- **Email Finder**: Find email for a person at company ($0.01)
-- **Email Verifier**: Check if email is deliverable ($0.01)
-- **Person Lookup**: Get person info from email ($0.01)
-- **Company Lookup**: Get company info from domain ($0.01)
-- **Combined Lookup**: Get person + company from email ($0.01)
-- **Company Discovery**: Find companies matching criteria ($0.01)
+- **Combined Enrichment**: Get both person AND company information from an email address in a single request ($0.01)
+- **Email Enrichment**: Get detailed person information from an email address - name, location, employment, social profiles ($0.01)
+- **Email Count**: Get count of email addresses we have for a domain, broken down by department and seniority ($0.01)
+- **Discover Companies**: Find companies matching criteria using filters or natural language ($0.01)
+- **Company Enrichment**: Get detailed company information from a domain - industry, description, location, size, tech stack, funding ($0.01)
+- **Domain Search**: Find all email addresses for a domain ($0.01)
+- **Email Finder**: Find the most likely email address for a person given their name and company domain ($0.01)
+- **Email Verifier**: Verify if an email address is deliverable ($0.01)
 
 ## Usage
 
-### Domain Search ($0.01)
-```bash
-orth api run hunter /v2/domain-search --query 'domain=stripe.com'
-```
+### Combined Enrichment ($0.01)
+Get both person AND company information from an email address in a single request.
 
-### Find Email ($0.01)
-```bash
-orth api run hunter /v2/email-finder --query domain=openai.com first_name=Sam last_name=Altman
-```
+Parameters:
+- email* (string) - Email address to enrich
 
-### Verify Email ($0.01)
-```bash
-orth api run hunter /v2/email-verifier --query 'email=john@example.com'
-```
-
-### Person Lookup ($0.01)
-```bash
-orth api run hunter /v2/people/find --query 'email=john@company.com'
-```
-
-### Company Lookup ($0.01)
-```bash
-orth api run hunter /v2/companies/find --query 'domain=anthropic.com'
-```
-
-### Combined Lookup ($0.01)
 ```bash
 orth api run hunter /v2/combined/find --query 'email=jane@company.com'
 ```
 
+### Email Enrichment ($0.01)
+Get detailed person information from an email address - name, location, employment, social profiles.
+
+Parameters:
+- email (string) - Email address to enrich
+- linkedin_handle (string) - LinkedIn handle to enrich
+
+```bash
+orth api run hunter /v2/people/find --query 'email=john@company.com'
+```
+
+### Email Count ($0.01)
+Get count of email addresses we have for a domain, broken down by department and seniority. FREE endpoint.
+
+Parameters:
+- domain (string) - Domain to count emails for
+- company (string) - Company name (domain preferred)
+- type (string) - Filter: personal or generic
+
+```bash
+orth api run hunter /v2/email-count --query 'domain=google.com'
+```
+
 ### Discover Companies ($0.01)
+Find companies matching criteria using filters or natural language. Returns up to 100 companies per request. FREE endpoint.
+
+Parameters:
+- query (string) - Natural language search (e.g. Companies in Europe in Tech)
+- headquarters_location (object) - Filter by HQ location
+- industry (object) - Filter by industry
+- headcount (array) - Filter by employee count ranges
+- limit (integer) - Max results (default 100)
+- offset (integer) - Skip N results for pagination
+
 ```bash
 orth api run hunter /v2/discover --body '{"query": "AI startups in San Francisco"}'
 ```
 
-### Email Count ($0.01)
+### Company Enrichment ($0.01)
+Get detailed company information from a domain - industry, description, location, size, tech stack, funding.
+
+Parameters:
+- domain* (string) - Company domain to enrich (e.g. hunter.io)
+
 ```bash
-orth api run hunter /v2/email-count --query 'domain=google.com'
+orth api run hunter /v2/companies/find --query 'domain=anthropic.com'
+```
+
+### Domain Search ($0.01)
+Find all email addresses for a domain. Returns emails with sources, confidence scores, and verification status.
+
+Parameters:
+- domain* (string) - Domain to search (e.g. stripe.com)
+- limit (integer) - Max emails to return (default 10)
+- offset (integer) - Skip N emails
+- type (string) - Filter: personal or generic
+- seniority (string) - Filter: junior, senior, or executive
+- department (string) - Filter by department (sales, marketing, etc)
+
+```bash
+orth api run hunter /v2/domain-search --query 'domain=stripe.com'
+```
+
+### Email Finder ($0.01)
+Find the most likely email address for a person given their name and company domain.
+
+Parameters:
+- domain (string) - Company domain (e.g. reddit.com)
+- company (string) - Company name (domain preferred)
+- first_name (string) - Person first name
+- last_name (string) - Person last name
+- full_name (string) - Full name (if first/last not available)
+- linkedin_handle (string) - LinkedIn profile handle
+
+```bash
+orth api run hunter /v2/email-finder --query domain=openai.com first_name=Sam last_name=Altman
+```
+
+### Email Verifier ($0.01)
+Verify if an email address is deliverable. Returns status (valid, invalid, accept_all, webmail, disposable, unknown).
+
+Parameters:
+- email* (string) - Email address to verify
+
+```bash
+orth api run hunter /v2/email-verifier --query 'email=john@example.com'
 ```
 
 ## Use Cases

@@ -9,18 +9,19 @@ Find company domains by searching brand names.
 
 ## Capabilities
 
-- **Search**: Find company domains from brand names ($0.01)
+- **Brand Search**: Search for company domains by brand name ($0.01)
 
 ## Usage
 
-### Search for Domain ($0.01)
+### Brand Search ($0.01)
+Search for company domains by brand name
+
+Parameters:
+- q* (string)
+- strategy (string)
+
 ```bash
 orth api run logo /search --query 'q=Stripe'
-```
-
-### Search Multiple
-```bash
-orth api run logo /search --query 'q=OpenAI'
 ```
 
 ## Use Cases

@@ -9,18 +9,18 @@ Simple, fast web search using Jina's search foundation.
 
 ## Capabilities
 
-- **Search**: Get search engine results pages (SERP) ($0.01)
+- **Search**: Use s ($0.01)
 
 ## Usage
 
-### Web Search ($0.01)
+### Search ($0.01)
+Use s.jina.ai to search the web and get SERP
+
+Parameters:
+- q (string) - Search query
+
 ```bash
 orth api run jina-s / --query 'q=latest%20AI%20news'
-```
-
-### Search with Options
-```bash
-orth api run jina-s / --query q=machine%20learning%20tutorials num=10
 ```
 
 ## Use Cases

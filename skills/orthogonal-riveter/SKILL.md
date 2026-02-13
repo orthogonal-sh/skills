@@ -9,19 +9,34 @@ Scrape web pages and extract data into your defined structure.
 
 ## Capabilities
 
-- **Scrape**: Extract text content from web pages ($0.01)
-- **Structured Run**: Define output schema and extract structured data ($0.01)
-- **Status Tracking**: Monitor long-running extraction jobs (free)
-- **Stop Jobs**: Cancel running extraction jobs (free)
+- **Scrape**: Scrape a webpage and return the text content ($0.01)
+- **Run**: Copy link Define the structure of your output directly in the API request ($0.01)
+- **Run data**: Retrieve the processed data from a completed project run (free)
+- **Run status**: Check the current status of a project run (free)
+- **Stop run**: Stop a currently running project (free)
 
 ## Usage
 
-### Simple Scrape ($0.01)
+### Scrape ($0.01)
+Scrape a webpage and return the text content. This endpoint allows you to extract text content from any public webpage.
+
+Parameters:
+- url* (string) - Example: "https://example.com"
+- proxy_country_code (string) - Optional two-character country code for proxy (e.g., 'us', 'gb', 'de')
+- skip_cache (boolean) - Default: false. Set to true to bypass cache and always fetch fresh content
+
 ```bash
 orth api run riveter /v1/scrape --body '{"url": "https://example.com/article"}'
 ```
 
-### Structured Extraction ($0.01)
+### Run ($0.01)
+Copy link Define the structure of your output directly in the API request. This endpoint allows you to define both your input data and output configuration in a single request.
+
+Parameters:
+- input* (object) - The input object contains your source data:  Keys are column/attribute names Values are arrays of strings (all arrays must be the same length) Maximum 1000 rows per request
+- output* (object) - The output object defines what data you want to extract:  Keys are the names of attributes you want to extract Each attribute requires: prompt: Instructions for finding/extracting this data contexts: Array of input or other output attribute names this depends on. Optional Output Configuration Each output attribute can optionally include:  format: Data type ('number', 'json', 'url', 'text', 'email', 'tag', 'date', 'boolean') format_details: Format-specific configuration (varies by format type). For json format, you can provide either a description (string) or a schema (JSON Schema object) or both. tools: Array of tools to use (['web_search', 'web_scrape', 'query_pdf', 'query_image']) max_tool_calls: Number of tool calls allowed (0-10) run_when: When to run this extraction ('always', 'any_filled', 'all_filled')
+- run_key (string) - Custom identifier for this run (optional, will be generated if not provided)
+
 ```bash
 orth api run riveter /v1/run --body '{
   "input": {
@@ -29,23 +44,37 @@ orth api run riveter /v1/run --body '{
   },
   "output": {
     "name": {"prompt": "Product name", "contexts": ["urls"]},
-    "price": {"prompt": "Product price", "contexts": ["urls"], "format": "number"},
-    "description": {"prompt": "Product description", "contexts": ["urls"]}
+    "price": {"prompt": "Product price", "contexts": ["urls"], "format": "number"}
   }
 }'
 ```
 
-### Check Run Status (free)
-```bash
-orth api run riveter /v1/run_status --query 'run_key=abc123'
-```
+### Run data (free)
+Retrieve the processed data from a completed project run
 
-### Get Run Data (free)
+Parameters:
+- run_key* (string) - The run key (UUID) of the project run to retrieve data for
+
 ```bash
 orth api run riveter /v1/run_data --query 'run_key=abc123'
 ```
 
-### Stop a Run (free)
+### Run status (free)
+Check the current status of a project run
+
+Parameters:
+- run_key* (string) - The run key (UUID) of the project run to check
+
+```bash
+orth api run riveter /v1/run_status --query 'run_key=abc123'
+```
+
+### Stop run (free)
+Stop a currently running project. This will halt all processing and mark the run as stopped. Behavior:  If the run is already stopped or success, returns success with current status. If the run is in progress, stops all pending cells and marks the run as stopped.  Stopped runs cannot be resumed
+
+Parameters:
+- run_key* (string) - The run key (UUID) of the project run to stop
+
 ```bash
 orth api run riveter /v1/stop_run --query 'run_key=abc123'
 ```
