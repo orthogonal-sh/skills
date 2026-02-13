@@ -26,20 +26,7 @@ orth api run scrapegraph /v1/smartscraper --body '{
 }'
 ```
 
-### Step 3: Describe Image Content
-Get detailed image descriptions:
-
-```bash
-orth api run perplexity /chat/completions --body '{
-  "model": "sonar",
-  "messages": [{
-    "role": "user",
-    "content": "Describe the contents of this image in detail: https://example.com/image.jpg"
-  }]
-}'
-```
-
-### Step 4: Extract Structured Data
+### Step 3: Extract Structured Data
 Get specific data from images:
 
 ```bash
@@ -54,7 +41,7 @@ orth api run riveter /v1/run --body '{
 }'
 ```
 
-### Step 5: Capture Website Screenshots
+### Step 4: Capture Website Screenshots
 Get screenshots of web pages:
 
 ```bash
@@ -68,12 +55,6 @@ orth api run brand-dev /v1/brand/screenshot --query 'domain=stripe.com'
 orth api run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://example.com/receipt.jpg",
   "user_prompt": "Extract store name, date, all items with prices, and total amount"
-}'
-
-# Analyze product image
-orth api run perplexity /chat/completions --body '{
-  "model": "sonar",
-  "messages": [{"role": "user", "content": "What product is shown in this image? Identify brand, model, and features: [url]"}]
 }'
 
 # Get website screenshot
@@ -94,9 +75,8 @@ List all endpoints, or add a path for parameter details:
 ```bash
 orth api show brand-dev
 orth api show linkup
-orth api show perplexity
 orth api show riveter
-orth api show scrapegraph 
+orth api show scrapegraph
 ```
 
 Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

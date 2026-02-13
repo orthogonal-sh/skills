@@ -21,20 +21,7 @@ orth api run fiber /v1/investor-search --body '{
 }'
 ```
 
-### Step 2: Research Investment Thesis
-Understand investor focus:
-
-```bash
-orth api run perplexity /chat/completions --body '{
-  "model": "sonar",
-  "messages": [{
-    "role": "user",
-    "content": "What is Andreessen Horowitz investment thesis for AI companies? What do they look for in founders and startups?"
-  }]
-}'
-```
-
-### Step 3: Find Portfolio Companies
+### Step 2: Find Portfolio Companies
 See their existing investments:
 
 ```bash
@@ -44,7 +31,7 @@ orth api run exa /search --body '{
 }'
 ```
 
-### Step 4: Find Partner Contacts
+### Step 3: Find Partner Contacts
 Get contact info for partners:
 
 ```bash
@@ -56,7 +43,7 @@ orth api run fiber /v1/people-search --body '{
 }'
 ```
 
-### Step 5: Get Partner Email
+### Step 4: Get Partner Email
 Find email for outreach:
 
 ```bash
@@ -66,17 +53,6 @@ orth api run sixtyfour /find-email --body '{
     "last_name": "Lin",
     "company": "Sequoia Capital"
   }
-}'
-```
-
-### Step 6: Recent Activity
-Track recent investments:
-
-```bash
-orth api run tavily /search --body '{
-  "query": "Sequoia Capital recent investments 2024 AI startups announcements",
-  "search_depth": "advanced",
-  "include_answer": true
 }'
 ```
 
@@ -90,11 +66,6 @@ orth api run fiber /v1/investor-search --body '{
     "investment_stages": ["Seed"],
     "locations": ["San Francisco", "New York"]
   }
-}'
-
-# Research specific investor
-orth api run tavily /research --body '{
-  "input": "First Round Capital - investment thesis, notable exits, typical check size, portfolio companies"
 }'
 
 # Find angels in your space
@@ -118,9 +89,7 @@ List all endpoints, or add a path for parameter details:
 ```bash
 orth api show exa
 orth api show fiber
-orth api show perplexity
 orth api show sixtyfour
-orth api show tavily 
 ```
 
 Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

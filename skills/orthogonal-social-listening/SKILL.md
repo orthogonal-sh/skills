@@ -9,18 +9,7 @@ Track brand mentions, competitor activity, and industry conversations across the
 
 ## Workflow
 
-### Step 1: Search for Brand Mentions
-Find mentions of your brand:
-
-```bash
-orth api run tavily /search --body '{
-  "query": "\"YourBrand\" OR \"@yourbrand\" mentions reviews discussions",
-  "search_depth": "advanced",
-  "include_answer": true
-}'
-```
-
-### Step 2: Monitor Competitors
+### Step 1: Monitor Competitors
 Track competitor mentions:
 
 ```bash
@@ -31,57 +20,13 @@ orth api run exa /search --body '{
 }'
 ```
 
-### Step 3: Track Industry Trends
-Monitor industry conversations:
-
-```bash
-orth api run perplexity /chat/completions --body '{
-  "model": "sonar",
-  "messages": [{
-    "role": "user",
-    "content": "What are people saying about productivity software trends on Twitter, Reddit, and HackerNews this week?"
-  }]
-}'
-```
-
-### Step 4: Find User Feedback
-Search for product feedback:
-
-```bash
-orth api run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "Find user reviews and feedback about Notion on G2, Capterra, and ProductHunt"
-}'
-```
-
-### Step 5: Monitor Forum Discussions
-Track community discussions:
-
-```bash
-orth api run tavily /search --body '{
-  "query": "site:reddit.com OR site:news.ycombinator.com productivity software recommendations",
-  "search_depth": "advanced"
-}'
-```
-
 ## Example Usage
 
 ```bash
-# Monitor brand sentiment
-orth api run tavily /search --body '{
-  "query": "\"Slack\" complaints OR problems OR issues users",
-  "include_answer": true
-}'
-
 # Track competitor launches
 orth api run exa /search --body '{
   "query": "Notion new features announcement launch 2024",
   "num_results": 20
-}'
-
-# Find influencer mentions
-orth api run tavily /search --body '{
-  "query": "tech influencers reviewing project management tools YouTube",
-  "include_answer": true
 }'
 ```
 
@@ -98,9 +43,6 @@ List all endpoints, or add a path for parameter details:
 
 ```bash
 orth api show exa
-orth api show perplexity
-orth api show scrapegraph
-orth api show tavily 
 ```
 
 Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

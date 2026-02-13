@@ -16,16 +16,7 @@ Get basic company information:
 orth api run brand-dev /v1/brand/retrieve --query 'domain=competitor.com'
 ```
 
-### Step 2: Deep Research
-Use Tavily for comprehensive research:
-
-```bash
-orth api run tavily /research --body '{
-  "input": "Notion company analysis - products, pricing, funding, team size, recent news, competitive advantages"
-}'
-```
-
-### Step 3: Find Similar Companies
+### Step 2: Find Similar Companies
 Use Exa to find related competitors:
 
 ```bash
@@ -35,7 +26,7 @@ orth api run exa /findSimilar --body '{
 }'
 ```
 
-### Step 4: Get Product Details
+### Step 3: Get Product Details
 Scrape pricing and features:
 
 ```bash
@@ -45,7 +36,7 @@ orth api run scrapegraph /v1/smartscraper --body '{
 }'
 ```
 
-### Step 5: Research Team
+### Step 4: Research Team
 Find key people at the company:
 
 ```bash
@@ -57,31 +48,9 @@ orth api run fiber /v1/people-search --body '{
 }'
 ```
 
-### Step 6: Track News & Updates
-Search for recent news:
-
-```bash
-orth api run tavily /search --body '{
-  "query": "Notion news announcements updates 2024",
-  "search_depth": "advanced",
-  "include_answer": true
-}'
-```
-
 ## Example Usage
 
 ```bash
-# Full competitor analysis
-orth api run tavily /research --body '{
-  "input": "Linear app complete analysis - product, pricing, investors, team, growth, market position vs Jira"
-}'
-
-# Compare multiple competitors
-orth api run perplexity /chat/completions --body '{
-  "model": "sonar",
-  "messages": [{"role": "user", "content": "Compare Notion vs Coda vs Confluence - features, pricing, target market, pros/cons"}]
-}'
-
 # Find competitor customers
 orth api run exa /search --body '{
   "query": "companies using Notion for documentation case studies",
@@ -104,9 +73,7 @@ List all endpoints, or add a path for parameter details:
 orth api show brand-dev
 orth api show exa
 orth api show fiber
-orth api show perplexity
 orth api show scrapegraph
-orth api show tavily 
 ```
 
 Example: `orth api show olostep /v1/scrapes` for endpoint parameters.
