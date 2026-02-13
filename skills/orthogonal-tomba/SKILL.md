@@ -257,3 +257,12 @@ orth api run tomba /v1/reveal/search --body '{"query": "AI startups in San Franc
 3. **Email Validation**: Clean email lists before campaigns
 4. **Company Research**: Find companies matching criteria
 5. **Outreach**: Verify emails before sending
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show tomba              # List all endpoints
+orth api show tomba /v1/phone-validator   # Get endpoint details
+```

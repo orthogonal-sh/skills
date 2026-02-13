@@ -141,3 +141,12 @@ orth api run tavily /crawl --body '{
 3. **Market Intelligence**: Track industry trends
 4. **Documentation**: Crawl and index documentation sites
 5. **Fact-Finding**: Get accurate, sourced answers
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show tavily              # List all endpoints
+orth api show tavily /search   # Get endpoint details
+```

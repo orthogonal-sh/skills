@@ -117,3 +117,16 @@ orth api run perplexity /chat/completions --body '{
   "messages": [{"role": "user", "content": "Write a bug report for: Server crashes after 24 hours with out of memory error"}]
 }'
 ```
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show exa
+orth api show olostep
+orth api show perplexity
+orth api show tavily 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

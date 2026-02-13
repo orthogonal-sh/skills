@@ -125,3 +125,12 @@ orth api run hunter /v2/email-verifier --query 'email=john@example.com'
 3. **Email Validation**: Clean lists before campaigns
 4. **Company Research**: Find companies matching criteria
 5. **Contact Enrichment**: Get full profiles from emails
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show hunter              # List all endpoints
+orth api show hunter /v2/combined/find   # Get endpoint details
+```

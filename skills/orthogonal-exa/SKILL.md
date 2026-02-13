@@ -153,3 +153,12 @@ orth api run exa /contents --body '{
 3. **Market Research**: Discover companies in specific niches
 4. **Fact-Finding**: Get sourced answers to questions
 5. **Deep Research**: Comprehensive research on complex topics
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show exa              # List all endpoints
+orth api show exa /research   # Get endpoint details
+```

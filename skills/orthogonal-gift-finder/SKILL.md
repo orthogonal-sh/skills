@@ -79,3 +79,16 @@ orth api run olostep /v1/answers --body '{
 - Think about experiences, not just physical items
 - Check for gift cards if unsure
 - Look for personalization options
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show olostep
+orth api show perplexity
+orth api show scrapegraph
+orth api show tavily 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

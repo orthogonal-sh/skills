@@ -90,3 +90,17 @@ orth api run perplexity /chat/completions --body '{
 - Compare multiple analyst reports
 - Look for both bullish and bearish perspectives
 - Update research quarterly for fast-moving markets
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show fiber
+orth api show olostep
+orth api show perplexity
+orth api show scrapegraph
+orth api show tavily 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

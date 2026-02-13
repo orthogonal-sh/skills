@@ -174,3 +174,12 @@ orth api run olostep /v1/retrieve --body '{"retrieve_id": "abc123"}'
 2. **Content Monitoring**: Track changes on competitor sites
 3. **Research Automation**: Get AI-synthesized answers from web sources
 4. **SEO Analysis**: Crawl and analyze site structure
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show olostep              # List all endpoints
+orth api show olostep /v1/scrapes   # Get endpoint details
+```

@@ -117,3 +117,12 @@ orth api run perplexity /async/chat/completions
 3. **Technical Questions**: Get accurate technical answers
 4. **Fact-Checking**: Verify information with web sources
 5. **Content Creation**: Generate content grounded in facts
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show perplexity              # List all endpoints
+orth api show perplexity /chat/completions   # Get endpoint details
+```

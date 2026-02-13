@@ -95,3 +95,18 @@ orth api run exa /search --body '{
 - Track their job postings for strategic insights
 - Monitor their social media and blog
 - Analyze their customer reviews
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show brand-dev
+orth api show exa
+orth api show fiber
+orth api show perplexity
+orth api show scrapegraph
+orth api show tavily 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

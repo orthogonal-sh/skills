@@ -83,3 +83,15 @@ orth api run fiber /v1/natural-language-search/companies --body '{
 - Research company culture before applying
 - Network with people at target companies
 - Set up alerts for new postings
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show brand-dev
+orth api show fiber
+orth api show hunter 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

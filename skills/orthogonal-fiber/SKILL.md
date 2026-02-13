@@ -268,3 +268,12 @@ orth api run fiber /v1/linkedin-live-fetch/post-reactions --body '{"identifier":
 3. **Fundraising**: Research investors in your space
 4. **Competitive Intel**: Track companies and their employees
 5. **Job Search**: Find relevant job opportunities
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show fiber              # List all endpoints
+orth api show fiber /v1/natural-language-search/profiles   # Get endpoint details
+```

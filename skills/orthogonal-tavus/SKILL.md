@@ -41,3 +41,12 @@ orth api run tavus /v2/conversations --body '{
 3. **Training**: Interactive video training sessions
 4. **Onboarding**: Automated new user onboarding calls
 5. **Interviews**: AI-assisted screening interviews
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show tavus              # List all endpoints
+orth api show tavus /v2/personas   # Get endpoint details
+```

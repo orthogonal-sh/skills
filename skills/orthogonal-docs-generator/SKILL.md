@@ -86,3 +86,17 @@ orth api run perplexity /chat/completions --body '{
 - Add error handling documentation
 - Keep language simple and clear
 - Include quick start guides
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show exa
+orth api show linkup
+orth api show perplexity
+orth api show scrapegraph
+orth api show tavily 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

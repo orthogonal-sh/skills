@@ -234,3 +234,12 @@ orth api run nyne /company/funders --body '{"company_name": "OpenAI"}'
 3. **Investment Research**: Research company funding and investors
 4. **Market Research**: Track company signals and news
 5. **Lead Scoring**: Score leads based on interests and events
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show nyne              # List all endpoints
+orth api show nyne /person/search   # Get endpoint details
+```

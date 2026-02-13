@@ -122,3 +122,12 @@ orth api run didit /v3/database-validation --body '{"issuing_state": "ESP", "val
 2. **Two-Factor Authentication**: Add OTP verification to login flows
 3. **KYC Compliance**: Validate identity data for financial services
 4. **AML Compliance**: Screen customers against sanctions and watchlists
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show didit              # List all endpoints
+orth api show didit /v3/email/send   # Get endpoint details
+```

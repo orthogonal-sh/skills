@@ -30,3 +30,12 @@ orth api run logo /search --query 'q=Stripe'
 2. **Brand Research**: Identify company websites
 3. **Lead Enrichment**: Get domains from company names
 4. **Data Cleaning**: Standardize company domains in datasets
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show logo              # List all endpoints
+orth api show logo /search   # Get endpoint details
+```

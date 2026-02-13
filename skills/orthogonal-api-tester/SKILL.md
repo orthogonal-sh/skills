@@ -85,3 +85,16 @@ orth api run linkup /fetch --body '{"url": "https://api.openai.com/v1/models"}'
 - Verify response schemas match documentation
 - Check rate limits and authentication
 - Document any discrepancies found
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show linkup
+orth api show perplexity
+orth api show riveter
+orth api show scrapegraph 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

@@ -99,3 +99,16 @@ orth api run fiber /v1/validate-email/single --body '{"email": "lead@company.com
 - Verify all emails before adding to sequences
 - Personalize outreach with company context
 - Track email engagement for list optimization
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show brand-dev
+orth api show fiber
+orth api show hunter
+orth api show sixtyfour 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

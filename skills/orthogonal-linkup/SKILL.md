@@ -58,3 +58,12 @@ orth api run linkup /fetch --body '{"url": "https://example.com/article"}'
 2. **Content Aggregation**: Fetch and process web content
 3. **Fact Checking**: Verify information from multiple sources
 4. **News Monitoring**: Track news on specific topics
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show linkup              # List all endpoints
+orth api show linkup /search   # Get endpoint details
+```

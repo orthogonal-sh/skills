@@ -74,3 +74,16 @@ orth api run perplexity /chat/completions --body '{
 - Check crime stats for the neighborhood
 - Factor in commute time and transit access
 - Ask about utilities included vs separate
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show olostep
+orth api show perplexity
+orth api show scrapegraph
+orth api show tavily 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

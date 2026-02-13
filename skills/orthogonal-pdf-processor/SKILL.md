@@ -88,3 +88,17 @@ orth api run riveter /v1/run --body '{
 - Use schemas for consistent structured output
 - Handle multi-page documents in chunks
 - Verify extracted numbers against source
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show linkup
+orth api show olostep
+orth api show perplexity
+orth api show riveter
+orth api show scrapegraph 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

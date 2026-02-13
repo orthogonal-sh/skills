@@ -110,3 +110,17 @@ orth api run exa /search --body '{
 - Find warm intros through mutual connections
 - Research partner's personal investment interests
 - Time outreach when raising (not too early/late)
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show exa
+orth api show fiber
+orth api show perplexity
+orth api show sixtyfour
+orth api show tavily 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

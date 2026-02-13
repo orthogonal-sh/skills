@@ -91,3 +91,16 @@ orth api run tavily /search --body '{
 - Track both positive and negative sentiment
 - Respond quickly to negative mentions
 - Use insights for product development
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show exa
+orth api show perplexity
+orth api show scrapegraph
+orth api show tavily 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

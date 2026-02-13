@@ -86,3 +86,17 @@ orth api run brand-dev /v1/brand/screenshot --query 'domain=openai.com'
 - Specify exact data needed for extraction
 - Combine with OCR for text-heavy images
 - Use screenshots for website analysis
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show brand-dev
+orth api show linkup
+orth api show perplexity
+orth api show riveter
+orth api show scrapegraph 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

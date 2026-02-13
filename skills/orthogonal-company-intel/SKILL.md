@@ -111,3 +111,17 @@ orth api run tavily /search --body "{\"query\": \"$COMPANY news 2024\", \"includ
 - Verify funding data from multiple sources
 - Track company over time for changes
 - Note any discrepancies between sources
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show brand-dev
+orth api show fiber
+orth api show perplexity
+orth api show scrapegraph
+orth api show tavily 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

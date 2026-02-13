@@ -70,3 +70,16 @@ orth api run olostep /v1/answers --body '{
 - Include cooking time constraints
 - Mention skill level (beginner, intermediate)
 - List ingredients you want to use or avoid
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show olostep
+orth api show perplexity
+orth api show scrapegraph
+orth api show tavily 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

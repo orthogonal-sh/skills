@@ -86,3 +86,16 @@ orth api run sixtyfour /enrich-lead --body '{"lead_info": {"first_name": "John",
 - Personalize using enrichment data
 - Segment by role, industry, or company size
 - Track bounces and clean your list
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show brand-dev
+orth api show fiber
+orth api show hunter
+orth api show sixtyfour 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

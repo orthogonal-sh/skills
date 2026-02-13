@@ -203,3 +203,12 @@ orth api run brand-dev /v1/brand/ai/query --body '{
 3. **Lead Enrichment**: Get company info from domains or emails
 4. **Transaction Identification**: Identify companies from transaction data
 5. **Market Research**: Classify and categorize companies
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show brand-dev              # List all endpoints
+orth api show brand-dev /v1/brand/fonts   # Get endpoint details
+```

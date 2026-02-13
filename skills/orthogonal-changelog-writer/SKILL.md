@@ -83,3 +83,17 @@ orth api run scrapegraph /v1/smartscraper --body '{
 - **Removed**: Removed features
 - **Fixed**: Bug fixes
 - **Security**: Security fixes
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show exa
+orth api show linkup
+orth api show perplexity
+orth api show scrapegraph
+orth api show tavily 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

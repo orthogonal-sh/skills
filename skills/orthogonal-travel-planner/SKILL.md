@@ -92,3 +92,16 @@ orth api run perplexity /chat/completions --body '{
 - Stay in central neighborhoods to save on transport
 - Mix popular attractions with local experiences
 - Leave buffer time for spontaneous discoveries
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show olostep
+orth api show perplexity
+orth api show precip
+orth api show tavily 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

@@ -88,3 +88,15 @@ orth api run exa /search --body '{
 - Gather multiple sources for credibility
 - Look for unique angles not covered elsewhere
 - Include data and statistics when possible
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show exa
+orth api show perplexity
+orth api show tavily 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.

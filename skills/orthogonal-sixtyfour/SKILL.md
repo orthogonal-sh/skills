@@ -99,3 +99,12 @@ orth api run sixtyfour /enrich-company --body '{
 2. **Lead Enrichment**: Complete partial lead data with emails/phones
 3. **CRM Data Quality**: Fill in missing fields in your CRM
 4. **Account Research**: Get comprehensive company information
+
+## Discover More
+
+For full endpoint details and parameters:
+
+```bash
+orth api show sixtyfour              # List all endpoints
+orth api show sixtyfour /find-email   # Get endpoint details
+```

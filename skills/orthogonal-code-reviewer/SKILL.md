@@ -89,3 +89,17 @@ orth api run exa /search --body '{
 3. **Best Practices**: Naming, structure, documentation
 4. **Error Handling**: Try/catch, validation, logging
 5. **Testing**: Test coverage, edge cases
+
+## Discover More
+
+List all endpoints, or add a path for parameter details:
+
+```bash
+orth api show exa
+orth api show linkup
+orth api show olostep
+orth api show perplexity
+orth api show tavily 
+```
+
+Example: `orth api show olostep /v1/scrapes` for endpoint parameters.
