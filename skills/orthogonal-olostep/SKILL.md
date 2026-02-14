@@ -9,22 +9,22 @@ Powerful web scraping, crawling, and AI-powered content extraction.
 
 ## Capabilities
 
-- **Create Scrape**: Initiate a web page scrape ($0.01)
-- **Create Answer**: The AI will perform actions like searching and browsing web pages to find the answer to the provided task ($0.05)
-- **Maps**: This endpoint allows users to get all the urls on a certain website ($0.01)
-- **Start Crawl**: Starts a new crawl ($0.05)
-- **Start Batch**: Starts a new batch ($0.01)
-- **Batch Items**: Retrieves the list of items processed for a batch ($0.01)
-- **Crawl Info**: Fetches information about a specific crawl ($0.01)
-- **Crawl Pages**: Fetches the list of pages for a specific crawl ($0.01)
-- **Get Answer**: This endpoint retrieves a previously completed answer by its ID ($0.01)
-- **Get Scrape**: Can be used to retrieve response for a scrape ($0.01)
-- **Batch Info**: Retrieves the status and progress information about a batch ($0.01)
-- **Retrieve Content**: Retrieve page content of processed batches and crawls urls ($0.01)
+- **Create Scrape**: Initiate a web page scrape
+- **Create Answer**: The AI will perform actions like searching and browsing web pages to find the answer to the provided task
+- **Maps**: This endpoint allows users to get all the urls on a certain website
+- **Start Crawl**: Starts a new crawl
+- **Start Batch**: Starts a new batch
+- **Batch Items**: Retrieves the list of items processed for a batch
+- **Crawl Info**: Fetches information about a specific crawl
+- **Crawl Pages**: Fetches the list of pages for a specific crawl
+- **Get Answer**: This endpoint retrieves a previously completed answer by its ID
+- **Get Scrape**: Can be used to retrieve response for a scrape
+- **Batch Info**: Retrieves the status and progress information about a batch
+- **Retrieve Content**: Retrieve page content of processed batches and crawls urls
 
 ## Usage
 
-### Create Scrape ($0.01)
+### Create Scrape
 Initiate a web page scrape
 
 Parameters:
@@ -47,7 +47,7 @@ Parameters:
 orth api run olostep /v1/scrapes --body '{"url_to_scrape": "https://example.com/page"}'
 ```
 
-### Create Answer ($0.05)
+### Create Answer
 The AI will perform actions like searching and browsing web pages to find the answer to the provided task. Execution time is 3-30s depending upon complexity. For longer tasks, use the agent endpoint instead.
 
 Parameters:
@@ -58,7 +58,7 @@ Parameters:
 orth api run olostep /v1/answers --body '{"task": "What are the latest AI developments?"}'
 ```
 
-### Maps ($0.01)
+### Maps
 This endpoint allows users to get all the urls on a certain website. It can take up to 120 seconds for complex websites. For large websites, results are paginated using cursor-based pagination
 
 Parameters:
@@ -74,7 +74,7 @@ Parameters:
 orth api run olostep /v1/maps --body '{"url": "https://example.com"}'
 ```
 
-### Start Crawl ($0.05)
+### Start Crawl
 Starts a new crawl. You receive a `id` to track the progress. The operation may take 1-10 mins depending upon the site and depth and pages parameters.
 
 Parameters:
@@ -97,7 +97,7 @@ orth api run olostep /v1/crawls --body '{
 }'
 ```
 
-### Start Batch ($0.01)
+### Start Batch
 Starts a new batch. You receive an `id` that you can use to track the progress of the batch as shown [here](/api-reference/batches/info). Note: Processing time is constant regardless of batch size
 
 Parameters:
@@ -115,49 +115,49 @@ orth api run olostep /v1/batches --body '{
 }'
 ```
 
-### Batch Items ($0.01)
+### Batch Items
 Retrieves the list of items processed for a batch. You can then use the `retrieve_id` to get the content with the Retrieve Endpoint
 
 ```bash
 orth api run olostep /v1/batches/{batch_id}/items
 ```
 
-### Crawl Info ($0.01)
+### Crawl Info
 Fetches information about a specific crawl.
 
 ```bash
 orth api run olostep /v1/crawls/{crawl_id}
 ```
 
-### Crawl Pages ($0.01)
+### Crawl Pages
 Fetches the list of pages for a specific crawl.
 
 ```bash
 orth api run olostep /v1/crawls/{crawl_id}/pages
 ```
 
-### Get Answer ($0.01)
+### Get Answer
 This endpoint retrieves a previously completed answer by its ID.
 
 ```bash
 orth api run olostep /v1/answers/{answer_id}
 ```
 
-### Get Scrape ($0.01)
+### Get Scrape
 Can be used to retrieve response for a scrape.
 
 ```bash
 orth api run olostep /v1/scrapes/{scrape_id}
 ```
 
-### Batch Info ($0.01)
+### Batch Info
 Retrieves the status and progress information about a batch. To retrieve the content for a batch, see here
 
 ```bash
 orth api run olostep /v1/batches/{batch_id}
 ```
 
-### Retrieve Content ($0.01)
+### Retrieve Content
 Retrieve page content of processed batches and crawls urls.
 
 Parameters:

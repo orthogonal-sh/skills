@@ -9,19 +9,19 @@ Create real-time video conversations with AI-powered digital personas.
 
 ## Capabilities
 
-- **List Personas**: This endpoint returns a list of all Personas ($0.01)
-- **Create Conversation**: This endpoint starts a real-time video conversation with your AI replica, powered by a persona that allows it to see, hear, and respond like a human ($0.02)
+- **List Personas**: This endpoint returns a list of all Personas
+- **Create Conversation**: This endpoint starts a real-time video conversation with your AI replica, powered by a persona that allows it to see, hear, and respond like a human
 
 ## Usage
 
-### List Personas ($0.01)
+### List Personas
 This endpoint returns a list of all Personas. You can first list the Personas to choose which one you'd like to create a conversation with. Then, using the Create Conversation endpoint, you can start a conversation with that persona providing the persona ID.
 
 ```bash
 orth api run tavus /v2/personas
 ```
 
-### Create Conversation ($0.02)
+### Create Conversation
 This endpoint starts a real-time video conversation with your AI replica, powered by a persona that allows it to see, hear, and respond like a human. Provide the most relevant persona_id obtained from the List Personas endpoint.
 
 Parameters:

@@ -9,18 +9,18 @@ Find email addresses, verify deliverability, and discover companies.
 
 ## Capabilities
 
-- **Combined Enrichment**: Get both person AND company information from an email address in a single request ($0.01)
-- **Email Enrichment**: Get detailed person information from an email address - name, location, employment, social profiles ($0.01)
-- **Email Count**: Get count of email addresses we have for a domain, broken down by department and seniority ($0.01)
-- **Discover Companies**: Find companies matching criteria using filters or natural language ($0.01)
-- **Company Enrichment**: Get detailed company information from a domain - industry, description, location, size, tech stack, funding ($0.01)
-- **Domain Search**: Find all email addresses for a domain ($0.01)
-- **Email Finder**: Find the most likely email address for a person given their name and company domain ($0.01)
-- **Email Verifier**: Verify if an email address is deliverable ($0.01)
+- **Combined Enrichment**: Get both person AND company information from an email address in a single request
+- **Email Enrichment**: Get detailed person information from an email address - name, location, employment, social profiles
+- **Email Count**: Get count of email addresses we have for a domain, broken down by department and seniority
+- **Discover Companies**: Find companies matching criteria using filters or natural language
+- **Company Enrichment**: Get detailed company information from a domain - industry, description, location, size, tech stack, funding
+- **Domain Search**: Find all email addresses for a domain
+- **Email Finder**: Find the most likely email address for a person given their name and company domain
+- **Email Verifier**: Verify if an email address is deliverable
 
 ## Usage
 
-### Combined Enrichment ($0.01)
+### Combined Enrichment
 Get both person AND company information from an email address in a single request.
 
 Parameters:
@@ -30,7 +30,7 @@ Parameters:
 orth api run hunter /v2/combined/find --query 'email=jane@company.com'
 ```
 
-### Email Enrichment ($0.01)
+### Email Enrichment
 Get detailed person information from an email address - name, location, employment, social profiles.
 
 Parameters:
@@ -41,7 +41,7 @@ Parameters:
 orth api run hunter /v2/people/find --query 'email=john@company.com'
 ```
 
-### Email Count ($0.01)
+### Email Count
 Get count of email addresses we have for a domain, broken down by department and seniority. FREE endpoint.
 
 Parameters:
@@ -53,7 +53,7 @@ Parameters:
 orth api run hunter /v2/email-count --query 'domain=google.com'
 ```
 
-### Discover Companies ($0.01)
+### Discover Companies
 Find companies matching criteria using filters or natural language. Returns up to 100 companies per request. FREE endpoint.
 
 Parameters:
@@ -68,7 +68,7 @@ Parameters:
 orth api run hunter /v2/discover --body '{"query": "AI startups in San Francisco"}'
 ```
 
-### Company Enrichment ($0.01)
+### Company Enrichment
 Get detailed company information from a domain - industry, description, location, size, tech stack, funding.
 
 Parameters:
@@ -78,7 +78,7 @@ Parameters:
 orth api run hunter /v2/companies/find --query 'domain=anthropic.com'
 ```
 
-### Domain Search ($0.01)
+### Domain Search
 Find all email addresses for a domain. Returns emails with sources, confidence scores, and verification status.
 
 Parameters:
@@ -93,7 +93,7 @@ Parameters:
 orth api run hunter /v2/domain-search --query 'domain=stripe.com'
 ```
 
-### Email Finder ($0.01)
+### Email Finder
 Find the most likely email address for a person given their name and company domain.
 
 Parameters:
@@ -108,7 +108,7 @@ Parameters:
 orth api run hunter /v2/email-finder --query domain=openai.com first_name=Sam last_name=Altman
 ```
 
-### Email Verifier ($0.01)
+### Email Verifier
 Verify if an email address is deliverable. Returns status (valid, invalid, accept_all, webmail, disposable, unknown).
 
 Parameters:

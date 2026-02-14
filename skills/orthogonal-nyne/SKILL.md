@@ -9,24 +9,24 @@ Enrich person and company data with social profiles, events, interests, funding,
 
 ## Capabilities
 
-- **Person Search**: Search people by company, role, geography, and name ($0.075)
-- **Person Enrichment**: Enrich person data from email, phone, or social URL ($0.075)
-- **Person Events**: Find life events and career milestones ($0.219)
-- **Person Social Profiles**: Get all social media profiles for a person ($0.363)
-- **Person Single Social Lookup**: Look up a specific social media profile ($0.148)
-- **Person Interactions**: Get social media interactions ($0.219)
-- **Person Interests**: Get interests, skills, and topics a person engages with ($0.363)
-- **Person Newsfeed**: Get social media newsfeed data ($0.435)
-- **Company Search**: Search companies by industry and keywords ($0.363)
-- **Company Enrichment**: Enrich company data from email, phone, or social URL ($0.076)
-- **Company Check Seller**: Check if a company sells a specific product/service ($0.148)
-- **Company Needs**: Analyze company needs from SEC filings and content ($0.219)
-- **Company Funding**: Get company funding history and investment details ($0.578)
-- **Company Funders**: Get investors and funders associated with a company ($1.44)
+- **Person Search**: Search people by company, role, geography, and name
+- **Person Enrichment**: Enrich person data from email, phone, or social URL
+- **Person Events**: Find life events and career milestones
+- **Person Social Profiles**: Get all social media profiles for a person
+- **Person Single Social Lookup**: Look up a specific social media profile
+- **Person Interactions**: Get social media interactions
+- **Person Interests**: Get interests, skills, and topics a person engages with
+- **Person Newsfeed**: Get social media newsfeed data
+- **Company Search**: Search companies by industry and keywords
+- **Company Enrichment**: Enrich company data from email, phone, or social URL
+- **Company Check Seller**: Check if a company sells a specific product/service
+- **Company Needs**: Analyze company needs from SEC filings and content
+- **Company Funding**: Get company funding history and investment details
+- **Company Funders**: Get investors and funders associated with a company
 
 ## Usage
 
-### Person Search ($0.075)
+### Person Search
 Search people by company name, role, geography, and person name. Returns requestId for polling.
 
 Parameters:
@@ -52,7 +52,7 @@ Parameters:
 orth api run nyne /person/search --body '{"query": "Software engineers at OpenAI"}'
 ```
 
-### Person Enrichment ($0.075)
+### Person Enrichment
 Enrich a person's profile from email, phone, or social media URL. Returns comprehensive data including work history, education, and social profiles.
 
 Parameters:
@@ -72,7 +72,7 @@ Parameters:
 orth api run nyne /person/enrichment --body '{"email": "john@openai.com"}'
 ```
 
-### Person Events ($0.219)
+### Person Events
 Find life events and career milestones for people at specific events.
 
 Parameters:
@@ -87,7 +87,7 @@ Parameters:
 orth api run nyne /person/events --body '{"event": "YC Demo Day"}'
 ```
 
-### Person Social Profiles ($0.363)
+### Person Social Profiles
 Get all social media profiles associated with a person.
 
 Parameters:
@@ -100,7 +100,7 @@ Parameters:
 orth api run nyne /person/social-profiles --body '{"email": "john@openai.com"}'
 ```
 
-### Person Single Social Lookup ($0.148)
+### Person Single Social Lookup
 Look up a single social media profile for a person on a specific platform.
 
 Parameters:
@@ -113,7 +113,7 @@ Parameters:
 orth api run nyne /person/single-social-lookup --body '{"email": "john@openai.com", "site": "linkedin"}'
 ```
 
-### Person Interactions ($0.219)
+### Person Interactions
 Get social media interactions (replies, followers, following) from a profile.
 
 Parameters:
@@ -126,7 +126,7 @@ Parameters:
 orth api run nyne /person/interactions --body '{"type": "followers", "social_media_url": "https://twitter.com/openai"}'
 ```
 
-### Person Interests ($0.363)
+### Person Interests
 Get interests, skills, and topics a person engages with.
 
 Parameters:
@@ -139,7 +139,7 @@ Parameters:
 orth api run nyne /person/interests --body '{"email": "john@openai.com"}'
 ```
 
-### Person Newsfeed ($0.435)
+### Person Newsfeed
 Get social media newsfeed data from LinkedIn, Twitter, Instagram, GitHub, or Facebook profiles.
 
 Parameters:
@@ -150,7 +150,7 @@ Parameters:
 orth api run nyne /person/newsfeed --body '{"social_media_url": "https://linkedin.com/in/johndoe"}'
 ```
 
-### Company Search ($0.363)
+### Company Search
 Search for companies by industry focus and website keywords.
 
 Parameters:
@@ -165,7 +165,7 @@ Parameters:
 orth api run nyne /company/search --body '{"industry": "AI", "location": "San Francisco"}'
 ```
 
-### Company Enrichment ($0.076)
+### Company Enrichment
 Enrich company data from email, phone, or LinkedIn company URL.
 
 Parameters:
@@ -178,7 +178,7 @@ Parameters:
 orth api run nyne /company/enrichment --body '{"social_media_url": "https://linkedin.com/company/openai"}'
 ```
 
-### Company Check Seller ($0.148)
+### Company Check Seller
 Check if a company sells a specific product or service.
 
 Parameters:
@@ -190,7 +190,7 @@ Parameters:
 orth api run nyne /company/checkseller --body '{"company_name": "Vanta", "product_service": "SOC 2 automation"}'
 ```
 
-### Company Needs ($0.219)
+### Company Needs
 Analyze company needs based on SEC filings and provided content.
 
 Parameters:
@@ -203,7 +203,7 @@ Parameters:
 orth api run nyne /company/needs --body '{"company_name": "Uber Technologies", "content": "Regulatory challenges"}'
 ```
 
-### Company Funding ($0.578)
+### Company Funding
 Get company funding history and investment details.
 
 Parameters:
@@ -215,7 +215,7 @@ Parameters:
 orth api run nyne /company/funding --body '{"company_name": "OpenAI"}'
 ```
 
-### Company Funders ($1.44)
+### Company Funders
 Get investors and funders associated with a company.
 
 Parameters:

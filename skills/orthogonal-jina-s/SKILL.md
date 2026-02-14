@@ -9,11 +9,11 @@ Simple, fast web search using Jina's search foundation.
 
 ## Capabilities
 
-- **Search**: Use s ($0.01)
+- **Search**: Use s
 
 ## Usage
 
-### Search ($0.01)
+### Search
 Use s.jina.ai to search the web and get SERP
 
 Parameters:

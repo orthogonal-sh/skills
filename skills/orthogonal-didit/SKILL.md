@@ -9,16 +9,16 @@ Verify user identities through phone/email OTP codes and screen against AML data
 
 ## Capabilities
 
-- **Send Email Code**: Send a one-time verification code to an email address ($0.04)
+- **Send Email Code**: Send a one-time verification code to an email address
 - **Check Phone Code**: Verify a one-time code sent to a phone number (free)
-- **Send Phone Code**: Send a one-time verification code to a phone number ($0.30)
-- **AML Screening**: The AML Screening API allows you to screen individuals or companies against global watchlists and high-risk databases ($0.36)
+- **Send Phone Code**: Send a one-time verification code to a phone number
+- **AML Screening**: The AML Screening API allows you to screen individuals or companies against global watchlists and high-risk databases
 - **Check Email Code**: Verify a code sent to an email address (free)
-- **Database Validation API**: Validate user-provided identity data against authoritative national and global data sources ($0.31)
+- **Database Validation API**: Validate user-provided identity data against authoritative national and global data sources
 
 ## Usage
 
-### Send Email Code ($0.04)
+### Send Email Code
 Send a one-time verification code to an email address.
 
 Parameters:
@@ -45,7 +45,7 @@ Parameters:
 orth api run didit /v3/phone/check --body '{"phone_number": "+1234567890", "code": "123456"}'
 ```
 
-### Send Phone Code ($0.30)
+### Send Phone Code
 Send a one-time verification code to a phone number.
 
 Parameters:
@@ -58,7 +58,7 @@ Parameters:
 orth api run didit /v3/phone/send --body '{"phone_number": "+1234567890"}'
 ```
 
-### AML Screening ($0.36)
+### AML Screening
 The AML Screening API allows you to screen individuals or companies against global watchlists and high-risk databases. This API provides real-time screening capabilities to detect potential matches and mitigate risks associated with financial fraud and terrorism.
 
 Parameters:
@@ -97,7 +97,7 @@ Parameters:
 orth api run didit /v3/email/check --body '{"email": "user@example.com", "code": "123456"}'
 ```
 
-### Database Validation API ($0.31)
+### Database Validation API
 Validate user-provided identity data against authoritative national and global data sources.
 
 Parameters:

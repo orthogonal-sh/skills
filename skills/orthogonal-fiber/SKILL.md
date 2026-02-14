@@ -9,27 +9,27 @@ Comprehensive search and enrichment for people, companies, investors, and jobs.
 
 ## Capabilities
 
-- **Search profiles from text**: Takes free-form text (e ($0.54)
-- **Search companies from text**: Takes free-form text (e ($0.54)
-- **Find person by email**: Do a reverse lookup: given an email address, find someone's LinkedIn profile and personal details ($0.04)
-- **Live fetch LinkedIn profile**: Returns an enriched profile with details for a given LinkedIn profile identifier ($0.04)
-- **Validate a single email**: Checks if a given email is likely to bounce using a waterfall of strategies ($0.02)
-- **Kitchen sink person lookup**: Search for a person using a variety of parameters such as LinkedIn slug, LinkedIn URL, or their current company information ($0.01)
-- **Kitchen sink company lookup**: Search for a company using a variety of parameters such as LinkedIn slug, LinkedIn URL, name, etc ($0.01)
-- **Investor search**: Search for investors with flexible filtering capabilities ($1.50)
-- **Fetch LinkedIn profile posts**: Fetches recent posts from a LinkedIn profile ($0.04)
-- **Live fetch LinkedIn company**: Returns an enriched company with details for a given LinkedIn company identifier ($0.04)
-- **People search**: Search for people using filters ($0.01)
-- **Fetch LinkedIn post comments**: Fetches paginated comments for a LinkedIn post ($0.04)
-- **Company search**: Search for companies using filters ($0.01)
-- **Convert text into company search filters**: Takes free-form text (e ($0.04)
-- **Convert text into profile search filters**: Takes free-form text (e ($0.04)
-- **Job postings search**: Search for job postings with flexible filtering capabilities ($0.50)
-- **Fetch LinkedIn post reactions**: Fetches paginated reactions of a specific type for a LinkedIn post ($0.04)
+- **Search profiles from text**: Takes free-form text (e
+- **Search companies from text**: Takes free-form text (e
+- **Find person by email**: Do a reverse lookup: given an email address, find someone's LinkedIn profile and personal details
+- **Live fetch LinkedIn profile**: Returns an enriched profile with details for a given LinkedIn profile identifier
+- **Validate a single email**: Checks if a given email is likely to bounce using a waterfall of strategies
+- **Kitchen sink person lookup**: Search for a person using a variety of parameters such as LinkedIn slug, LinkedIn URL, or their current company information
+- **Kitchen sink company lookup**: Search for a company using a variety of parameters such as LinkedIn slug, LinkedIn URL, name, etc
+- **Investor search**: Search for investors with flexible filtering capabilities
+- **Fetch LinkedIn profile posts**: Fetches recent posts from a LinkedIn profile
+- **Live fetch LinkedIn company**: Returns an enriched company with details for a given LinkedIn company identifier
+- **People search**: Search for people using filters
+- **Fetch LinkedIn post comments**: Fetches paginated comments for a LinkedIn post
+- **Company search**: Search for companies using filters
+- **Convert text into company search filters**: Takes free-form text (e
+- **Convert text into profile search filters**: Takes free-form text (e
+- **Job postings search**: Search for job postings with flexible filtering capabilities
+- **Fetch LinkedIn post reactions**: Fetches paginated reactions of a specific type for a LinkedIn post
 
 ## Usage
 
-### Search profiles from text ($0.54)
+### Search profiles from text
 Takes free-form text (e.g., 'Software engineers in US with 5+ years of experience') and returns a list of matching profiles.
 
 Parameters:
@@ -43,7 +43,7 @@ Parameters:
 orth api run fiber /v1/natural-language-search/profiles --body '{"query": "Software engineers in San Francisco with 5+ years experience"}'
 ```
 
-### Search companies from text ($0.54)
+### Search companies from text
 Takes free-form text (e.g., 'Series A startups in USA with 50–200 employees') and returns a list of matching companies.
 
 Parameters:
@@ -55,7 +55,7 @@ Parameters:
 orth api run fiber /v1/natural-language-search/companies --body '{"query": "Series A startups in fintech with 50-200 employees"}'
 ```
 
-### Find person by email ($0.04)
+### Find person by email
 Do a reverse lookup: given an email address, find someone's LinkedIn profile and personal details. Note: if you also have the person's name, company, etc., you'll get better results with the Kitchen Sink endpoint, where you can pass all the information you have.
 
 Parameters:
@@ -66,7 +66,7 @@ Parameters:
 orth api run fiber /v1/email-to-person/single --body '{"email": "john@company.com"}'
 ```
 
-### Live fetch LinkedIn profile ($0.04)
+### Live fetch LinkedIn profile
 Returns an enriched profile with details for a given LinkedIn profile identifier
 
 Parameters:
@@ -78,7 +78,7 @@ Parameters:
 orth api run fiber /v1/linkedin-live-fetch/profile/single --body '{"identifier": "https://linkedin.com/in/johndoe"}'
 ```
 
-### Validate a single email ($0.02)
+### Validate a single email
 Checks if a given email is likely to bounce using a waterfall of strategies. Works for catch-all email addresses, which are increasingly common yet hard for other APIs to validate.
 
 Parameters:
@@ -88,7 +88,7 @@ Parameters:
 orth api run fiber /v1/validate-email/single --body '{"email": "john@example.com"}'
 ```
 
-### Kitchen sink person lookup ($0.01)
+### Kitchen sink person lookup
 Search for a person using a variety of parameters such as LinkedIn slug, LinkedIn URL, or their current company information. Returns profile data for the person if found.
 
 Parameters:
@@ -110,7 +110,7 @@ Parameters:
 orth api run fiber /v1/kitchen-sink/person --body '{"linkedin_url": "https://linkedin.com/in/johndoe"}'
 ```
 
-### Kitchen sink company lookup ($0.01)
+### Kitchen sink company lookup
 Search for a company using a variety of parameters such as LinkedIn slug, LinkedIn URL, name, etc. Returns complete company data if found.
 
 Parameters:
@@ -123,7 +123,7 @@ Parameters:
 orth api run fiber /v1/kitchen-sink/company --body '{"domain": "openai.com"}'
 ```
 
-### Investor search ($1.50)
+### Investor search
 Search for investors with flexible filtering capabilities
 
 Parameters:
@@ -140,7 +140,7 @@ orth api run fiber /v1/investor-search --body '{
 }'
 ```
 
-### Fetch LinkedIn profile posts ($0.04)
+### Fetch LinkedIn profile posts
 Fetches recent posts from a LinkedIn profile. Returns a paginated feed of posts with optional cursor for pagination. Each page returns up to 50 posts.
 
 Parameters:
@@ -151,7 +151,7 @@ Parameters:
 orth api run fiber /v1/linkedin-live-fetch/profile-posts --body '{"identifier": "https://linkedin.com/in/johndoe"}'
 ```
 
-### Live fetch LinkedIn company ($0.04)
+### Live fetch LinkedIn company
 Returns an enriched company with details for a given LinkedIn company identifier
 
 Parameters:
@@ -162,7 +162,7 @@ Parameters:
 orth api run fiber /v1/linkedin-live-fetch/company/single --body '{"identifier": "https://linkedin.com/company/openai"}'
 ```
 
-### People search ($0.01)
+### People search
 Search for people using filters
 
 Parameters:
@@ -182,7 +182,7 @@ orth api run fiber /v1/people-search --body '{
 }'
 ```
 
-### Fetch LinkedIn post comments ($0.04)
+### Fetch LinkedIn post comments
 Fetches paginated comments for a LinkedIn post. Each page contains up to 10 comments.
 
 Parameters:
@@ -193,7 +193,7 @@ Parameters:
 orth api run fiber /v1/linkedin-live-fetch/post-comments --body '{"identifier": "https://linkedin.com/feed/update/urn:li:activity:1234"}'
 ```
 
-### Company search ($0.01)
+### Company search
 Search for companies using filters
 
 Parameters:
@@ -212,7 +212,7 @@ orth api run fiber /v1/company-search --body '{
 }'
 ```
 
-### Convert text into company search filters ($0.04)
+### Convert text into company search filters
 Takes free-form text (e.g., 'Series A startups in USA with 50–200 employees') and converts it into a structured set of filters for company search.
 
 Parameters:
@@ -222,7 +222,7 @@ Parameters:
 orth api run fiber /v1/text-to-search-params/companies --body '{"query": "AI startups in healthcare"}'
 ```
 
-### Convert text into profile search filters ($0.04)
+### Convert text into profile search filters
 Takes free-form text (e.g., 'Software engineers in US with 5+ years of experience') and converts it into a structured set of filters for profile search.
 
 Parameters:
@@ -232,7 +232,7 @@ Parameters:
 orth api run fiber /v1/text-to-search-params/profiles --body '{"query": "Senior engineers at FAANG companies"}'
 ```
 
-### Job postings search ($0.50)
+### Job postings search
 Search for job postings with flexible filtering capabilities
 
 Parameters:
@@ -249,7 +249,7 @@ orth api run fiber /v1/job-search --body '{
 }'
 ```
 
-### Fetch LinkedIn post reactions ($0.04)
+### Fetch LinkedIn post reactions
 Fetches paginated reactions of a specific type for a LinkedIn post. Each page contains up to 10 reactions.
 
 Parameters:

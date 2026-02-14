@@ -9,17 +9,17 @@ Neural search engine for finding similar content, extracting pages, and deep res
 
 ## Capabilities
 
-- **Exa Research**: Retrieve a paginated list of your research tasks ($0.01)
-- **Answer**: Get an LLM answer to a question informed by Exa search results ($0.01)
-- **Search**: The search endpoint lets you intelligently search the web and extract contents from the results ($0.01)
-- **Get a task**: Retrieve the status and results of a previously created research task ($0.01)
-- **Find similar links**: Find similar links to the link provided and optionally return the contents of the pages ($0.01)
-- **Create a task**: Create an asynchronous research task that explores the web, gathers sources, synthesizes findings, and returns results with citations ($0.01)
-- **Get contents**: Get the full page contents, summaries, and metadata for a list of URLs ($0.01)
+- **Exa Research**: Retrieve a paginated list of your research tasks
+- **Answer**: Get an LLM answer to a question informed by Exa search results
+- **Search**: The search endpoint lets you intelligently search the web and extract contents from the results
+- **Get a task**: Retrieve the status and results of a previously created research task
+- **Find similar links**: Find similar links to the link provided and optionally return the contents of the pages
+- **Create a task**: Create an asynchronous research task that explores the web, gathers sources, synthesizes findings, and returns results with citations
+- **Get contents**: Get the full page contents, summaries, and metadata for a list of URLs
 
 ## Usage
 
-### Exa Research ($0.01)
+### Exa Research
 Retrieve a paginated list of your research tasks. The response follows a cursor-based pagination pattern. Pass the `limit` parameter to control page size (max 50) and use the `cursor` token returned in the response to fetch subsequent pages.
 
 Parameters:
@@ -30,7 +30,7 @@ Parameters:
 orth api run exa /research/v1
 ```
 
-### Answer ($0.01)
+### Answer
 Get an LLM answer to a question informed by Exa search results. /answer performs an Exa search and uses an LLM to generate either:
 
 A direct answer for specific queries. (i.e.
@@ -44,7 +44,7 @@ Parameters:
 orth api run exa /answer --body '{"query": "What are the best practices for prompt engineering?"}'
 ```
 
-### Search ($0.01)
+### Search
 The search endpoint lets you intelligently search the web and extract contents from the results.By default, it automatically chooses the best search method using Exa’s embeddings-based model and other techniques to find the most relevant results for your query.
 
 Parameters:
@@ -74,7 +74,7 @@ orth api run exa /search --body '{
 }'
 ```
 
-### Get a task ($0.01)
+### Get a task
 Retrieve the status and results of a previously created research task.Use the unique researchId returned from POST /research/v1 to poll until the task is finished.
 
 Parameters:
@@ -85,7 +85,7 @@ Parameters:
 orth api run exa /research/v1/{researchId}
 ```
 
-### Find similar links ($0.01)
+### Find similar links
 Find similar links to the link provided and optionally return the contents of the pages.
 
 Parameters:
@@ -110,7 +110,7 @@ orth api run exa /findSimilar --body '{
 }'
 ```
 
-### Create a task ($0.01)
+### Create a task
 Create an asynchronous research task that explores the web, gathers sources, synthesizes findings, and returns results with citations.
 
 Parameters:
@@ -122,7 +122,7 @@ Parameters:
 orth api run exa /research/v1 --body '{"instructions": "Research the current state of AI coding assistants"}'
 ```
 
-### Get contents ($0.01)
+### Get contents
 Get the full page contents, summaries, and metadata for a list of URLs.Returns instant results from our cache, with automatic live crawling as fallback for uncached pages.
 
 Parameters:

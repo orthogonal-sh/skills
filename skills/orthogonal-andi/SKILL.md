@@ -9,11 +9,11 @@ Fast, high-quality search with intelligent ranking, instant answers, and researc
 
 ## Capabilities
 
-- **Search**: Fast, high-quality search API with intelligent ranking, instant answers, and result enrichment ($0.01)
+- **Search**: Fast, high-quality search API with intelligent ranking, instant answers, and result enrichment
 
 ## Usage
 
-### Search ($0.01)
+### Search
 Fast, high-quality search API with intelligent ranking, instant answers, and result enrichment.
 
 Parameters:
