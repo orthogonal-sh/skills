@@ -14,13 +14,13 @@ Web research API that returns OpenAI ChatCompletions-compatible responses.
 - **Cancel FindAll Run**: Cancel a FindAll run (free)
 - **Retrieve Task Run Input**: Retrieves the input of a run by run_id (free)
 - **Retrieve Task Run**: Retrieves run status by run_id (free)
-- **Ingest FindAll Run**: Transforms a natural language search objective into a structured FindAll spec ($0.01)
+- **Ingest FindAll Run**: Transforms a natural language search objective into a structured FindAll spec
 - **Retrieve Task Run Result**: Retrieves a run result by run_id, blocking until the run is completed (free)
-- **Create FindAll Run**: Starts a FindAll run ($0.01)
-- **Search**: Searches the web ($0.01)
-- **Chat API**: Parallel Chat is a web research API that returns OpenAI ChatCompletions compatible streaming text and JSON ($0.01)
-- **Extract**: Extracts relevant content from specific web URLs ($0.01)
-- **Create Task Run**: Initiates a task run ($0.01)
+- **Create FindAll Run**: Starts a FindAll run
+- **Search**: Searches the web
+- **Chat API**: Parallel Chat is a web research API that returns OpenAI ChatCompletions compatible streaming text and JSON
+- **Extract**: Extracts relevant content from specific web URLs
+- **Create Task Run**: Initiates a task run
 
 ## Usage
 
@@ -59,7 +59,7 @@ Retrieves run status by run_id.The run result is available from the /result endp
 orth api run parallel /v1/tasks/runs/{run_id}
 ```
 
-### Ingest FindAll Run ($0.01)
+### Ingest FindAll Run
 Transforms a natural language search objective into a structured FindAll spec.Note: Access to this endpoint requires the parallel-beta header.The generated specification serves as a suggested starting point and can be furthercustomized by the user.
 
 Parameters:
@@ -79,7 +79,7 @@ Parameters:
 orth api run parallel /v1/tasks/runs/{run_id}/result
 ```
 
-### Create FindAll Run ($0.01)
+### Create FindAll Run
 Starts a FindAll run.This endpoint immediately returns a FindAll run object with status set to ‘queued’.You can get the run result snapshot using the GET /v1beta/findall/runs//result endpoint.You can track the progress of the run by:Polling the status using the GET /v1beta/findall/runs/ endpoint,Subscribing to real-time updates via the /v1beta/findall/runs//eventsendpoint,Or specifying a webhook with relevant event types during run creation to receivenotifications.
 
 Parameters:
@@ -98,7 +98,7 @@ orth api run parallel /v1beta/findall/runs --body '{
 }'
 ```
 
-### Search ($0.01)
+### Search
 Searches the web.To access this endpoint, pass the parallel-beta header with the valuesearch-extract-2025-10-10.
 
 Parameters:
@@ -116,7 +116,7 @@ Parameters:
 orth api run parallel /v1beta/search --body '{"objective": "AI agent frameworks comparison 2024"}'
 ```
 
-### Chat API ($0.01)
+### Chat API
 Parallel Chat is a web research API that returns OpenAI ChatCompletions compatible streaming text and JSON.
 
 Parameters:
@@ -134,7 +134,7 @@ orth api run parallel /chat/completions --body '{
 }'
 ```
 
-### Extract ($0.01)
+### Extract
 Extracts relevant content from specific web URLs.To access this endpoint, pass the parallel-beta header with the valuesearch-extract-2025-10-10.
 
 Parameters:
@@ -149,7 +149,7 @@ Parameters:
 orth api run parallel /v1beta/extract --body '{"urls": ["https://example.com/article"]}'
 ```
 
-### Create Task Run ($0.01)
+### Create Task Run
 Initiates a task run.Returns immediately with a run object in status ‘queued’.Beta features can be enabled by setting the ‘parallel-beta’ header.
 
 Parameters:

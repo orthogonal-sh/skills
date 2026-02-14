@@ -9,27 +9,27 @@ Access hyperlocal weather data including precipitation, temperature, wind, soil 
 
 ## Capabilities
 
-- **Last 48 Hours Precipitation Data**: Total precipitation in the last 48 hours for the given location(s) ($0.01)
-- **Air Temperature**: Hourly near-surface air temperature in Celsius (°C) ($0.01)
-- **Hourly Soil Moisture**: Hourly soil moisture percentage relative to holding capacity at 0-10cm depth ($0.01)
-- **Wind Direction**: Hourly wind direction in compass degrees (0-360) ($0.01)
-- **Daily Precipitation Data**: Returns comprehensive daily precipitation data for the given time range and location(s) ($0.01)
-- **Wind Gusts**: Hourly wind gust speed in meters per second (m/s) ($0.01)
-- **Recent Rain Event**: Returns detailed information about the most recent precipitation event for the given location(s), including total amounts, precipitation type (rain/snow), timing, and how long ago it occurred ($0.01)
-- **Map Layer Tiles**: Map tiles compatible with most web mapping or GIS tools ($0.01)
-- **Wind Speed**: Hourly near-surface wind speed in meters per second (m/s) ($0.01)
-- **Cloud Cover**: Hourly cloud cover fraction (0-1, where 0 is clear and 1 is overcast) ($0.01)
-- **Soil Temperature**: Hourly soil temperature data at 0-10cm depth in Celsius (°C) ($0.01)
-- **Specific Humidity**: Hourly specific humidity (kg/kg) ($0.01)
-- **Hourly Precipitation Data**: Returns comprehensive hourly precipitation data for the given time range and location(s) ($0.01)
-- **Daily Soil Moisture**: Daily soil moisture percentage relative to holding capacity at 0-10cm depth ($0.01)
-- **Embeddable HTML UI**: Returns a complete, HTML page displaying comprehensive weather data for a specific location ($0.10)
-- **Solar Radiation**: Hourly downward short-wave radiation flux in watts per square meter (W/m²) ($0.01)
-- **Relative Humidity**: Hourly relative humidity as a percentage (0-100%) ($0.01)
+- **Last 48 Hours Precipitation Data**: Total precipitation in the last 48 hours for the given location(s)
+- **Air Temperature**: Hourly near-surface air temperature in Celsius (°C)
+- **Hourly Soil Moisture**: Hourly soil moisture percentage relative to holding capacity at 0-10cm depth
+- **Wind Direction**: Hourly wind direction in compass degrees (0-360)
+- **Daily Precipitation Data**: Returns comprehensive daily precipitation data for the given time range and location(s)
+- **Wind Gusts**: Hourly wind gust speed in meters per second (m/s)
+- **Recent Rain Event**: Returns detailed information about the most recent precipitation event for the given location(s), including total amounts, precipitation type (rain/snow), timing, and how long ago it occurred
+- **Map Layer Tiles**: Map tiles compatible with most web mapping or GIS tools
+- **Wind Speed**: Hourly near-surface wind speed in meters per second (m/s)
+- **Cloud Cover**: Hourly cloud cover fraction (0-1, where 0 is clear and 1 is overcast)
+- **Soil Temperature**: Hourly soil temperature data at 0-10cm depth in Celsius (°C)
+- **Specific Humidity**: Hourly specific humidity (kg/kg)
+- **Hourly Precipitation Data**: Returns comprehensive hourly precipitation data for the given time range and location(s)
+- **Daily Soil Moisture**: Daily soil moisture percentage relative to holding capacity at 0-10cm depth
+- **Embeddable HTML UI**: Returns a complete, HTML page displaying comprehensive weather data for a specific location
+- **Solar Radiation**: Hourly downward short-wave radiation flux in watts per square meter (W/m²)
+- **Relative Humidity**: Hourly relative humidity as a percentage (0-100%)
 
 ## Usage
 
-### Last 48 Hours Precipitation Data ($0.01)
+### Last 48 Hours Precipitation Data
 Total precipitation in the last 48 hours for the given location(s).
 
 Parameters:
@@ -42,7 +42,7 @@ Parameters:
 orth api run precip /api/v1/last-48 --query latitude=37.7749 longitude=-122.4194
 ```
 
-### Air Temperature ($0.01)
+### Air Temperature
 Hourly near-surface air temperature in Celsius (°C)
 
 Parameters:
@@ -57,7 +57,7 @@ Parameters:
 orth api run precip /api/v1/temperature-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
-### Hourly Soil Moisture ($0.01)
+### Hourly Soil Moisture
 Hourly soil moisture percentage relative to holding capacity at 0-10cm depth
 
 Parameters:
@@ -72,7 +72,7 @@ Parameters:
 orth api run precip /api/v1/soil-moisture-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
-### Wind Direction ($0.01)
+### Wind Direction
 Hourly wind direction in compass degrees (0-360)
 
 Parameters:
@@ -87,7 +87,7 @@ Parameters:
 orth api run precip /api/v1/wind-direction-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
-### Daily Precipitation Data ($0.01)
+### Daily Precipitation Data
 Returns comprehensive daily precipitation data for the given time range and location(s). Each day includes precipitation amount, type (rain/snow/mixed), probability (for forecasts), and data source. Seamlessly combines historical observations with forecast data depending on the requested time range.
 
 Parameters:
@@ -102,7 +102,7 @@ Parameters:
 orth api run precip /api/v1/daily --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-31
 ```
 
-### Wind Gusts ($0.01)
+### Wind Gusts
 Hourly wind gust speed in meters per second (m/s)
 
 Parameters:
@@ -117,7 +117,7 @@ Parameters:
 orth api run precip /api/v1/wind-speed-gust-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
-### Recent Rain Event ($0.01)
+### Recent Rain Event
 Returns detailed information about the most recent precipitation event for the given location(s), including total amounts, precipitation type (rain/snow), timing, and how long ago it occurred.
 
 Parameters:
@@ -130,7 +130,7 @@ Parameters:
 orth api run precip /api/v1/recent-rain --query latitude=37.7749 longitude=-122.4194
 ```
 
-### Map Layer Tiles ($0.01)
+### Map Layer Tiles
 Map tiles compatible with most web mapping or GIS tools. Software such as Mapbox, Google Maps, ArcGIS, Leaflet, OpenLayers or QGIS will require an `x/y/z` url eg `https://api.precip.ai/api/v1/map/last-48/ImageServer/tile/{z}/{y}/{x}`. See the examples for more details.
 
 Parameters:
@@ -140,7 +140,7 @@ Parameters:
 orth api run precip /api/v1/map/precipitation/ImageServer/tile/5/12/10
 ```
 
-### Wind Speed ($0.01)
+### Wind Speed
 Hourly near-surface wind speed in meters per second (m/s)
 
 Parameters:
@@ -155,7 +155,7 @@ Parameters:
 orth api run precip /api/v1/wind-speed-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
-### Cloud Cover ($0.01)
+### Cloud Cover
 Hourly cloud cover fraction (0-1, where 0 is clear and 1 is overcast)
 
 Parameters:
@@ -170,7 +170,7 @@ Parameters:
 orth api run precip /api/v1/cloud-cover-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
-### Soil Temperature ($0.01)
+### Soil Temperature
 Hourly soil temperature data at 0-10cm depth in Celsius (°C)
 
 Parameters:
@@ -185,7 +185,7 @@ Parameters:
 orth api run precip /api/v1/temp-0-10cm-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
-### Specific Humidity ($0.01)
+### Specific Humidity
 Hourly specific humidity (kg/kg)
 
 Parameters:
@@ -200,7 +200,7 @@ Parameters:
 orth api run precip /api/v1/specific-humidity-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
-### Hourly Precipitation Data ($0.01)
+### Hourly Precipitation Data
 Returns comprehensive hourly precipitation data for the given time range and location(s). Each hour includes precipitation amount, type (rain/snow/mixed), probability (for forecasts), and data source.
 
 Parameters:
@@ -215,7 +215,7 @@ Parameters:
 orth api run precip /api/v1/hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-07
 ```
 
-### Daily Soil Moisture ($0.01)
+### Daily Soil Moisture
 Daily soil moisture percentage relative to holding capacity at 0-10cm depth
 
 Parameters:
@@ -230,7 +230,7 @@ Parameters:
 orth api run precip /api/v1/soil-moisture-daily --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-31
 ```
 
-### Embeddable HTML UI ($0.10)
+### Embeddable HTML UI
 Returns a complete, HTML page displaying comprehensive weather data for a specific location. See the examples page for more details. 
 
  Authorization headers set automatically from query parameters on this endpoint.
@@ -251,7 +251,7 @@ When not provided, shows all widgets.
 orth api run precip /embed/location --query lat=37.7749 lon=-122.4194
 ```
 
-### Solar Radiation ($0.01)
+### Solar Radiation
 Hourly downward short-wave radiation flux in watts per square meter (W/m²)
 
 Parameters:
@@ -266,7 +266,7 @@ Parameters:
 orth api run precip /api/v1/solar-radiation-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
-### Relative Humidity ($0.01)
+### Relative Humidity
 Hourly relative humidity as a percentage (0-100%)
 
 Parameters:

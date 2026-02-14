@@ -10,7 +10,7 @@ Send SMS messages via simple HTTP API.
 ## Capabilities
 
 - **Status**: Checking SMS delivery status (free)
-- **Send an SMS**: Send an SMS using HTTP POST ($0.025)
+- **Send an SMS**: Send an SMS using HTTP POST
 
 ## Usage
 
@@ -21,7 +21,7 @@ Checking SMS delivery status
 orth api run textbelt /status/{message_id}
 ```
 
-### Send an SMS ($0.025)
+### Send an SMS
 Send an SMS using HTTP POST.
 Note: No Urls in text message.
 Max 800 characters

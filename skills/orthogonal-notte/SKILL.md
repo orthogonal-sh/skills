@@ -9,25 +9,25 @@ Control browser sessions, scrape web pages, and run autonomous AI agents.
 
 ## Capabilities
 
-- **Take Screenshot**: Take a screenshot of the current page ($0.001)
+- **Take Screenshot**: Take a screenshot of the current page
 - **Get Session**: Get session status and details (free)
 - **Stop Session**: Stop and clean up a browser session (free)
 - **Get Session Cookies**: Get all cookies from the browser session (free)
 - **Get Network Logs**: Get network request/response logs from the session (free)
 - **Get Agent Status**: Get agent execution status and results (free)
-- **Observe Page**: Observe the current page state and get available actions ($0.005)
+- **Observe Page**: Observe the current page state and get available actions
 - **Stop Agent**: Stop a running agent (free)
-- **Scrape Webpage**: Scrape content from a URL without managing sessions ($0.01)
-- **Execute Page Action**: Execute an action on the page (click, type, navigate, etc ($0.002)
-- **Set Session Cookies**: Set cookies in the browser session ($0.001)
-- **Start Session**: Start a new browser session ($0.015)
-- **Scrape from HTML**: Extract structured content from raw HTML without using a browser ($0.002)
-- **Start Agent**: Start an AI agent to autonomously complete a browser task ($0.07)
-- **Scrape Page**: Scrape content from the current page in the session ($0.003)
+- **Scrape Webpage**: Scrape content from a URL without managing sessions
+- **Execute Page Action**: Execute an action on the page (click, type, navigate, etc
+- **Set Session Cookies**: Set cookies in the browser session
+- **Start Session**: Start a new browser session
+- **Scrape from HTML**: Extract structured content from raw HTML without using a browser
+- **Start Agent**: Start an AI agent to autonomously complete a browser task
+- **Scrape Page**: Scrape content from the current page in the session
 
 ## Usage
 
-### Take Screenshot ($0.001)
+### Take Screenshot
 Take a screenshot of the current page.
 
 Parameters:
@@ -88,7 +88,7 @@ Parameters:
 orth api run notte /agents/{agent_id}
 ```
 
-### Observe Page ($0.005)
+### Observe Page
 Observe the current page state and get available actions.
 
 Parameters:
@@ -111,7 +111,7 @@ Parameters:
 orth api run notte /agents/{agent_id}/stop
 ```
 
-### Scrape Webpage ($0.01)
+### Scrape Webpage
 Scrape content from a URL without managing sessions.
 
 Parameters:
@@ -122,7 +122,7 @@ Parameters:
 orth api run notte /scrape --body '{"url": "https://example.com"}'
 ```
 
-### Execute Page Action ($0.002)
+### Execute Page Action
 Execute an action on the page (click, type, navigate, etc.).
 
 Parameters:
@@ -140,7 +140,7 @@ Parameters:
 orth api run notte /sessions/{session_id}/page/execute --body '{"instruction": "Click the search button"}'
 ```
 
-### Set Session Cookies ($0.001)
+### Set Session Cookies
 Set cookies in the browser session.
 
 Parameters:
@@ -151,7 +151,7 @@ Parameters:
 orth api run notte /sessions/{session_id}/cookies
 ```
 
-### Start Session ($0.015)
+### Start Session
 Start a new browser session. Configure browser type, proxies, viewport, and session timeout.
 
 Parameters:
@@ -172,7 +172,7 @@ orth api run notte /sessions/start --body '{
 }'
 ```
 
-### Scrape from HTML ($0.002)
+### Scrape from HTML
 Extract structured content from raw HTML without using a browser
 
 Parameters:
@@ -182,7 +182,7 @@ Parameters:
 orth api run notte /scrape_from_html --body '{"html": "<html><body>Hello</body></html>"}'
 ```
 
-### Start Agent ($0.07)
+### Start Agent
 Start an AI agent to autonomously complete a browser task.
 
 Parameters:
@@ -199,7 +199,7 @@ orth api run notte /agents/start --body '{
 }'
 ```
 
-### Scrape Page ($0.003)
+### Scrape Page
 Scrape content from the current page in the session.
 
 Parameters:

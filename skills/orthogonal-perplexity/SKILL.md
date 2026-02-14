@@ -9,15 +9,15 @@ AI-powered search and chat completions with real-time web data.
 
 ## Capabilities
 
-- **Chat Completions**: Generates a model’s response for the given chat conversation ($0.01)
-- **Search**: Get ranked search results from Perplexity’s continuously refreshed index with advanced filtering and customization options ($0.01)
-- **Sonar Chat Completions API**: Creates an asynchronous chat completion job ($0.01)
-- **Get Async Chat Completion Response**: Retrieves the status and result of a specific asynchronous chat completion job ($0.01)
-- **List Async Chat Completions**: Lists all asynchronous chat completion requests for the authenticated user ($0.01)
+- **Chat Completions**: Generates a model’s response for the given chat conversation
+- **Search**: Get ranked search results from Perplexity’s continuously refreshed index with advanced filtering and customization options
+- **Sonar Chat Completions API**: Creates an asynchronous chat completion job
+- **Get Async Chat Completion Response**: Retrieves the status and result of a specific asynchronous chat completion job
+- **List Async Chat Completions**: Lists all asynchronous chat completion requests for the authenticated user
 
 ## Usage
 
-### Chat Completions ($0.01)
+### Chat Completions
 Generates a model’s response for the given chat conversation.
 
 Parameters:
@@ -56,7 +56,7 @@ orth api run perplexity /chat/completions --body '{
 }'
 ```
 
-### Search ($0.01)
+### Search
 Get ranked search results from Perplexity’s continuously refreshed index with advanced filtering and customization options.
 
 Parameters:
@@ -77,7 +77,7 @@ Parameters:
 orth api run perplexity /search --body '{"query": "latest AI developments February 2024"}'
 ```
 
-### Sonar Chat Completions API ($0.01)
+### Sonar Chat Completions API
 Creates an asynchronous chat completion job.
 
 Parameters:
@@ -92,14 +92,14 @@ orth api run perplexity /async/chat/completions --body '{
 }'
 ```
 
-### Get Async Chat Completion Response ($0.01)
+### Get Async Chat Completion Response
 Retrieves the status and result of a specific asynchronous chat completion job.
 
 ```bash
 orth api run perplexity /async/chat/completions/{request_id}
 ```
 
-### List Async Chat Completions ($0.01)
+### List Async Chat Completions
 Lists all asynchronous chat completion requests for the authenticated user.
 
 Parameters:

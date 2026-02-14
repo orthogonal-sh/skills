@@ -9,14 +9,14 @@ Find contact information and enrich lead data using AI-powered discovery.
 
 ## Capabilities
 
-- **Find email**: Find email address for a lead ($0.05)
-- **Enrich lead**: Enrich lead information with additional details such as contact information, social profiles, and company details ($0.10)
-- **Find Phone API**: The Find Phone API uses Sixtyfour AI to discover phone numbers for leads ($0.30)
-- **Enrich company**: Enrich company data with additional information and find associated people ($0.10)
+- **Find email**: Find email address for a lead
+- **Enrich lead**: Enrich lead information with additional details such as contact information, social profiles, and company details
+- **Find Phone API**: The Find Phone API uses Sixtyfour AI to discover phone numbers for leads
+- **Enrich company**: Enrich company data with additional information and find associated people
 
 ## Usage
 
-### Find email ($0.05)
+### Find email
 Find email address for a lead.
 
 Parameters:
@@ -34,7 +34,7 @@ orth api run sixtyfour /find-email --body '{
 }'
 ```
 
-### Enrich lead ($0.10)
+### Enrich lead
 Enrich lead information with additional details such as contact information, social profiles, and company details.
 
 Parameters:
@@ -54,7 +54,7 @@ orth api run sixtyfour /enrich-lead --body '{
 }'
 ```
 
-### Find Phone API ($0.30)
+### Find Phone API
 The Find Phone API uses Sixtyfour AI to discover phone numbers for leads. It extracts contact information from lead data and returns enriched results with phone numbers.
 
 Parameters:
@@ -75,7 +75,7 @@ orth api run sixtyfour /find-phone --body '{
 }'
 ```
 
-### Enrich company ($0.10)
+### Enrich company
 Enrich company data with additional information and find associated people.
 
 Parameters:

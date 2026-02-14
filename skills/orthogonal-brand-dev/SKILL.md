@@ -9,23 +9,23 @@ Extract comprehensive brand information from any domain - logos, colors, fonts, 
 
 ## Capabilities
 
-- **Extract fonts from website**: Extract font information from a brand’s website including font families, usage statistics, fallbacks, and element/word counts ($0.03)
-- **Identify brand from transaction data**: Endpoint specially designed for platforms that want to identify transaction data by the transaction title ($0.03)
-- **Retrieve NAICS code for any brand**: Endpoint to classify any brand into a 2022 NAICS code ($0.03)
-- **Retrieve brand data by email address**: Retrieve brand information using an email address while detecting disposable and free email addresses ($0.03)
-- **Retrieve simplified brand data by domain**: Returns a simplified version of brand data containing only essential information: domain, title, colors, logos, and backdrops ($0.03)
-- **Retrieve brand data by ISIN**: Retrieve brand information using an ISIN (International Securities Identification Number) ($0.03)
-- **Extract products from a brand's website**: Beta feature: Extract product information from a brand’s website ($0.03)
-- **Retrieve brand data by domain**: Retrieve logos, backdrops, colors, industry, description, and more from any domain ($0.03)
-- **Retrieve brand data by company name**: Retrieve brand information using a company name ($0.03)
-- **Retrieve brand data by stock ticker**: Retrieve brand information using a stock ticker symbol ($0.03)
-- **Extract design system and styleguide from website**: Automatically extract comprehensive design system information from a brand’s website including colors, typography, spacing, shadows, and UI components ($0.03)
-- **Take screenshot of website**: Capture a screenshot of a website ($0.03)
-- **Query website data using AI**: Use AI to extract specific data points from a brand’s website ($0.03)
+- **Extract fonts from website**: Extract font information from a brand’s website including font families, usage statistics, fallbacks, and element/word counts
+- **Identify brand from transaction data**: Endpoint specially designed for platforms that want to identify transaction data by the transaction title
+- **Retrieve NAICS code for any brand**: Endpoint to classify any brand into a 2022 NAICS code
+- **Retrieve brand data by email address**: Retrieve brand information using an email address while detecting disposable and free email addresses
+- **Retrieve simplified brand data by domain**: Returns a simplified version of brand data containing only essential information: domain, title, colors, logos, and backdrops
+- **Retrieve brand data by ISIN**: Retrieve brand information using an ISIN (International Securities Identification Number)
+- **Extract products from a brand's website**: Beta feature: Extract product information from a brand’s website
+- **Retrieve brand data by domain**: Retrieve logos, backdrops, colors, industry, description, and more from any domain
+- **Retrieve brand data by company name**: Retrieve brand information using a company name
+- **Retrieve brand data by stock ticker**: Retrieve brand information using a stock ticker symbol
+- **Extract design system and styleguide from website**: Automatically extract comprehensive design system information from a brand’s website including colors, typography, spacing, shadows, and UI components
+- **Take screenshot of website**: Capture a screenshot of a website
+- **Query website data using AI**: Use AI to extract specific data points from a brand’s website
 
 ## Usage
 
-### Extract fonts from website ($0.03)
+### Extract fonts from website
 Extract font information from a brand’s website including font families, usage statistics, fallbacks, and element/word counts.
 
 Parameters:
@@ -36,7 +36,7 @@ Parameters:
 orth api run brand-dev /v1/brand/fonts --query 'domain=vercel.com'
 ```
 
-### Identify brand from transaction data ($0.03)
+### Identify brand from transaction data
 Endpoint specially designed for platforms that want to identify transaction data by the transaction title.
 
 Parameters:
@@ -53,7 +53,7 @@ Parameters:
 orth api run brand-dev /v1/brand/transaction_identifier --query 'transaction_title=STRIPE%20PAYMENT'
 ```
 
-### Retrieve NAICS code for any brand ($0.03)
+### Retrieve NAICS code for any brand
 Endpoint to classify any brand into a 2022 NAICS code.
 
 Parameters:
@@ -66,7 +66,7 @@ Parameters:
 orth api run brand-dev /v1/brand/naics --query 'input=openai.com'
 ```
 
-### Retrieve brand data by email address ($0.03)
+### Retrieve brand data by email address
 Retrieve brand information using an email address while detecting disposable and free email addresses. This endpoint extracts the domain from the email address and returns brand data for that domain. Disposable and free email addresses (like gmail.com, yahoo.com) will throw a 422 error.
 
 Parameters:
@@ -79,7 +79,7 @@ Parameters:
 orth api run brand-dev /v1/brand/retrieve-by-email --query 'email=john@stripe.com'
 ```
 
-### Retrieve simplified brand data by domain ($0.03)
+### Retrieve simplified brand data by domain
 Returns a simplified version of brand data containing only essential information: domain, title, colors, logos, and backdrops. This endpoint is optimized for faster responses and reduced data transfer.
 
 Parameters:
@@ -90,7 +90,7 @@ Parameters:
 orth api run brand-dev /v1/brand/retrieve-simplified --query 'domain=notion.so'
 ```
 
-### Retrieve brand data by ISIN ($0.03)
+### Retrieve brand data by ISIN
 Retrieve brand information using an ISIN (International Securities Identification Number). This endpoint looks up the company associated with the ISIN and returns its brand data.
 
 Parameters:
@@ -103,7 +103,7 @@ Parameters:
 orth api run brand-dev /v1/brand/retrieve-by-isin --query 'isin=US0378331005'
 ```
 
-### Extract products from a brand's website ($0.03)
+### Extract products from a brand's website
 Beta feature: Extract product information from a brand’s website. Brand.dev will analyze the website and return a list of products with details such as name, description, image, pricing, features, and more.
 
 Parameters:
@@ -115,7 +115,7 @@ Parameters:
 orth api run brand-dev /v1/brand/ai/products --body '{"domain": "stripe.com"}'
 ```
 
-### Retrieve brand data by domain ($0.03)
+### Retrieve brand data by domain
 Retrieve logos, backdrops, colors, industry, description, and more from any domain
 
 Parameters:
@@ -128,7 +128,7 @@ Parameters:
 orth api run brand-dev /v1/brand/retrieve --query 'domain=stripe.com'
 ```
 
-### Retrieve brand data by company name ($0.03)
+### Retrieve brand data by company name
 Retrieve brand information using a company name. This endpoint searches for the company by name and returns its brand data.
 
 Parameters:
@@ -141,7 +141,7 @@ Parameters:
 orth api run brand-dev /v1/brand/retrieve-by-name --query 'name=Stripe'
 ```
 
-### Retrieve brand data by stock ticker ($0.03)
+### Retrieve brand data by stock ticker
 Retrieve brand information using a stock ticker symbol. This endpoint looks up the company associated with the ticker and returns its brand data.
 
 Parameters:
@@ -155,7 +155,7 @@ Parameters:
 orth api run brand-dev /v1/brand/retrieve-by-ticker --query 'ticker=AAPL'
 ```
 
-### Extract design system and styleguide from website ($0.03)
+### Extract design system and styleguide from website
 Automatically extract comprehensive design system information from a brand’s website including colors, typography, spacing, shadows, and UI components.
 
 Parameters:
@@ -167,7 +167,7 @@ Parameters:
 orth api run brand-dev /v1/brand/styleguide --query 'domain=linear.app'
 ```
 
-### Take screenshot of website ($0.03)
+### Take screenshot of website
 Capture a screenshot of a website. Supports both viewport (standard browser view) and full-page screenshots. Can also screenshot specific page types (login, pricing, etc.) by using heuristics to find the appropriate URL. Returns a URL to the uploaded screenshot image hosted on our CDN.
 
 Parameters:
@@ -180,7 +180,7 @@ Parameters:
 orth api run brand-dev /v1/brand/screenshot --query 'domain=github.com'
 ```
 
-### Query website data using AI ($0.03)
+### Query website data using AI
 Use AI to extract specific data points from a brand’s website. The AI will crawl the website and extract the requested information based on the provided data points.
 
 Parameters:

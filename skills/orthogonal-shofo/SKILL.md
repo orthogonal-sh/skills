@@ -9,28 +9,28 @@ Scrape profiles, posts, and comments from Instagram, TikTok, LinkedIn, and X/Twi
 
 ## Capabilities
 
-- **Instagram Hashtag**: Get posts for an Instagram hashtag ($0.01)
-- **X/Twitter Tweet Comments**: Get comments/replies from an X tweet ($0.01)
-- **LinkedIn Company Posts**: Get recent posts from a LinkedIn company page ($0.01)
-- **TikTok Hashtag Videos**: Get videos for a specific hashtag ($0.01)
-- **X/Twitter User Profile**: Get X/Twitter profile data including bio, follower counts, and profile info ($0.01)
-- **TikTok Feed Videos**: Get videos from TikTok's recommendation feed ($0.01)
-- **Instagram User Profile**: Get Instagram profile data with optional followers and following lists ($0.01)
-- **TikTok User Profile Videos**: Get videos from a specific TikTok user's profile ($0.01)
-- **TikTok Video Comments**: Get comments from a TikTok video ($0.01)
-- **Linkedin User Profile**: Get comprehensive LinkedIn profile data including work experience, education, skills, and contact info ($0.01)
-- **Linkedin User Posts**: Get recent posts and activity from a LinkedIn user ($0.01)
-- **Linkedin Company Profile**: Get company information including size, industry, locations, and specialties ($0.01)
-- **Linkedin Search Employees**: Search LinkedIn people by company or school ($0.01)
-- **Instagram User Posts**: Get posts or reels from an Instagram user's profile ($0.01)
-- **Instagram Individual Post**: Get detailed data for a specific Instagram post by shortcode or URL ($0.01)
-- **Instagram Post Comments**: Get comments from an Instagram post ($0.01)
-- **X/Twitter User Posts**: Get tweets from a user's profile ($0.01)
-- **X/Twitter Individual Post**: Get detailed data for a specific tweet by ID or URL ($0.01)
+- **Instagram Hashtag**: Get posts for an Instagram hashtag
+- **X/Twitter Tweet Comments**: Get comments/replies from an X tweet
+- **LinkedIn Company Posts**: Get recent posts from a LinkedIn company page
+- **TikTok Hashtag Videos**: Get videos for a specific hashtag
+- **X/Twitter User Profile**: Get X/Twitter profile data including bio, follower counts, and profile info
+- **TikTok Feed Videos**: Get videos from TikTok's recommendation feed
+- **Instagram User Profile**: Get Instagram profile data with optional followers and following lists
+- **TikTok User Profile Videos**: Get videos from a specific TikTok user's profile
+- **TikTok Video Comments**: Get comments from a TikTok video
+- **Linkedin User Profile**: Get comprehensive LinkedIn profile data including work experience, education, skills, and contact info
+- **Linkedin User Posts**: Get recent posts and activity from a LinkedIn user
+- **Linkedin Company Profile**: Get company information including size, industry, locations, and specialties
+- **Linkedin Search Employees**: Search LinkedIn people by company or school
+- **Instagram User Posts**: Get posts or reels from an Instagram user's profile
+- **Instagram Individual Post**: Get detailed data for a specific Instagram post by shortcode or URL
+- **Instagram Post Comments**: Get comments from an Instagram post
+- **X/Twitter User Posts**: Get tweets from a user's profile
+- **X/Twitter Individual Post**: Get detailed data for a specific tweet by ID or URL
 
 ## Usage
 
-### Instagram Hashtag ($0.01)
+### Instagram Hashtag
 Get posts for an Instagram hashtag.
 
 Parameters:
@@ -42,7 +42,7 @@ Parameters:
 orth api run shofo /instagram/hashtag --query 'hashtag=artificialintelligence'
 ```
 
-### X/Twitter Tweet Comments ($0.01)
+### X/Twitter Tweet Comments
 Get comments/replies from an X tweet.
 
 Parameters:
@@ -54,7 +54,7 @@ Parameters:
 orth api run shofo /x/comments --query 'tweet_url=https://x.com/OpenAI/status/123456'
 ```
 
-### LinkedIn Company Posts ($0.01)
+### LinkedIn Company Posts
 Get recent posts from a LinkedIn company page.
 
 Parameters:
@@ -67,7 +67,7 @@ Parameters:
 orth api run shofo /linkedin/company-posts --query 'url=https://linkedin.com/company/openai'
 ```
 
-### TikTok Hashtag Videos ($0.01)
+### TikTok Hashtag Videos
 Get videos for a specific hashtag. Great for campaign tracking and trend monitoring.
 
 Parameters:
@@ -80,7 +80,7 @@ Parameters:
 orth api run shofo /tiktok/hashtag --query 'hashtag=ai'
 ```
 
-### X/Twitter User Profile ($0.01)
+### X/Twitter User Profile
 Get X/Twitter profile data including bio, follower counts, and profile info.
 
 Parameters:
@@ -90,7 +90,7 @@ Parameters:
 orth api run shofo /x/user-profile --query 'username=OpenAI'
 ```
 
-### TikTok Feed Videos ($0.01)
+### TikTok Feed Videos
 Get videos from TikTok's recommendation feed. Perfect for trend analysis and content discovery.
 
 Parameters:
@@ -100,7 +100,7 @@ Parameters:
 orth api run shofo /tiktok/feed --query 'keyword=artificial%20intelligence'
 ```
 
-### Instagram User Profile ($0.01)
+### Instagram User Profile
 Get Instagram profile data with optional followers and following lists.
 
 Parameters:
@@ -112,7 +112,7 @@ Parameters:
 orth api run shofo /instagram/user-profile --query 'username=openai'
 ```
 
-### TikTok User Profile Videos ($0.01)
+### TikTok User Profile Videos
 Get videos from a specific TikTok user's profile.
 
 Parameters:
@@ -125,7 +125,7 @@ Parameters:
 orth api run shofo /tiktok/profile --query 'username=openai'
 ```
 
-### TikTok Video Comments ($0.01)
+### TikTok Video Comments
 Get comments from a TikTok video.
 
 Parameters:
@@ -137,7 +137,7 @@ Parameters:
 orth api run shofo /tiktok/comments --query 'video_url=https://tiktok.com/@user/video/123'
 ```
 
-### Linkedin User Profile ($0.01)
+### Linkedin User Profile
 Get comprehensive LinkedIn profile data including work experience, education, skills, and contact info.
 
 Parameters:
@@ -147,7 +147,7 @@ Parameters:
 orth api run shofo /linkedin/user-profile --query 'url=https://linkedin.com/in/johndoe'
 ```
 
-### Linkedin User Posts ($0.01)
+### Linkedin User Posts
 Get recent posts and activity from a LinkedIn user.
 
 Parameters:
@@ -158,7 +158,7 @@ Parameters:
 orth api run shofo /linkedin/user-posts --query 'url=https://linkedin.com/in/johndoe'
 ```
 
-### Linkedin Company Profile ($0.01)
+### Linkedin Company Profile
 Get company information including size, industry, locations, and specialties.
 
 Parameters:
@@ -170,7 +170,7 @@ Parameters:
 orth api run shofo /linkedin/company-profile --query 'url=https://linkedin.com/company/openai'
 ```
 
-### Linkedin Search Employees ($0.01)
+### Linkedin Search Employees
 Search LinkedIn people by company or school.
 
 Parameters:
@@ -183,7 +183,7 @@ Parameters:
 orth api run shofo /linkedin/search-employees --query 'company_url=https://linkedin.com/company/openai'
 ```
 
-### Instagram User Posts ($0.01)
+### Instagram User Posts
 Get posts or reels from an Instagram user's profile.
 
 Parameters:
@@ -195,7 +195,7 @@ Parameters:
 orth api run shofo /instagram/user-posts --query 'username=openai'
 ```
 
-### Instagram Individual Post ($0.01)
+### Instagram Individual Post
 Get detailed data for a specific Instagram post by shortcode or URL.
 
 Parameters:
@@ -205,7 +205,7 @@ Parameters:
 orth api run shofo /instagram/post --query 'url=https://instagram.com/p/abc123'
 ```
 
-### Instagram Post Comments ($0.01)
+### Instagram Post Comments
 Get comments from an Instagram post.
 
 Parameters:
@@ -218,7 +218,7 @@ Parameters:
 orth api run shofo /instagram/comments --query 'post_url=https://instagram.com/p/abc123'
 ```
 
-### X/Twitter User Posts ($0.01)
+### X/Twitter User Posts
 Get tweets from a user's profile.
 
 Parameters:
@@ -229,7 +229,7 @@ Parameters:
 orth api run shofo /x/user-posts --query 'username=OpenAI'
 ```
 
-### X/Twitter Individual Post ($0.01)
+### X/Twitter Individual Post
 Get detailed data for a specific tweet by ID or URL.
 
 Parameters:

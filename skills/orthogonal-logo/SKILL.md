@@ -9,11 +9,11 @@ Find company domains by searching brand names.
 
 ## Capabilities
 
-- **Brand Search**: Search for company domains by brand name ($0.01)
+- **Brand Search**: Search for company domains by brand name
 
 ## Usage
 
-### Brand Search ($0.01)
+### Brand Search
 Search for company domains by brand name
 
 Parameters:

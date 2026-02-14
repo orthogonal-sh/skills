@@ -9,12 +9,12 @@ Extract web content using AI with natural language prompts.
 
 ## Capabilities
 
-- **Start SmartScraper**: Extract content from a webpage using AI by providing a natural language prompt and a URL ($0.04)
-- **Start SearchScraper**: Start a new AI-powered web search request ($0.12)
-- **Scrape**: Extract raw HTML content from web pages with JavaScript rendering support ($0.03)
-- **Start SmartCrawler**: Start a new web crawl request with AI extraction or markdown conversion ($0.04)
-- **Start Sitemap**: Extract all URLs from a website sitemap automatically ($0.01)
-- **Start Markdownify**: Convert any webpage into clean, readable Markdown format ($0.03)
+- **Start SmartScraper**: Extract content from a webpage using AI by providing a natural language prompt and a URL
+- **Start SearchScraper**: Start a new AI-powered web search request
+- **Scrape**: Extract raw HTML content from web pages with JavaScript rendering support
+- **Start SmartCrawler**: Start a new web crawl request with AI extraction or markdown conversion
+- **Start Sitemap**: Extract all URLs from a website sitemap automatically
+- **Start Markdownify**: Convert any webpage into clean, readable Markdown format
 - **Get SearchScraper Status**: Get the status and results of a previous search request (free)
 - **Get Markdownify Status**: Check the status and retrieve results of a Markdownify request (free)
 - **Get Sitemap Status**: Check the status and retrieve results of a Sitemap request (free)
@@ -23,7 +23,7 @@ Extract web content using AI with natural language prompts.
 
 ## Usage
 
-### Start SmartScraper ($0.04)
+### Start SmartScraper
 Extract content from a webpage using AI by providing a natural language prompt and a URL.
 
 Parameters:
@@ -48,7 +48,7 @@ orth api run scrapegraph /v1/smartscraper --body '{
 }'
 ```
 
-### Start SearchScraper ($0.12)
+### Start SearchScraper
 Start a new AI-powered web search request
 
 Parameters:
@@ -62,7 +62,7 @@ Parameters:
 orth api run scrapegraph /v1/searchscraper --body '{"user_prompt": "Find the latest iPhone prices from major retailers"}'
 ```
 
-### Scrape ($0.03)
+### Scrape
 Extract raw HTML content from web pages with JavaScript rendering support
 
 Parameters:
@@ -75,7 +75,7 @@ Parameters:
 orth api run scrapegraph /v1/scrape --body '{"website_url": "https://example.com"}'
 ```
 
-### Start SmartCrawler ($0.04)
+### Start SmartCrawler
 Start a new web crawl request with AI extraction or markdown conversion
 
 Parameters:
@@ -100,7 +100,7 @@ orth api run scrapegraph /v1/crawl --body '{
 }'
 ```
 
-### Start Sitemap ($0.01)
+### Start Sitemap
 Extract all URLs from a website sitemap automatically.
 
 Parameters:
@@ -113,7 +113,7 @@ Parameters:
 orth api run scrapegraph /v1/sitemap --body '{"website_url": "https://example.com"}'
 ```
 
-### Start Markdownify ($0.03)
+### Start Markdownify
 Convert any webpage into clean, readable Markdown format.
 
 Parameters:

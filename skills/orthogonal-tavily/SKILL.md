@@ -9,16 +9,16 @@ Comprehensive web search, crawling, content extraction, and deep research.
 
 ## Capabilities
 
-- **Tavily Search**: Execute a search query using Tavily Search ($0.016)
+- **Tavily Search**: Execute a search query using Tavily Search
 - **Get Research Task Status**: Retrieve the status and results of a research task using its request ID (free)
-- **Create Research Task**: Tavily Research performs comprehensive research on a given topic by conducting multiple searches, analyzing sources, and generating a detailed research report ($0.50)
-- **Tavily Extract**: Extract web page content from one or more specified URLs using Tavily Extract ($0.01)
-- **Tavily Map**: Tavily Map traverses websites like a graph and can explore hundreds of paths in parallel with intelligent discovery to generate comprehensive site maps ($0.01)
-- **Tavily Crawl**: Tavily Crawl is a graph-based website traversal tool that can explore hundreds of paths in parallel with built-in extraction and intelligent discovery ($0.01)
+- **Create Research Task**: Tavily Research performs comprehensive research on a given topic by conducting multiple searches, analyzing sources, and generating a detailed research report
+- **Tavily Extract**: Extract web page content from one or more specified URLs using Tavily Extract
+- **Tavily Map**: Tavily Map traverses websites like a graph and can explore hundreds of paths in parallel with intelligent discovery to generate comprehensive site maps
+- **Tavily Crawl**: Tavily Crawl is a graph-based website traversal tool that can explore hundreds of paths in parallel with built-in extraction and intelligent discovery
 
 ## Usage
 
-### Tavily Search ($0.016)
+### Tavily Search
 Execute a search query using Tavily Search.
 
 Parameters:
@@ -55,7 +55,7 @@ Retrieve the status and results of a research task using its request ID.
 orth api run tavily /research/{request_id}
 ```
 
-### Create Research Task ($0.50)
+### Create Research Task
 Tavily Research performs comprehensive research on a given topic by conducting multiple searches, analyzing sources, and generating a detailed research report.
 
 Parameters:
@@ -69,7 +69,7 @@ Parameters:
 orth api run tavily /research --body '{"input": "Compare different AI agent frameworks for production use"}'
 ```
 
-### Tavily Extract ($0.01)
+### Tavily Extract
 Extract web page content from one or more specified URLs using Tavily Extract.
 
 Parameters:
@@ -86,7 +86,7 @@ Parameters:
 orth api run tavily /extract --body '{"urls": ["https://example.com/article1", "https://example.com/article2"]}'
 ```
 
-### Tavily Map ($0.01)
+### Tavily Map
 Tavily Map traverses websites like a graph and can explore hundreds of paths in parallel with intelligent discovery to generate comprehensive site maps.
 
 Parameters:
@@ -106,7 +106,7 @@ Parameters:
 orth api run tavily /map --body '{"url": "https://example.com"}'
 ```
 
-### Tavily Crawl ($0.01)
+### Tavily Crawl
 Tavily Crawl is a graph-based website traversal tool that can explore hundreds of paths in parallel with built-in extraction and intelligent discovery.
 
 Parameters:

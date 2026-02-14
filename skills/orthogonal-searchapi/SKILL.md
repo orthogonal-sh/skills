@@ -9,28 +9,28 @@ Search across YouTube, Amazon, eBay, Walmart, TikTok, Instagram, Airbnb, and ad 
 
 ## Capabilities
 
-- **TripAdvisor Search**: Search TripAdvisor listings ($0.01)
-- **YouTube Comments**: Get comments on a YouTube video ($0.01)
-- **YouTube Channel**: Get YouTube channel info ($0.01)
-- **Reddit Ad Library**: Search Reddit ads library ($0.01)
-- **Meta Ad Library**: Search Meta/Facebook ads library ($0.01)
-- **YouTube Transcripts**: Get video transcript/captions ($0.01)
-- **Amazon Search**: Search Amazon products ($0.01)
-- **eBay Search**: Search eBay listings ($0.01)
-- **YouTube Video Details**: Get detailed info about a YouTube video ($0.01)
-- **YouTube Channel Videos**: Get videos from a YouTube channel ($0.01)
-- **Apple App Store Search**: Search Apple App Store apps ($0.01)
-- **Airbnb Search**: Search Airbnb listings ($0.01)
-- **TikTok Profile**: Get TikTok user profile info ($0.01)
-- **Instagram Profile**: Get Instagram profile info ($0.01)
-- **Walmart Search**: Search Walmart products ($0.01)
-- **TikTok Ads Library**: Search TikTok ads library ($0.01)
-- **LinkedIn Ad Library**: Search LinkedIn ads library ($0.01)
-- **YouTube Search**: Search YouTube videos by query ($0.01)
+- **TripAdvisor Search**: Search TripAdvisor listings
+- **YouTube Comments**: Get comments on a YouTube video
+- **YouTube Channel**: Get YouTube channel info
+- **Reddit Ad Library**: Search Reddit ads library
+- **Meta Ad Library**: Search Meta/Facebook ads library
+- **YouTube Transcripts**: Get video transcript/captions
+- **Amazon Search**: Search Amazon products
+- **eBay Search**: Search eBay listings
+- **YouTube Video Details**: Get detailed info about a YouTube video
+- **YouTube Channel Videos**: Get videos from a YouTube channel
+- **Apple App Store Search**: Search Apple App Store apps
+- **Airbnb Search**: Search Airbnb listings
+- **TikTok Profile**: Get TikTok user profile info
+- **Instagram Profile**: Get Instagram profile info
+- **Walmart Search**: Search Walmart products
+- **TikTok Ads Library**: Search TikTok ads library
+- **LinkedIn Ad Library**: Search LinkedIn ads library
+- **YouTube Search**: Search YouTube videos by query
 
 ## Usage
 
-### TripAdvisor Search ($0.01)
+### TripAdvisor Search
 Search TripAdvisor listings
 
 Parameters:
@@ -48,7 +48,7 @@ Parameters:
 orth api run searchapi /api/v1/search --query engine=tripadvisor q=best%20restaurants%20NYC
 ```
 
-### YouTube Comments ($0.01)
+### YouTube Comments
 Get comments on a YouTube video
 
 Parameters:
@@ -62,7 +62,7 @@ Parameters:
 orth api run searchapi /api/v1/search --query engine=youtube_comments video_id=dQw4w9WgXcQ
 ```
 
-### YouTube Channel ($0.01)
+### YouTube Channel
 Get YouTube channel info
 
 Parameters:
@@ -75,7 +75,7 @@ Parameters:
 orth api run searchapi /api/v1/search --query engine=youtube_channel channel_id=UC_x5XG1OV2P6uZZ5FSM9Ttw
 ```
 
-### Reddit Ad Library ($0.01)
+### Reddit Ad Library
 Search Reddit ads library
 
 Parameters:
@@ -91,7 +91,7 @@ Parameters:
 orth api run searchapi /api/v1/search --query engine=reddit_ad_library q=software
 ```
 
-### Meta Ad Library ($0.01)
+### Meta Ad Library
 Search Meta/Facebook ads library
 
 Parameters:
@@ -114,7 +114,7 @@ Parameters:
 orth api run searchapi /api/v1/search --query engine=meta_ad_library q=AI%20tools
 ```
 
-### YouTube Transcripts ($0.01)
+### YouTube Transcripts
 Get video transcript/captions
 
 Parameters:
@@ -129,7 +129,7 @@ Parameters:
 orth api run searchapi /api/v1/search --query engine=youtube_transcripts video_id=dQw4w9WgXcQ
 ```
 
-### Amazon Search ($0.01)
+### Amazon Search
 Search Amazon products
 
 Parameters:
@@ -148,7 +148,7 @@ Parameters:
 orth api run searchapi /api/v1/search --query engine=amazon_search q=wireless%20headphones
 ```
 
-### eBay Search ($0.01)
+### eBay Search
 Search eBay listings
 
 Parameters:
@@ -173,7 +173,7 @@ Parameters:
 orth api run searchapi /api/v1/search --query engine=ebay_search q=vintage%20watch
 ```
 
-### YouTube Video Details ($0.01)
+### YouTube Video Details
 Get detailed info about a YouTube video
 
 Parameters:
@@ -186,7 +186,7 @@ Parameters:
 orth api run searchapi /api/v1/search --query engine=youtube_video video_id=dQw4w9WgXcQ
 ```
 
-### YouTube Channel Videos ($0.01)
+### YouTube Channel Videos
 Get videos from a YouTube channel
 
 Parameters:
@@ -199,7 +199,7 @@ Parameters:
 orth api run searchapi /api/v1/search --query engine=youtube_channel_videos channel_id=UC_x5XG1OV2P6uZZ5FSM9Ttw
 ```
 
-### Apple App Store Search ($0.01)
+### Apple App Store Search
 Search Apple App Store apps
 
 Parameters:
@@ -217,7 +217,7 @@ Parameters:
 orth api run searchapi /api/v1/search --query engine=apple_app_store term=productivity
 ```
 
-### Airbnb Search ($0.01)
+### Airbnb Search
 Search Airbnb listings
 
 Parameters:
@@ -245,7 +245,7 @@ Parameters:
 orth api run searchapi /api/v1/search --query engine=airbnb q=Paris
 ```
 
-### TikTok Profile ($0.01)
+### TikTok Profile
 Get TikTok user profile info
 
 Parameters:
@@ -256,7 +256,7 @@ Parameters:
 orth api run searchapi /api/v1/search --query engine=tiktok_profile username=openai
 ```
 
-### Instagram Profile ($0.01)
+### Instagram Profile
 Get Instagram profile info
 
 Parameters:
@@ -267,7 +267,7 @@ Parameters:
 orth api run searchapi /api/v1/search --query engine=instagram_profile username=openai
 ```
 
-### Walmart Search ($0.01)
+### Walmart Search
 Search Walmart products
 
 Parameters:
@@ -285,7 +285,7 @@ Parameters:
 orth api run searchapi /api/v1/search --query engine=walmart_search q=laptop
 ```
 
-### TikTok Ads Library ($0.01)
+### TikTok Ads Library
 Search TikTok ads library
 
 Parameters:
@@ -301,7 +301,7 @@ Parameters:
 orth api run searchapi /api/v1/search --query engine=tiktok_ads_library q=AI
 ```
 
-### LinkedIn Ad Library ($0.01)
+### LinkedIn Ad Library
 Search LinkedIn ads library
 
 Parameters:
@@ -316,7 +316,7 @@ Parameters:
 orth api run searchapi /api/v1/search --query engine=linkedin_ad_library q=hiring
 ```
 
-### YouTube Search ($0.01)
+### YouTube Search
 Search YouTube videos by query
 
 Parameters:

@@ -9,27 +9,27 @@ Access data from Polymarket and Kalshi prediction markets.
 
 ## Capabilities
 
-- **Orderbook History**: Fetches historical orderbook snapshots for a specific Kalshi market (ticker) over a specified time range ($0.01)
-- **Market Price**: Fetches the current market price for a market by token_id ($0.01)
-- **Market Price**: Fetches the current market price for a Kalshi market by market_ticker ($0.01)
-- **Trade History**: Fetches historical trade data for Kalshi markets with optional filtering by ticker and time range ($0.01)
-- **Sport by Date**: Find equivalent markets across different prediction market platforms (Polymarket, Kalshi, etc ($0.01)
-- **Sports**: Find equivalent markets across different prediction market platforms (Polymarket, Kalshi, etc ($0.01)
-- **Positions**: Fetches all Polymarket positions for a proxy wallet address ($0.01)
-- **Binance Prices**: Fetches historical crypto price data from Binance ($0.01)
-- **Activity**: Fetches activity data for a specific user with optional filtering by market, condition, and time range ($0.01)
-- **Markets**: Find markets on Polymarket using various filters including the ability to search ($0.01)
-- **Orderbook History**: Fetches historical orderbook snapshots for a specific asset (token ID) over a specified time range ($0.01)
-- **Wallet**: Fetches wallet information by providing either an EOA (Externally Owned Account) address or a proxy wallet address ($0.01)
-- **Candlesticks**: Fetches historical candlestick data for a market identified by condition_id, over a specified interval ($0.01)
-- **Chainlink Prices**: Fetches historical crypto price data from Chainlink ($0.01)
-- **Wallet Profit-and-Loss**: Fetches the realized profit and loss (PnL) for a specific wallet address over a specified time range and granularity ($0.01)
-- **Trade History**: Fetches historical trade data with optional filtering by market, condition, token, time range, and user’s wallet address ($0.01)
-- **Markets**: Find markets on Kalshi using various filters including market ticker, event ticker, status, and volume ($0.01)
+- **Orderbook History**: Fetches historical orderbook snapshots for a specific Kalshi market (ticker) over a specified time range
+- **Market Price**: Fetches the current market price for a market by token_id
+- **Market Price**: Fetches the current market price for a Kalshi market by market_ticker
+- **Trade History**: Fetches historical trade data for Kalshi markets with optional filtering by ticker and time range
+- **Sport by Date**: Find equivalent markets across different prediction market platforms (Polymarket, Kalshi, etc
+- **Sports**: Find equivalent markets across different prediction market platforms (Polymarket, Kalshi, etc
+- **Positions**: Fetches all Polymarket positions for a proxy wallet address
+- **Binance Prices**: Fetches historical crypto price data from Binance
+- **Activity**: Fetches activity data for a specific user with optional filtering by market, condition, and time range
+- **Markets**: Find markets on Polymarket using various filters including the ability to search
+- **Orderbook History**: Fetches historical orderbook snapshots for a specific asset (token ID) over a specified time range
+- **Wallet**: Fetches wallet information by providing either an EOA (Externally Owned Account) address or a proxy wallet address
+- **Candlesticks**: Fetches historical candlestick data for a market identified by condition_id, over a specified interval
+- **Chainlink Prices**: Fetches historical crypto price data from Chainlink
+- **Wallet Profit-and-Loss**: Fetches the realized profit and loss (PnL) for a specific wallet address over a specified time range and granularity
+- **Trade History**: Fetches historical trade data with optional filtering by market, condition, token, time range, and user’s wallet address
+- **Markets**: Find markets on Kalshi using various filters including market ticker, event ticker, status, and volume
 
 ## Usage
 
-### Orderbook History ($0.01)
+### Orderbook History
 Fetches historical orderbook snapshots for a specific Kalshi market (ticker) over a specified time range. If no start_time and end_time are provided, returns the latest orderbook snapshot for the market.
 
 Parameters:
@@ -42,7 +42,7 @@ Parameters:
 orth api run dome /kalshi/orderbooks --query 'ticker={ticker}'
 ```
 
-### Market Price ($0.01)
+### Market Price
 Fetches the current market price for a market by token_id. Allows historical lookups via the at_time query parameter.
 
 Parameters:
@@ -52,7 +52,7 @@ Parameters:
 orth api run dome /polymarket/market-price/{token_id}
 ```
 
-### Market Price ($0.01)
+### Market Price
 Fetches the current market price for a Kalshi market by market_ticker. Returns prices for both yes and no sides. Allows historical lookups via the at_time query parameter.
 
 Parameters:
@@ -62,7 +62,7 @@ Parameters:
 orth api run dome /kalshi/market-price/{market_ticker}
 ```
 
-### Trade History ($0.01)
+### Trade History
 Fetches historical trade data for Kalshi markets with optional filtering by ticker and time range. Returns executed trades with pricing, volume, and taker side information. All timestamps are in seconds.
 
 Parameters:
@@ -76,7 +76,7 @@ Parameters:
 orth api run dome /kalshi/trades --query 'ticker={ticker}'
 ```
 
-### Sport by Date ($0.01)
+### Sport by Date
 Find equivalent markets across different prediction market platforms (Polymarket, Kalshi, etc.) for sports events by sport and date.
 
 Parameters:
@@ -86,7 +86,7 @@ Parameters:
 orth api run dome /matching-markets/sports/nba --query 'date=2024-03-01'
 ```
 
-### Sports ($0.01)
+### Sports
 Find equivalent markets across different prediction market platforms (Polymarket, Kalshi, etc.) for sports events using a Polymarket market slug or a Kalshi event ticker.
 
 Parameters:
@@ -97,7 +97,7 @@ Parameters:
 orth api run dome /matching-markets/sports
 ```
 
-### Positions ($0.01)
+### Positions
 Fetches all Polymarket positions for a proxy wallet address. Returns positions with balance >= 10,000 shares (0.01 normalized) with market info.
 
 Parameters:
@@ -108,7 +108,7 @@ Parameters:
 orth api run dome /polymarket/positions/wallet/{wallet_address}
 ```
 
-### Binance Prices ($0.01)
+### Binance Prices
 Fetches historical crypto price data from Binance. Returns price data for a specific currency pair over an optional time range. When no time range is provided, returns the most recent price. All timestamps are in Unix milliseconds.
 
 Parameters:
@@ -122,7 +122,7 @@ Parameters:
 orth api run dome /crypto-prices/binance --query 'currency=btcusdt'
 ```
 
-### Activity ($0.01)
+### Activity
 Fetches activity data for a specific user with optional filtering by market, condition, and time range. Returns trading activity including MERGES, SPLITS, and REDEEMS.
 
 Parameters:
@@ -138,7 +138,7 @@ Parameters:
 orth api run dome /polymarket/activity --query 'user={wallet_address}'
 ```
 
-### Markets ($0.01)
+### Markets
 Find markets on Polymarket using various filters including the ability to search
 
 Parameters:
@@ -158,7 +158,7 @@ Parameters:
 orth api run dome /polymarket/markets --query 'search=election' 'status=open'
 ```
 
-### Orderbook History ($0.01)
+### Orderbook History
 Fetches historical orderbook snapshots for a specific asset (token ID) over a specified time range. If no start_time and end_time are provided, returns the latest orderbook snapshot for the market.
 
 Parameters:
@@ -172,7 +172,7 @@ Parameters:
 orth api run dome /polymarket/orderbooks --query 'token_id={token_id}'
 ```
 
-### Wallet ($0.01)
+### Wallet
 Fetches wallet information by providing either an EOA (Externally Owned Account) address or a proxy wallet address. Returns the associated EOA, proxy, and wallet type. Optionally returns trading metrics including total volume, number of trades, and unique markets traded when with_metrics=true.
 
 Parameters:
@@ -186,7 +186,7 @@ Parameters:
 orth api run dome /polymarket/wallet --query 'address={wallet_address}'
 ```
 
-### Candlesticks ($0.01)
+### Candlesticks
 Fetches historical candlestick data for a market identified by condition_id, over a specified interval.
 
 Parameters:
@@ -198,7 +198,7 @@ Parameters:
 orth api run dome /polymarket/candlesticks/{condition_id} --query 'interval=1h'
 ```
 
-### Chainlink Prices ($0.01)
+### Chainlink Prices
 Fetches historical crypto price data from Chainlink. Returns price data for a specific currency pair over an optional time range. When no time range is provided, returns the most recent price. All timestamps are in Unix milliseconds. Currency format: slash-separated (e.g., btc/usd, eth/usd).
 
 Parameters:
@@ -212,7 +212,7 @@ Parameters:
 orth api run dome /crypto-prices/chainlink --query 'currency=btc/usd'
 ```
 
-### Wallet Profit-and-Loss ($0.01)
+### Wallet Profit-and-Loss
 Fetches the realized profit and loss (PnL) for a specific wallet address over a specified time range and granularity. Note: This will differ to what you see on Polymarket’s dashboard since Polymarket showcases historical unrealized PnL.
 
 Parameters:
@@ -224,7 +224,7 @@ Parameters:
 orth api run dome /polymarket/wallet/pnl/{wallet_address}
 ```
 
-### Trade History ($0.01)
+### Trade History
 Fetches historical trade data with optional filtering by market, condition, token, time range, and user’s wallet address.
 
 Parameters:
@@ -241,7 +241,7 @@ Parameters:
 orth api run dome /polymarket/orders --query 'market={market_id}'
 ```
 
-### Markets ($0.01)
+### Markets
 Find markets on Kalshi using various filters including market ticker, event ticker, status, and volume
 
 Parameters:

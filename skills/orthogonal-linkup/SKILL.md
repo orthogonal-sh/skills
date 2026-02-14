@@ -9,12 +9,12 @@ Search the web and fetch content from any URL.
 
 ## Capabilities
 
-- **Search**: The /search endpoint allows you to retrieve web content ($0.01)
-- **Fetch**: The /fetch endpoint allows you to fetch a single webpage from a given URL ($0.01)
+- **Search**: The /search endpoint allows you to retrieve web content
+- **Fetch**: The /fetch endpoint allows you to fetch a single webpage from a given URL
 
 ## Usage
 
-### Search ($0.01)
+### Search
 The /search endpoint allows you to retrieve web content.
 
 Parameters:
@@ -39,7 +39,7 @@ orth api run linkup /search --body '{
 }'
 ```
 
-### Fetch ($0.01)
+### Fetch
 The /fetch endpoint allows you to fetch a single webpage from a given URL.
 
 Parameters:

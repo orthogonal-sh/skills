@@ -9,30 +9,30 @@ Search the web, get AI answers, extract content, and run deep research tasks.
 
 ## Capabilities
 
-- **Get Status**: Reference for getting deep research task status via GET /v1/deepresearch/tasks/{id}/status ($0.01)
-- **Update Task**: Reference for adding follow-up instructions to a running task via POST /v1/deepresearch/tasks/{id}/update ($0.01)
-- **Cancel Task**: Reference for cancelling a running task via POST /v1/deepresearch/tasks/{id}/cancel ($0.01)
-- **Delete Task**: Reference for deleting a task via DELETE /v1/deepresearch/tasks/{id}/delete ($0.01)
-- **Get Batch Status**: Reference for getting batch status via GET /v1/deepresearch/batches/ ($0.01)
-- **List Batch Tasks**: Reference for listing tasks in a batch via GET /v1/deepresearch/batches//tasks ($0.01)
-- **Cancel Batch**: Reference for cancelling a batch via POST /v1/deepresearch/batches//cancel ($0.01)
-- **Search**: Reference for the Valyu Search endpoint to search the web, research, and proprietary datasets via POST /v1/search ($0.01)
-- **Answer**: Reference for the Valyu Answer endpoint that blends search results into AI-generated answers via POST /v1/answer ($0.01)
-- **Contents**: Reference for the Valyu Contents endpoint that extracts clean, structured content from any URL via POST /v1/contents ($0.01)
-- **Create Batch**: Reference for creating a new batch via POST /v1/deepresearch/batches ($0.01)
-- **Create Task**: Reference for creating a new deep research task via POST /v1/deepresearch/tasks ($0.01)
-- **Add Tasks to Batch**: Reference for adding tasks to a batch via POST /v1/deepresearch/batches//tasks ($0.01)
+- **Get Status**: Reference for getting deep research task status via GET /v1/deepresearch/tasks/{id}/status
+- **Update Task**: Reference for adding follow-up instructions to a running task via POST /v1/deepresearch/tasks/{id}/update
+- **Cancel Task**: Reference for cancelling a running task via POST /v1/deepresearch/tasks/{id}/cancel
+- **Delete Task**: Reference for deleting a task via DELETE /v1/deepresearch/tasks/{id}/delete
+- **Get Batch Status**: Reference for getting batch status via GET /v1/deepresearch/batches/
+- **List Batch Tasks**: Reference for listing tasks in a batch via GET /v1/deepresearch/batches//tasks
+- **Cancel Batch**: Reference for cancelling a batch via POST /v1/deepresearch/batches//cancel
+- **Search**: Reference for the Valyu Search endpoint to search the web, research, and proprietary datasets via POST /v1/search
+- **Answer**: Reference for the Valyu Answer endpoint that blends search results into AI-generated answers via POST /v1/answer
+- **Contents**: Reference for the Valyu Contents endpoint that extracts clean, structured content from any URL via POST /v1/contents
+- **Create Batch**: Reference for creating a new batch via POST /v1/deepresearch/batches
+- **Create Task**: Reference for creating a new deep research task via POST /v1/deepresearch/tasks
+- **Add Tasks to Batch**: Reference for adding tasks to a batch via POST /v1/deepresearch/batches//tasks
 
 ## Usage
 
-### Get Status ($0.01)
+### Get Status
 Reference for getting deep research task status via GET /v1/deepresearch/tasks/{id}/status.
 
 ```bash
 orth api run valyu /v1/deepresearch/tasks/{id}/status
 ```
 
-### Update Task ($0.01)
+### Update Task
 Reference for adding follow-up instructions to a running task via POST /v1/deepresearch/tasks/{id}/update.
 
 Parameters:
@@ -42,42 +42,42 @@ Parameters:
 orth api run valyu /v1/deepresearch/tasks/{id}/update --body '{"query": "Updated research query"}'
 ```
 
-### Cancel Task ($0.01)
+### Cancel Task
 Reference for cancelling a running task via POST /v1/deepresearch/tasks/{id}/cancel.
 
 ```bash
 orth api run valyu /v1/deepresearch/tasks/{id}/cancel
 ```
 
-### Delete Task ($0.01)
+### Delete Task
 Reference for deleting a task via DELETE /v1/deepresearch/tasks/{id}/delete.
 
 ```bash
 orth api run valyu /v1/deepresearch/tasks/{id}/delete
 ```
 
-### Get Batch Status ($0.01)
+### Get Batch Status
 Reference for getting batch status via GET /v1/deepresearch/batches/.
 
 ```bash
 orth api run valyu /v1/deepresearch/batches/{id}
 ```
 
-### List Batch Tasks ($0.01)
+### List Batch Tasks
 Reference for listing tasks in a batch via GET /v1/deepresearch/batches//tasks.
 
 ```bash
 orth api run valyu /v1/deepresearch/batches/{id}/tasks
 ```
 
-### Cancel Batch ($0.01)
+### Cancel Batch
 Reference for cancelling a batch via POST /v1/deepresearch/batches//cancel.
 
 ```bash
 orth api run valyu /v1/deepresearch/batches/{id}/cancel
 ```
 
-### Search ($0.01)
+### Search
 Reference for the Valyu Search endpoint to search the web, research, and proprietary datasets via POST /v1/search.
 
 Parameters:
@@ -101,7 +101,7 @@ Parameters:
 orth api run valyu /v1/search --body '{"query": "AI agent frameworks comparison"}'
 ```
 
-### Answer ($0.01)
+### Answer
 Reference for the Valyu Answer endpoint that blends search results into AI-generated answers via POST /v1/answer.
 
 Parameters:
@@ -122,7 +122,7 @@ Parameters:
 orth api run valyu /v1/answer --body '{"query": "What are the best practices for building AI agents?"}'
 ```
 
-### Contents ($0.01)
+### Contents
 Reference for the Valyu Contents endpoint that extracts clean, structured content from any URL via POST /v1/contents.
 
 Parameters:
@@ -137,7 +137,7 @@ Parameters:
 orth api run valyu /v1/contents --body '{"urls": ["https://example.com/article"]}'
 ```
 
-### Create Batch ($0.01)
+### Create Batch
 Reference for creating a new batch via POST /v1/deepresearch/batches.
 
 Parameters:
@@ -152,7 +152,7 @@ Parameters:
 orth api run valyu /v1/deepresearch/batches --body '{"name": "Competitor Research"}'
 ```
 
-### Create Task ($0.01)
+### Create Task
 Reference for creating a new deep research task via POST /v1/deepresearch/tasks.
 
 Parameters:
@@ -175,7 +175,7 @@ Parameters:
 orth api run valyu /v1/deepresearch/tasks --body '{"query": "Comprehensive analysis of vector databases market"}'
 ```
 
-### Add Tasks to Batch ($0.01)
+### Add Tasks to Batch
 Reference for adding tasks to a batch via POST /v1/deepresearch/batches//tasks.
 
 Parameters:

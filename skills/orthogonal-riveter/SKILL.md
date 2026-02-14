@@ -9,15 +9,15 @@ Scrape web pages and extract data into your defined structure.
 
 ## Capabilities
 
-- **Scrape**: Scrape a webpage and return the text content ($0.01)
-- **Run**: Copy link Define the structure of your output directly in the API request ($0.01)
+- **Scrape**: Scrape a webpage and return the text content
+- **Run**: Copy link Define the structure of your output directly in the API request
 - **Run data**: Retrieve the processed data from a completed project run (free)
 - **Run status**: Check the current status of a project run (free)
 - **Stop run**: Stop a currently running project (free)
 
 ## Usage
 
-### Scrape ($0.01)
+### Scrape
 Scrape a webpage and return the text content. This endpoint allows you to extract text content from any public webpage.
 
 Parameters:
@@ -29,7 +29,7 @@ Parameters:
 orth api run riveter /v1/scrape --body '{"url": "https://example.com/article"}'
 ```
 
-### Run ($0.01)
+### Run
 Copy link Define the structure of your output directly in the API request. This endpoint allows you to define both your input data and output configuration in a single request.
 
 Parameters:
