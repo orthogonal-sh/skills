@@ -40,7 +40,7 @@ Parameters:
 - country_code (string) - Country code (e.g., US)
 
 ```bash
-orth api run tomba /v1/phone-validator --query 'phone=+14155552671'
+orth run tomba /v1/phone-validator --query 'phone=+14155552671'
 ```
 
 ### Domain Status
@@ -50,7 +50,7 @@ Parameters:
 - domain* (string) - Domain to check
 
 ```bash
-orth api run tomba /v1/domain-status --query 'domain=stripe.com'
+orth run tomba /v1/domain-status --query 'domain=stripe.com'
 ```
 
 ### Email Format
@@ -60,7 +60,7 @@ Parameters:
 - domain* (string) - Domain name, e.g. stripe.com
 
 ```bash
-orth api run tomba /v1/email-format --query 'domain=stripe.com'
+orth run tomba /v1/email-format --query 'domain=stripe.com'
 ```
 
 ### Find Person
@@ -70,7 +70,7 @@ Parameters:
 - email* (string) - Email address to look up
 
 ```bash
-orth api run tomba /v1/people/find --query 'email=john@stripe.com'
+orth run tomba /v1/people/find --query 'email=john@stripe.com'
 ```
 
 ### Combined Enrichment
@@ -80,7 +80,7 @@ Parameters:
 - email* (string) - Email address to enrich
 
 ```bash
-orth api run tomba /v1/combined/find --query 'email=john@stripe.com'
+orth run tomba /v1/combined/find --query 'email=john@stripe.com'
 ```
 
 ### Domain Suggestions
@@ -90,7 +90,7 @@ Parameters:
 - query* (string) - The domain or company name to find suggestions for
 
 ```bash
-orth api run tomba /v1/domain-suggestions --query 'query=Google'
+orth run tomba /v1/domain-suggestions --query 'query=Google'
 ```
 
 ### Email Count
@@ -100,7 +100,7 @@ Parameters:
 - domain* (string) - Domain name, e.g. stripe.com
 
 ```bash
-orth api run tomba /v1/email-count --query 'domain=openai.com'
+orth run tomba /v1/email-count --query 'domain=openai.com'
 ```
 
 ### Author Finder
@@ -110,7 +110,7 @@ Parameters:
 - url* (string) - URL of the blog post/article
 
 ```bash
-orth api run tomba /v1/author-finder --query 'url=https://example.com/blog/post'
+orth run tomba /v1/author-finder --query 'url=https://example.com/blog/post'
 ```
 
 ### LinkedIn Finder
@@ -121,7 +121,7 @@ Parameters:
 - enrich_mobile (string) - Set to true to get phone number
 
 ```bash
-orth api run tomba /v1/linkedin --query 'url=https://linkedin.com/in/johndoe'
+orth run tomba /v1/linkedin --query 'url=https://linkedin.com/in/johndoe'
 ```
 
 ### Technology Stack
@@ -131,7 +131,7 @@ Parameters:
 - domain* (string) - Domain to analyze
 
 ```bash
-orth api run tomba /v1/technology --query 'domain=stripe.com'
+orth run tomba /v1/technology --query 'domain=stripe.com'
 ```
 
 ### Verify Email
@@ -141,7 +141,7 @@ Parameters:
 - email* (string) - The email address to verify
 
 ```bash
-orth api run tomba /v1/email-verifier --query 'email=john@example.com'
+orth run tomba /v1/email-verifier --query 'email=john@example.com'
 ```
 
 ### Find Company
@@ -151,7 +151,7 @@ Parameters:
 - domain* (string) - Domain name (e.g., stripe.com)
 
 ```bash
-orth api run tomba /v1/companies/find --query 'domain=anthropic.com'
+orth run tomba /v1/companies/find --query 'domain=anthropic.com'
 ```
 
 ### Location
@@ -161,7 +161,7 @@ Parameters:
 - domain* (string) - Domain name, e.g. stripe.com
 
 ```bash
-orth api run tomba /v1/location --query 'ip=8.8.8.8'
+orth run tomba /v1/location --query 'ip=8.8.8.8'
 ```
 
 ### Domain Search
@@ -176,7 +176,7 @@ Parameters:
 - department (string) - Department filter: engineering, sales, finance, hr, it, marketing, operations, management, executive, legal, support, communication, software, security, pr, warehouse, diversity, administrative, facilities, accounting
 
 ```bash
-orth api run tomba /v1/domain-search --query 'domain=stripe.com'
+orth run tomba /v1/domain-search --query 'domain=stripe.com'
 ```
 
 ### Email Enrichment
@@ -187,7 +187,7 @@ Parameters:
 - enrich_mobile (string) - Set to true to get phone number
 
 ```bash
-orth api run tomba /v1/enrich --query 'email=john@stripe.com'
+orth run tomba /v1/enrich --query 'email=john@stripe.com'
 ```
 
 ### Find Phone
@@ -200,7 +200,7 @@ Parameters:
 - full (boolean) - Set to true to get all phone numbers
 
 ```bash
-orth api run tomba /v1/phone-finder --query domain=stripe.com first_name=John last_name=Doe
+orth run tomba /v1/phone-finder --query domain=stripe.com first_name=John last_name=Doe
 ```
 
 ### Similar Domains
@@ -210,7 +210,7 @@ Parameters:
 - domain* (string) - Domain to find similar domains for
 
 ```bash
-orth api run tomba /v1/similar --query 'domain=stripe.com'
+orth run tomba /v1/similar --query 'domain=stripe.com'
 ```
 
 ### Email Finder
@@ -225,7 +225,7 @@ Parameters:
 - enrich_mobile (string) - Set to true to get phone number
 
 ```bash
-orth api run tomba /v1/email-finder --query domain=stripe.com first_name=John last_name=Doe
+orth run tomba /v1/email-finder --query domain=stripe.com first_name=John last_name=Doe
 ```
 
 ### Email Sources
@@ -235,7 +235,7 @@ Parameters:
 - email* (string) - Email address to find sources for
 
 ```bash
-orth api run tomba /v1/email-sources --query 'email=john@stripe.com'
+orth run tomba /v1/email-sources --query 'email=john@stripe.com'
 ```
 
 ### Search Companies
@@ -247,7 +247,7 @@ Parameters:
 - page (integer) - Page number for pagination (1-1000, default: 1)
 
 ```bash
-orth api run tomba /v1/reveal/search --body '{"query": "AI startups in San Francisco with 50+ employees"}'
+orth run tomba /v1/reveal/search --body '{"query": "AI startups in San Francisco with 50+ employees"}'
 ```
 
 ## Use Cases

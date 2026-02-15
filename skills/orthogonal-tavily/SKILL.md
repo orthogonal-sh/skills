@@ -41,7 +41,7 @@ Parameters:
 - auto_parameters (boolean) - When auto_parameters is enabled, Tavily automatically configures search parameters based on your query's content and intent. You can still set other parameters manually, and your explicit values will override the automatic ones. The parameters include_answer, include_raw_content, and max_results must always be set manually, as they directly affect response size. Note: search_depth may be automatically set to advanced when it's likely to improve results. This uses 2 API credits per request. To avoid the extra cost, you can explicitly set search_depth to basic.
 
 ```bash
-orth api run tavily /search --body '{
+orth run tavily /search --body '{
   "query": "latest developments in AI agents",
   "search_depth": "advanced",
   "include_answer": true
@@ -52,7 +52,7 @@ orth api run tavily /search --body '{
 Retrieve the status and results of a research task using its request ID.
 
 ```bash
-orth api run tavily /research/{request_id}
+orth run tavily /research/{request_id}
 ```
 
 ### Create Research Task
@@ -66,7 +66,7 @@ Parameters:
 - citation_format (enum<string>) - The format for citations in the research report.
 
 ```bash
-orth api run tavily /research --body '{"input": "Compare different AI agent frameworks for production use"}'
+orth run tavily /research --body '{"input": "Compare different AI agent frameworks for production use"}'
 ```
 
 ### Tavily Extract
@@ -83,7 +83,7 @@ Parameters:
 - timeout (number) - Maximum time in seconds to wait for the URL extraction before timing out. Must be between 1.0 and 60.0 seconds. If not specified, default timeouts are applied based on extract_depth: 10 seconds for basic extraction and 30 seconds for advanced extraction.
 
 ```bash
-orth api run tavily /extract --body '{"urls": ["https://example.com/article1", "https://example.com/article2"]}'
+orth run tavily /extract --body '{"urls": ["https://example.com/article1", "https://example.com/article2"]}'
 ```
 
 ### Tavily Map
@@ -103,7 +103,7 @@ Parameters:
 - timeout (number<float>) - Maximum time in seconds to wait for the map operation before timing out. Must be between 10 and 150 seconds.
 
 ```bash
-orth api run tavily /map --body '{"url": "https://example.com"}'
+orth run tavily /map --body '{"url": "https://example.com"}'
 ```
 
 ### Tavily Crawl
@@ -128,7 +128,7 @@ Parameters:
 - timeout (number<float>) - Maximum time in seconds to wait for the crawl operation before timing out. Must be between 10 and 150 seconds.
 
 ```bash
-orth api run tavily /crawl --body '{
+orth run tavily /crawl --body '{
   "url": "https://docs.example.com",
   "max_depth": 3
 }'

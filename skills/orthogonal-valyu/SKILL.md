@@ -29,7 +29,7 @@ Search the web, get AI answers, extract content, and run deep research tasks.
 Reference for getting deep research task status via GET /v1/deepresearch/tasks/{id}/status.
 
 ```bash
-orth api run valyu /v1/deepresearch/tasks/{id}/status
+orth run valyu /v1/deepresearch/tasks/{id}/status
 ```
 
 ### Update Task
@@ -39,42 +39,42 @@ Parameters:
 - instruction* (string) - Follow-up instruction to add to the running task. Must be submitted before the writing phase begins.
 
 ```bash
-orth api run valyu /v1/deepresearch/tasks/{id}/update --body '{"query": "Updated research query"}'
+orth run valyu /v1/deepresearch/tasks/{id}/update --body '{"query": "Updated research query"}'
 ```
 
 ### Cancel Task
 Reference for cancelling a running task via POST /v1/deepresearch/tasks/{id}/cancel.
 
 ```bash
-orth api run valyu /v1/deepresearch/tasks/{id}/cancel
+orth run valyu /v1/deepresearch/tasks/{id}/cancel
 ```
 
 ### Delete Task
 Reference for deleting a task via DELETE /v1/deepresearch/tasks/{id}/delete.
 
 ```bash
-orth api run valyu /v1/deepresearch/tasks/{id}/delete
+orth run valyu /v1/deepresearch/tasks/{id}/delete
 ```
 
 ### Get Batch Status
 Reference for getting batch status via GET /v1/deepresearch/batches/.
 
 ```bash
-orth api run valyu /v1/deepresearch/batches/{id}
+orth run valyu /v1/deepresearch/batches/{id}
 ```
 
 ### List Batch Tasks
 Reference for listing tasks in a batch via GET /v1/deepresearch/batches//tasks.
 
 ```bash
-orth api run valyu /v1/deepresearch/batches/{id}/tasks
+orth run valyu /v1/deepresearch/batches/{id}/tasks
 ```
 
 ### Cancel Batch
 Reference for cancelling a batch via POST /v1/deepresearch/batches//cancel.
 
 ```bash
-orth api run valyu /v1/deepresearch/batches/{id}/cancel
+orth run valyu /v1/deepresearch/batches/{id}/cancel
 ```
 
 ### Search
@@ -98,7 +98,7 @@ Parameters:
 - url_only (boolean) - When set to true, only returns URLs for results (no content). Only applies when search_type is 'web' or 'news'.
 
 ```bash
-orth api run valyu /v1/search --body '{"query": "AI agent frameworks comparison"}'
+orth run valyu /v1/search --body '{"query": "AI agent frameworks comparison"}'
 ```
 
 ### Answer
@@ -119,7 +119,7 @@ Parameters:
 - streaming (boolean) - Enable Server-Sent Events (SSE) streaming. When true, returns a stream of chunks: search_results first, then content deltas, then metadata, then [DONE].
 
 ```bash
-orth api run valyu /v1/answer --body '{"query": "What are the best practices for building AI agents?"}'
+orth run valyu /v1/answer --body '{"query": "What are the best practices for building AI agents?"}'
 ```
 
 ### Contents
@@ -134,7 +134,7 @@ Parameters:
 - summary (boolean) - Toggle AI processing (false is default)
 
 ```bash
-orth api run valyu /v1/contents --body '{"urls": ["https://example.com/article"]}'
+orth run valyu /v1/contents --body '{"urls": ["https://example.com/article"]}'
 ```
 
 ### Create Batch
@@ -149,7 +149,7 @@ Parameters:
 - metadata (object) - Custom metadata for tracking and organization
 
 ```bash
-orth api run valyu /v1/deepresearch/batches --body '{"name": "Competitor Research"}'
+orth run valyu /v1/deepresearch/batches --body '{"name": "Competitor Research"}'
 ```
 
 ### Create Task
@@ -172,7 +172,7 @@ Parameters:
 - deliverables (object[]) - Additional file outputs to generate from the research (CSV, Excel, PowerPoint, Word, PDF). Max 10 deliverables.
 
 ```bash
-orth api run valyu /v1/deepresearch/tasks --body '{"query": "Comprehensive analysis of vector databases market"}'
+orth run valyu /v1/deepresearch/tasks --body '{"query": "Comprehensive analysis of vector databases market"}'
 ```
 
 ### Add Tasks to Batch
@@ -182,7 +182,7 @@ Parameters:
 - tasks* (object[]) - Array of tasks to add to the batch (1-100 tasks per request)
 
 ```bash
-orth api run valyu /v1/deepresearch/batches/{id}/tasks
+orth run valyu /v1/deepresearch/batches/{id}/tasks
 ```
 
 ## Use Cases

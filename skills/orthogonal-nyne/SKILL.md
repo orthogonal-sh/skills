@@ -49,7 +49,7 @@ Parameters:
 - custom_filters (object) - Structured filters (locations, industries, titles, etc.)
 
 ```bash
-orth api run nyne /person/search --body '{"query": "Software engineers at OpenAI"}'
+orth run nyne /person/search --body '{"query": "Software engineers at OpenAI"}'
 ```
 
 ### Person Enrichment
@@ -69,7 +69,7 @@ Parameters:
 - probability_score (boolean) - Include confidence score in results
 
 ```bash
-orth api run nyne /person/enrichment --body '{"email": "john@openai.com"}'
+orth run nyne /person/enrichment --body '{"email": "john@openai.com"}'
 ```
 
 ### Person Events
@@ -84,7 +84,7 @@ Parameters:
 - callback_url (string) - HTTPS endpoint for automatic delivery
 
 ```bash
-orth api run nyne /person/events --body '{"event": "YC Demo Day"}'
+orth run nyne /person/events --body '{"event": "YC Demo Day"}'
 ```
 
 ### Person Social Profiles
@@ -97,7 +97,7 @@ Parameters:
 - callback_url (string) - URL to receive results via webhook
 
 ```bash
-orth api run nyne /person/social-profiles --body '{"email": "john@openai.com"}'
+orth run nyne /person/social-profiles --body '{"email": "john@openai.com"}'
 ```
 
 ### Person Single Social Lookup
@@ -110,7 +110,7 @@ Parameters:
 - callback_url (string) - URL to receive results via webhook
 
 ```bash
-orth api run nyne /person/single-social-lookup --body '{"email": "john@openai.com", "site": "linkedin"}'
+orth run nyne /person/single-social-lookup --body '{"email": "john@openai.com", "site": "linkedin"}'
 ```
 
 ### Person Interactions
@@ -123,7 +123,7 @@ Parameters:
 - callback_url (string) - URL to receive results via webhook
 
 ```bash
-orth api run nyne /person/interactions --body '{"type": "followers", "social_media_url": "https://twitter.com/openai"}'
+orth run nyne /person/interactions --body '{"type": "followers", "social_media_url": "https://twitter.com/openai"}'
 ```
 
 ### Person Interests
@@ -136,7 +136,7 @@ Parameters:
 - callback_url (string) - URL to receive results via webhook
 
 ```bash
-orth api run nyne /person/interests --body '{"email": "john@openai.com"}'
+orth run nyne /person/interests --body '{"email": "john@openai.com"}'
 ```
 
 ### Person Newsfeed
@@ -147,7 +147,7 @@ Parameters:
 - callback_url (string) - URL to receive results via webhook
 
 ```bash
-orth api run nyne /person/newsfeed --body '{"social_media_url": "https://linkedin.com/in/johndoe"}'
+orth run nyne /person/newsfeed --body '{"social_media_url": "https://linkedin.com/in/johndoe"}'
 ```
 
 ### Company Search
@@ -162,7 +162,7 @@ Parameters:
 - callback_url (string) - HTTPS endpoint for automatic delivery
 
 ```bash
-orth api run nyne /company/search --body '{"industry": "AI", "location": "San Francisco"}'
+orth run nyne /company/search --body '{"industry": "AI", "location": "San Francisco"}'
 ```
 
 ### Company Enrichment
@@ -175,7 +175,7 @@ Parameters:
 - callback_url (string) - HTTPS endpoint for automatic delivery
 
 ```bash
-orth api run nyne /company/enrichment --body '{"social_media_url": "https://linkedin.com/company/openai"}'
+orth run nyne /company/enrichment --body '{"social_media_url": "https://linkedin.com/company/openai"}'
 ```
 
 ### Company Check Seller
@@ -187,7 +187,7 @@ Parameters:
 - callback_url (string) - HTTPS endpoint for automatic delivery
 
 ```bash
-orth api run nyne /company/checkseller --body '{"company_name": "Vanta", "product_service": "SOC 2 automation"}'
+orth run nyne /company/checkseller --body '{"company_name": "Vanta", "product_service": "SOC 2 automation"}'
 ```
 
 ### Company Needs
@@ -200,7 +200,7 @@ Parameters:
 - callback_url (string) - HTTPS endpoint for automatic delivery
 
 ```bash
-orth api run nyne /company/needs --body '{"company_name": "Uber Technologies", "content": "Regulatory challenges"}'
+orth run nyne /company/needs --body '{"company_name": "Uber Technologies", "content": "Regulatory challenges"}'
 ```
 
 ### Company Funding
@@ -212,7 +212,7 @@ Parameters:
 - callback_url (string) - HTTPS endpoint for automatic delivery
 
 ```bash
-orth api run nyne /company/funding --body '{"company_name": "OpenAI"}'
+orth run nyne /company/funding --body '{"company_name": "OpenAI"}'
 ```
 
 ### Company Funders
@@ -224,7 +224,7 @@ Parameters:
 - callback_url (string) - HTTPS endpoint for automatic delivery
 
 ```bash
-orth api run nyne /company/funders --body '{"company_name": "OpenAI"}'
+orth run nyne /company/funders --body '{"company_name": "OpenAI"}'
 ```
 
 ## Use Cases

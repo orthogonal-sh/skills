@@ -13,7 +13,7 @@ Build targeted prospect lists with verified emails and contact information.
 Search for companies matching your ICP:
 
 ```bash
-orth api run fiber /v1/natural-language-search/companies --body '{
+orth run fiber /v1/natural-language-search/companies --body '{
   "query": "B2B SaaS startups in San Francisco with 50-200 employees Series A or B funded"
 }'
 ```
@@ -22,7 +22,7 @@ orth api run fiber /v1/natural-language-search/companies --body '{
 Search for people at target companies:
 
 ```bash
-orth api run fiber /v1/people-search --body '{
+orth run fiber /v1/people-search --body '{
   "searchParams": {
     "job_titles": ["CTO", "VP Engineering", "Head of Engineering"],
     "company_names": ["Stripe", "Figma", "Notion"],
@@ -35,14 +35,14 @@ orth api run fiber /v1/people-search --body '{
 Find all contacts at a domain:
 
 ```bash
-orth api run hunter /v2/domain-search --query 'domain=stripe.com'
+orth run hunter /v2/domain-search --query 'domain=stripe.com'
 ```
 
 ### Step 4: Find Specific Contact's Email
 Find email for a specific person:
 
 ```bash
-orth api run sixtyfour /find-email --body '{
+orth run sixtyfour /find-email --body '{
   "lead": {
     "first_name": "Sarah",
     "last_name": "Chen",
@@ -55,21 +55,21 @@ orth api run sixtyfour /find-email --body '{
 Check deliverability before outreach:
 
 ```bash
-orth api run fiber /v1/validate-email/single --body '{"email": "sarah@stripe.com"}'
+orth run fiber /v1/validate-email/single --body '{"email": "sarah@stripe.com"}'
 ```
 
 ### Step 6: Enrich with Company Data
 Get company context for personalization:
 
 ```bash
-orth api run brand-dev /v1/brand/retrieve --query 'domain=stripe.com'
+orth run brand-dev /v1/brand/retrieve --query 'domain=stripe.com'
 ```
 
 ## Prospecting Pipeline
 
 ```bash
 # 1. Find companies (Fiber)
-orth api run fiber /v1/company-search --body '{
+orth run fiber /v1/company-search --body '{
   "searchParams": {
     "industries": ["Software", "SaaS"],
     "employee_count_min": 50,
@@ -79,7 +79,7 @@ orth api run fiber /v1/company-search --body '{
 }'
 
 # 2. Find decision makers (Fiber)
-orth api run fiber /v1/people-search --body '{
+orth run fiber /v1/people-search --body '{
   "searchParams": {
     "job_titles": ["VP Sales", "Head of Sales", "CRO"],
     "company_domains": ["company1.com", "company2.com"]
@@ -87,10 +87,10 @@ orth api run fiber /v1/people-search --body '{
 }'
 
 # 3. Get emails (Hunter)
-orth api run hunter /v2/domain-search --query 'domain=company1.com'
+orth run hunter /v2/domain-search --query 'domain=company1.com'
 
 # 4. Verify emails (Fiber)
-orth api run fiber /v1/validate-email/single --body '{"email": "lead@company.com"}'
+orth run fiber /v1/validate-email/single --body '{"email": "lead@company.com"}'
 ```
 
 ## Tips

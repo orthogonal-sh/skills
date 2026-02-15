@@ -13,14 +13,14 @@ Analyze images to extract text, describe content, and detect objects using AI.
 Fetch image content:
 
 ```bash
-orth api run linkup /fetch --body '{"url": "https://example.com/image.jpg"}'
+orth run linkup /fetch --body '{"url": "https://example.com/image.jpg"}'
 ```
 
 ### Step 2: Extract Text (OCR)
 Use AI to extract text from images:
 
 ```bash
-orth api run scrapegraph /v1/smartscraper --body '{
+orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://example.com/screenshot.png",
   "user_prompt": "Extract all visible text from this image"
 }'
@@ -30,7 +30,7 @@ orth api run scrapegraph /v1/smartscraper --body '{
 Get specific data from images:
 
 ```bash
-orth api run riveter /v1/run --body '{
+orth run riveter /v1/run --body '{
   "url": "https://example.com/receipt.jpg",
   "schema": {
     "store_name": "string",
@@ -45,20 +45,20 @@ orth api run riveter /v1/run --body '{
 Get screenshots of web pages:
 
 ```bash
-orth api run brand-dev /v1/brand/screenshot --query 'domain=stripe.com'
+orth run brand-dev /v1/brand/screenshot --query 'domain=stripe.com'
 ```
 
 ## Example Usage
 
 ```bash
 # Extract receipt data
-orth api run scrapegraph /v1/smartscraper --body '{
+orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://example.com/receipt.jpg",
   "user_prompt": "Extract store name, date, all items with prices, and total amount"
 }'
 
 # Get website screenshot
-orth api run brand-dev /v1/brand/screenshot --query 'domain=openai.com'
+orth run brand-dev /v1/brand/screenshot --query 'domain=openai.com'
 ```
 
 ## Tips

@@ -13,14 +13,14 @@ Gather comprehensive intelligence on competitors including products, pricing, te
 Get basic company information:
 
 ```bash
-orth api run brand-dev /v1/brand/retrieve --query 'domain=competitor.com'
+orth run brand-dev /v1/brand/retrieve --query 'domain=competitor.com'
 ```
 
 ### Step 2: Find Similar Companies
 Use Exa to find related competitors:
 
 ```bash
-orth api run exa /findSimilar --body '{
+orth run exa /findSimilar --body '{
   "url": "https://notion.so",
   "num_results": 10
 }'
@@ -30,7 +30,7 @@ orth api run exa /findSimilar --body '{
 Scrape pricing and features:
 
 ```bash
-orth api run scrapegraph /v1/smartscraper --body '{
+orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://notion.so/pricing",
   "user_prompt": "Extract all pricing tiers, features per tier, and any enterprise options"
 }'
@@ -40,7 +40,7 @@ orth api run scrapegraph /v1/smartscraper --body '{
 Find key people at the company:
 
 ```bash
-orth api run fiber /v1/people-search --body '{
+orth run fiber /v1/people-search --body '{
   "searchParams": {
     "company_names": ["Notion"],
     "job_titles": ["CEO", "CTO", "VP Product", "VP Engineering"]
@@ -52,7 +52,7 @@ orth api run fiber /v1/people-search --body '{
 
 ```bash
 # Find competitor customers
-orth api run exa /search --body '{
+orth run exa /search --body '{
   "query": "companies using Notion for documentation case studies",
   "num_results": 20
 }'

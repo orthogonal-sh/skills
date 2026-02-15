@@ -45,7 +45,7 @@ Parameters:
 - num (integer) - Number of results
 
 ```bash
-orth api run searchapi /api/v1/search --query engine=tripadvisor q=best%20restaurants%20NYC
+orth run searchapi /api/v1/search -q 'engine=tripadvisor&q=best restaurants NYC'
 ```
 
 ### YouTube Comments
@@ -59,7 +59,7 @@ Parameters:
 - next_page_token (string) - Pagination token
 
 ```bash
-orth api run searchapi /api/v1/search --query engine=youtube_comments video_id=dQw4w9WgXcQ
+orth run searchapi /api/v1/search -q 'engine=youtube_comments&video_id=dQw4w9WgXcQ'
 ```
 
 ### YouTube Channel
@@ -72,7 +72,7 @@ Parameters:
 - hl (string) - Language code
 
 ```bash
-orth api run searchapi /api/v1/search --query engine=youtube_channel channel_id=UC_x5XG1OV2P6uZZ5FSM9Ttw
+orth run searchapi /api/v1/search -q 'engine=youtube_channel&channel_id=UC_x5XG1OV2P6uZZ5FSM9Ttw'
 ```
 
 ### Reddit Ad Library
@@ -88,7 +88,7 @@ Parameters:
 - post_type (string) - Post type filter
 
 ```bash
-orth api run searchapi /api/v1/search --query engine=reddit_ad_library q=software
+orth run searchapi /api/v1/search -q 'engine=reddit_ad_library&q=software'
 ```
 
 ### Meta Ad Library
@@ -111,7 +111,7 @@ Parameters:
 - next_page_token (string) - Pagination token
 
 ```bash
-orth api run searchapi /api/v1/search --query engine=meta_ad_library q=AI%20tools
+orth run searchapi /api/v1/search -q 'engine=meta_ad_library&q=AI tools'
 ```
 
 ### YouTube Transcripts
@@ -126,7 +126,7 @@ Parameters:
 - only_available (boolean) - Only return available transcripts
 
 ```bash
-orth api run searchapi /api/v1/search --query engine=youtube_transcripts video_id=dQw4w9WgXcQ
+orth run searchapi /api/v1/search -q 'engine=youtube_transcripts&video_id=dQw4w9WgXcQ'
 ```
 
 ### Amazon Search
@@ -145,7 +145,7 @@ Parameters:
 - rh (string) - Refinement filters
 
 ```bash
-orth api run searchapi /api/v1/search --query engine=amazon_search q=wireless%20headphones
+orth run searchapi /api/v1/search -q 'engine=amazon_search&q=wireless headphones'
 ```
 
 ### eBay Search
@@ -170,7 +170,7 @@ Parameters:
 - distance_radius (integer) - Distance radius in miles
 
 ```bash
-orth api run searchapi /api/v1/search --query engine=ebay_search q=vintage%20watch
+orth run searchapi /api/v1/search -q 'engine=ebay_search&q=vintage watch'
 ```
 
 ### YouTube Video Details
@@ -183,7 +183,7 @@ Parameters:
 - hl (string) - Language code
 
 ```bash
-orth api run searchapi /api/v1/search --query engine=youtube_video video_id=dQw4w9WgXcQ
+orth run searchapi /api/v1/search -q 'engine=youtube_video&video_id=dQw4w9WgXcQ'
 ```
 
 ### YouTube Channel Videos
@@ -196,7 +196,7 @@ Parameters:
 - hl (string) - Language code
 
 ```bash
-orth api run searchapi /api/v1/search --query engine=youtube_channel_videos channel_id=UC_x5XG1OV2P6uZZ5FSM9Ttw
+orth run searchapi /api/v1/search -q 'engine=youtube_channel_videos&channel_id=UC_x5XG1OV2P6uZZ5FSM9Ttw'
 ```
 
 ### Apple App Store Search
@@ -214,7 +214,7 @@ Parameters:
 - include_explicit (boolean) - Include explicit content
 
 ```bash
-orth api run searchapi /api/v1/search --query engine=apple_app_store term=productivity
+orth run searchapi /api/v1/search -q 'engine=apple_app_store&term=productivity'
 ```
 
 ### Airbnb Search
@@ -242,7 +242,7 @@ Parameters:
 - amenities (string) - Amenities filter
 
 ```bash
-orth api run searchapi /api/v1/search --query engine=airbnb q=Paris
+orth run searchapi /api/v1/search -q 'engine=airbnb&q=Paris'
 ```
 
 ### TikTok Profile
@@ -253,7 +253,7 @@ Parameters:
 - username* (string) - TikTok username
 
 ```bash
-orth api run searchapi /api/v1/search --query engine=tiktok_profile username=openai
+orth run searchapi /api/v1/search -q 'engine=tiktok_profile&username=openai'
 ```
 
 ### Instagram Profile
@@ -264,7 +264,7 @@ Parameters:
 - username* (string) - Instagram username
 
 ```bash
-orth api run searchapi /api/v1/search --query engine=instagram_profile username=openai
+orth run searchapi /api/v1/search -q 'engine=instagram_profile&username=openai'
 ```
 
 ### Walmart Search
@@ -282,7 +282,7 @@ Parameters:
 - filters (string) - Additional filters
 
 ```bash
-orth api run searchapi /api/v1/search --query engine=walmart_search q=laptop
+orth run searchapi /api/v1/search -q 'engine=walmart_search&q=laptop'
 ```
 
 ### TikTok Ads Library
@@ -298,7 +298,7 @@ Parameters:
 - next_page_token (string) - Pagination token
 
 ```bash
-orth api run searchapi /api/v1/search --query engine=tiktok_ads_library q=AI
+orth run searchapi /api/v1/search -q 'engine=tiktok_ads_library&q=AI'
 ```
 
 ### LinkedIn Ad Library
@@ -313,7 +313,7 @@ Parameters:
 - next_page_token (string) - Pagination token
 
 ```bash
-orth api run searchapi /api/v1/search --query engine=linkedin_ad_library q=hiring
+orth run searchapi /api/v1/search -q 'engine=linkedin_ad_library&q=hiring'
 ```
 
 ### YouTube Search
@@ -327,7 +327,7 @@ Parameters:
 - hl (string) - Language code (e.g. en, de, fr)
 
 ```bash
-orth api run searchapi /api/v1/search --query engine=youtube q=AI%20agents
+orth run searchapi /api/v1/search -q 'engine=youtube&q=AI agents'
 ```
 
 ## Use Cases

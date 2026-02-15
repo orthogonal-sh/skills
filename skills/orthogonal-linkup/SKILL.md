@@ -32,7 +32,7 @@ Parameters:
 - maxResults (number) - The maximum number of results to return.
 
 ```bash
-orth api run linkup /search --body '{
+orth run linkup /search --body '{
   "q": "latest AI developments 2024",
   "depth": "standard",
   "outputType": "sourcedAnswer"
@@ -49,7 +49,7 @@ Parameters:
 - extractImages (boolean) - Defines whether the API should extract the images from the webpage in its response.
 
 ```bash
-orth api run linkup /fetch --body '{"url": "https://example.com/article"}'
+orth run linkup /fetch --body '{"url": "https://example.com/article"}'
 ```
 
 ## Use Cases

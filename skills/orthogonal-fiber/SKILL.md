@@ -40,7 +40,7 @@ Parameters:
 - cursor (['string', 'null']) - A pagination cursor returned from a previous search response. Use this to fetch the next page of results.
 
 ```bash
-orth api run fiber /v1/natural-language-search/profiles --body '{"query": "Software engineers in San Francisco with 5+ years experience"}'
+orth run fiber /v1/natural-language-search/profiles --body '{"query": "Software engineers in San Francisco with 5+ years experience"}'
 ```
 
 ### Search companies from text
@@ -52,7 +52,7 @@ Parameters:
 - cursor (['string', 'null']) - A pagination cursor returned from a previous search response. Use this to fetch the next page of results.
 
 ```bash
-orth api run fiber /v1/natural-language-search/companies --body '{"query": "Series A startups in fintech with 50-200 employees"}'
+orth run fiber /v1/natural-language-search/companies --body '{"query": "Series A startups in fintech with 50-200 employees"}'
 ```
 
 ### Find person by email
@@ -63,7 +63,7 @@ Parameters:
 - num_profiles (['number', 'null']) - Number of profiles to return. Maximum 10 profiles can be returned for given query. The returned profiles will be sorted by best match first.
 
 ```bash
-orth api run fiber /v1/email-to-person/single --body '{"email": "john@company.com"}'
+orth run fiber /v1/email-to-person/single --body '{"email": "john@company.com"}'
 ```
 
 ### Live fetch LinkedIn profile
@@ -75,7 +75,7 @@ Parameters:
 - getDetailedWorkExperience (['boolean', 'null']) - Whether to include deep details about each work experience item, like the company's LinkedIn URL, website, location, etc. That'll be put in the detailedWorkExperience array. This slows down the API call, so only enable this if you need it.
 
 ```bash
-orth api run fiber /v1/linkedin-live-fetch/profile/single --body '{"identifier": "https://linkedin.com/in/johndoe"}'
+orth run fiber /v1/linkedin-live-fetch/profile/single --body '{"identifier": "https://linkedin.com/in/johndoe"}'
 ```
 
 ### Validate a single email
@@ -85,7 +85,7 @@ Parameters:
 - email* (string) - The email to validate
 
 ```bash
-orth api run fiber /v1/validate-email/single --body '{"email": "john@example.com"}'
+orth run fiber /v1/validate-email/single --body '{"email": "john@example.com"}'
 ```
 
 ### Kitchen sink person lookup
@@ -107,7 +107,7 @@ Parameters:
 - getDetailedWorkExperience (['boolean', 'null']) - Whether to include deep details about each work experience item, like the company's LinkedIn URL, website, location, etc. That'll be put in the detailedWorkExperience array. This slows down the API call, so only enable this if you need it.
 
 ```bash
-orth api run fiber /v1/kitchen-sink/person --body '{"linkedin_url": "https://linkedin.com/in/johndoe"}'
+orth run fiber /v1/kitchen-sink/person --body '{"linkedin_url": "https://linkedin.com/in/johndoe"}'
 ```
 
 ### Kitchen sink company lookup
@@ -120,7 +120,7 @@ Parameters:
 - numCompanies (integer) - The number of companies you want to fetch. Companies are sorted by best match first.
 
 ```bash
-orth api run fiber /v1/kitchen-sink/company --body '{"domain": "openai.com"}'
+orth run fiber /v1/kitchen-sink/company --body '{"domain": "openai.com"}'
 ```
 
 ### Investor search
@@ -132,7 +132,7 @@ Parameters:
 - cursor (['string', 'null']) - Pagination cursor returned from a previous search response. Use this to fetch the next page of results. Null for the first page.
 
 ```bash
-orth api run fiber /v1/investor-search --body '{
+orth run fiber /v1/investor-search --body '{
   "searchParams": {
     "investment_stages": ["Seed", "Series A"],
     "industries": ["AI", "SaaS"]
@@ -148,7 +148,7 @@ Parameters:
 - cursor (['string', 'null']) - Pagination cursor for fetching additional pages of posts
 
 ```bash
-orth api run fiber /v1/linkedin-live-fetch/profile-posts --body '{"identifier": "https://linkedin.com/in/johndoe"}'
+orth run fiber /v1/linkedin-live-fetch/profile-posts --body '{"identifier": "https://linkedin.com/in/johndoe"}'
 ```
 
 ### Live fetch LinkedIn company
@@ -159,7 +159,7 @@ Parameters:
 - value* (string) - The company's LinkedIn slug (e.g., 'microsoft'), LinkedIn URL (e.g., 'https://www.linkedin.com/company/microsoft' or 'https://www.linkedin.com/company/1441'), LinkedIn organization ID (e.g., '1441' for Google), or Fiber company ID (e.g., 'comp_1441')
 
 ```bash
-orth api run fiber /v1/linkedin-live-fetch/company/single --body '{"identifier": "https://linkedin.com/company/openai"}'
+orth run fiber /v1/linkedin-live-fetch/company/single --body '{"identifier": "https://linkedin.com/company/openai"}'
 ```
 
 ### People search
@@ -174,7 +174,7 @@ Parameters:
 - companyExclusionListIDs (['array', 'null']) - Filter out people who work at companies which belong to the given company exclusion lists
 
 ```bash
-orth api run fiber /v1/people-search --body '{
+orth run fiber /v1/people-search --body '{
   "searchParams": {
     "job_titles": ["CTO", "VP Engineering"],
     "locations": ["San Francisco", "New York"]
@@ -190,7 +190,7 @@ Parameters:
 - cursor (['string', 'null']) - Pagination cursor for fetching additional pages of posts
 
 ```bash
-orth api run fiber /v1/linkedin-live-fetch/post-comments --body '{"identifier": "https://linkedin.com/feed/update/urn:li:activity:1234"}'
+orth run fiber /v1/linkedin-live-fetch/post-comments --body '{"identifier": "https://linkedin.com/feed/update/urn:li:activity:1234"}'
 ```
 
 ### Company search
@@ -203,7 +203,7 @@ Parameters:
 - companyExclusionListIDs (['array', 'null']) - Filter out companies which belong to the given company exclusion lists. You can create company exclusion lists via /v1/exclusions/companies/create-list
 
 ```bash
-orth api run fiber /v1/company-search --body '{
+orth run fiber /v1/company-search --body '{
   "searchParams": {
     "industries": ["Software", "AI"],
     "employee_count_min": 50,
@@ -219,7 +219,7 @@ Parameters:
 - query* (string)
 
 ```bash
-orth api run fiber /v1/text-to-search-params/companies --body '{"query": "AI startups in healthcare"}'
+orth run fiber /v1/text-to-search-params/companies --body '{"query": "AI startups in healthcare"}'
 ```
 
 ### Convert text into profile search filters
@@ -229,7 +229,7 @@ Parameters:
 - query* (string)
 
 ```bash
-orth api run fiber /v1/text-to-search-params/profiles --body '{"query": "Senior engineers at FAANG companies"}'
+orth run fiber /v1/text-to-search-params/profiles --body '{"query": "Senior engineers at FAANG companies"}'
 ```
 
 ### Job postings search
@@ -241,7 +241,7 @@ Parameters:
 - cursor (['string', 'null']) - Pagination cursor for fetching next page of results
 
 ```bash
-orth api run fiber /v1/job-search --body '{
+orth run fiber /v1/job-search --body '{
   "searchParams": {
     "job_titles": ["Software Engineer"],
     "locations": ["Remote"]
@@ -258,7 +258,7 @@ Parameters:
 - cursor (['string', 'null']) - Pagination cursor for fetching additional pages of posts
 
 ```bash
-orth api run fiber /v1/linkedin-live-fetch/post-reactions --body '{"identifier": "https://linkedin.com/feed/update/urn:li:activity:1234"}'
+orth run fiber /v1/linkedin-live-fetch/post-reactions --body '{"identifier": "https://linkedin.com/feed/update/urn:li:activity:1234"}'
 ```
 
 ## Use Cases

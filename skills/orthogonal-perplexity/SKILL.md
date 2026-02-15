@@ -48,7 +48,7 @@ Parameters:
 - media_response (object) - Perplexity-Specific: Configuration for controlling media content in responses, such as videos and images. Use the overrides property to enable specific media types.
 
 ```bash
-orth api run perplexity /chat/completions --body '{
+orth run perplexity /chat/completions --body '{
   "model": "sonar",
   "messages": [
     {"role": "user", "content": "What are the latest developments in AI agents?"}
@@ -74,7 +74,7 @@ Parameters:
 - search_language_filter (string[]) - Perplexity-Specific: Filters search results to only include content in the specified languages. Accepts an array of ISO 639-1 language codes (2 lowercase letters). Maximum 10 language codes per request.
 
 ```bash
-orth api run perplexity /search --body '{"query": "latest AI developments February 2024"}'
+orth run perplexity /search --body '{"query": "latest AI developments February 2024"}'
 ```
 
 ### Sonar Chat Completions API
@@ -84,7 +84,7 @@ Parameters:
 - request (object) - required Show child attributes
 
 ```bash
-orth api run perplexity /async/chat/completions --body '{
+orth run perplexity /async/chat/completions --body '{
   "model": "sonar",
   "messages": [
     {"role": "user", "content": "Write a comprehensive analysis of vector databases"}
@@ -96,7 +96,7 @@ orth api run perplexity /async/chat/completions --body '{
 Retrieves the status and result of a specific asynchronous chat completion job.
 
 ```bash
-orth api run perplexity /async/chat/completions/{request_id}
+orth run perplexity /async/chat/completions/{request_id}
 ```
 
 ### List Async Chat Completions
@@ -107,7 +107,7 @@ Parameters:
 - next_token (string) - Token for fetching the next page of results. Ensure this token is URL-encoded when passed as a query parameter.
 
 ```bash
-orth api run perplexity /async/chat/completions
+orth run perplexity /async/chat/completions
 ```
 
 ## Use Cases

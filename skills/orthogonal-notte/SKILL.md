@@ -35,7 +35,7 @@ Parameters:
 - session_id* (string)
 
 ```bash
-orth api run notte /sessions/{session_id}/page/screenshot --body '{}'
+orth run notte /sessions/{session_id}/page/screenshot --body '{}'
 ```
 
 ### Get Session (free)
@@ -45,7 +45,7 @@ Parameters:
 - session_id* (string)
 
 ```bash
-orth api run notte /sessions/{session_id}
+orth run notte /sessions/{session_id}
 ```
 
 ### Stop Session (free)
@@ -55,7 +55,7 @@ Parameters:
 - session_id* (string) - Session ID
 
 ```bash
-orth api run notte /sessions/{session_id}/stop
+orth run notte /sessions/{session_id}/stop
 ```
 
 ### Get Session Cookies (free)
@@ -65,7 +65,7 @@ Parameters:
 - session_id* (string)
 
 ```bash
-orth api run notte /sessions/{session_id}/cookies
+orth run notte /sessions/{session_id}/cookies
 ```
 
 ### Get Network Logs (free)
@@ -75,7 +75,7 @@ Parameters:
 - session_id* (string)
 
 ```bash
-orth api run notte /sessions/{session_id}/network/logs --query session_id=example
+orth run notte /sessions/{session_id}/network/logs --query session_id=example
 ```
 
 ### Get Agent Status (free)
@@ -85,7 +85,7 @@ Parameters:
 - agent_id* (string)
 
 ```bash
-orth api run notte /agents/{agent_id}
+orth run notte /agents/{agent_id}
 ```
 
 ### Observe Page
@@ -98,7 +98,7 @@ Parameters:
 - session_id* (string)
 
 ```bash
-orth api run notte /sessions/{session_id}/page/observe --body '{"instruction": "Find the search box"}'
+orth run notte /sessions/{session_id}/page/observe --body '{"instruction": "Find the search box"}'
 ```
 
 ### Stop Agent (free)
@@ -108,7 +108,7 @@ Parameters:
 - session_id* (string) - Session ID the agent is running on
 
 ```bash
-orth api run notte /agents/{agent_id}/stop
+orth run notte /agents/{agent_id}/stop
 ```
 
 ### Scrape Webpage
@@ -119,7 +119,7 @@ Parameters:
 - schema (object) - Structured extraction schema
 
 ```bash
-orth api run notte /scrape --body '{"url": "https://example.com"}'
+orth run notte /scrape --body '{"url": "https://example.com"}'
 ```
 
 ### Execute Page Action
@@ -137,7 +137,7 @@ Parameters:
 - session_id* (string)
 
 ```bash
-orth api run notte /sessions/{session_id}/page/execute --body '{"instruction": "Click the search button"}'
+orth run notte /sessions/{session_id}/page/execute --body '{"instruction": "Click the search button"}'
 ```
 
 ### Set Session Cookies
@@ -148,7 +148,7 @@ Parameters:
 - session_id* (string)
 
 ```bash
-orth api run notte /sessions/{session_id}/cookies
+orth run notte /sessions/{session_id}/cookies
 ```
 
 ### Start Session
@@ -166,7 +166,7 @@ Parameters:
 - user_agent (string)
 
 ```bash
-orth api run notte /sessions/start --body '{
+orth run notte /sessions/start --body '{
   "url": "https://example.com",
   "timeout_minutes": 5
 }'
@@ -179,7 +179,7 @@ Parameters:
 - frames* (array) - Array of HTML frames to parse
 
 ```bash
-orth api run notte /scrape_from_html --body '{"html": "<html><body>Hello</body></html>"}'
+orth run notte /scrape_from_html --body '{"html": "<html><body>Hello</body></html>"}'
 ```
 
 ### Start Agent
@@ -193,7 +193,7 @@ Parameters:
 - use_vision (boolean) - Use vision model (default: true)
 
 ```bash
-orth api run notte /agents/start --body '{
+orth run notte /agents/start --body '{
   "task": "Search for AI news on Google and summarize the top results",
   "url": "https://google.com"
 }'
@@ -212,7 +212,7 @@ Parameters:
 - session_id* (string)
 
 ```bash
-orth api run notte /sessions/{session_id}/page/scrape --body '{}'
+orth run notte /sessions/{session_id}/page/scrape --body '{}'
 ```
 
 ## Use Cases

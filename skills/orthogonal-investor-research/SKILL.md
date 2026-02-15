@@ -13,7 +13,7 @@ Research venture capitalists, angel investors, and their investment patterns.
 Find investors in your space:
 
 ```bash
-orth api run fiber /v1/investor-search --body '{
+orth run fiber /v1/investor-search --body '{
   "searchParams": {
     "investment_stages": ["Seed", "Series A"],
     "industries": ["AI", "SaaS", "Developer Tools"]
@@ -25,7 +25,7 @@ orth api run fiber /v1/investor-search --body '{
 See their existing investments:
 
 ```bash
-orth api run exa /search --body '{
+orth run exa /search --body '{
   "query": "Sequoia Capital portfolio companies AI 2023 2024",
   "num_results": 30
 }'
@@ -35,7 +35,7 @@ orth api run exa /search --body '{
 Get contact info for partners:
 
 ```bash
-orth api run fiber /v1/people-search --body '{
+orth run fiber /v1/people-search --body '{
   "searchParams": {
     "company_names": ["Sequoia Capital"],
     "job_titles": ["Partner", "General Partner", "Principal"]
@@ -47,7 +47,7 @@ orth api run fiber /v1/people-search --body '{
 Find email for outreach:
 
 ```bash
-orth api run sixtyfour /find-email --body '{
+orth run sixtyfour /find-email --body '{
   "lead": {
     "first_name": "Alfred",
     "last_name": "Lin",
@@ -60,7 +60,7 @@ orth api run sixtyfour /find-email --body '{
 
 ```bash
 # Find AI-focused investors
-orth api run fiber /v1/investor-search --body '{
+orth run fiber /v1/investor-search --body '{
   "searchParams": {
     "industries": ["AI", "Machine Learning"],
     "investment_stages": ["Seed"],
@@ -69,7 +69,7 @@ orth api run fiber /v1/investor-search --body '{
 }'
 
 # Find angels in your space
-orth api run exa /search --body '{
+orth run exa /search --body '{
   "query": "angel investors who invest in developer tools startups",
   "num_results": 25
 }'

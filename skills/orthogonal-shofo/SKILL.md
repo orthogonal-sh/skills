@@ -39,7 +39,7 @@ Parameters:
 - feed_type (string) - Feed type: "top", "recent", or "reels"
 
 ```bash
-orth api run shofo /instagram/hashtag --query 'hashtag=artificialintelligence'
+orth run shofo /instagram/hashtag --query 'hashtag=artificialintelligence'
 ```
 
 ### X/Twitter Tweet Comments
@@ -51,7 +51,7 @@ Parameters:
 - cursor (string) - Pagination cursor from previous response
 
 ```bash
-orth api run shofo /x/comments --query 'tweet_url=https://x.com/OpenAI/status/123456'
+orth run shofo /x/comments --query 'tweet_url=https://x.com/OpenAI/status/123456'
 ```
 
 ### LinkedIn Company Posts
@@ -64,7 +64,7 @@ Parameters:
 - sort_by (string) - "top" for popular, "recent" for newest (default: top)
 
 ```bash
-orth api run shofo /linkedin/company-posts --query 'url=https://linkedin.com/company/openai'
+orth run shofo /linkedin/company-posts --query 'url=https://linkedin.com/company/openai'
 ```
 
 ### TikTok Hashtag Videos
@@ -77,7 +77,7 @@ Parameters:
 - cursor (string) - Pagination cursor from previous response
 
 ```bash
-orth api run shofo /tiktok/hashtag --query 'hashtag=ai'
+orth run shofo /tiktok/hashtag --query 'hashtag=ai'
 ```
 
 ### X/Twitter User Profile
@@ -87,7 +87,7 @@ Parameters:
 - username* (string) - X/Twitter username (without @)
 
 ```bash
-orth api run shofo /x/user-profile --query 'username=OpenAI'
+orth run shofo /x/user-profile --query 'username=OpenAI'
 ```
 
 ### TikTok Feed Videos
@@ -97,7 +97,7 @@ Parameters:
 - count* (integer) - Number of videos to retrieve (1-100)
 
 ```bash
-orth api run shofo /tiktok/feed --query 'keyword=artificial%20intelligence'
+orth run shofo /tiktok/feed --query 'keyword=artificial%20intelligence'
 ```
 
 ### Instagram User Profile
@@ -109,7 +109,7 @@ Parameters:
 - max_following (integer) - Number of following to fetch (0 = skip)
 
 ```bash
-orth api run shofo /instagram/user-profile --query 'username=openai'
+orth run shofo /instagram/user-profile --query 'username=openai'
 ```
 
 ### TikTok User Profile Videos
@@ -122,7 +122,7 @@ Parameters:
 - cursor (string) - Pagination cursor from previous response
 
 ```bash
-orth api run shofo /tiktok/profile --query 'username=openai'
+orth run shofo /tiktok/profile --query 'username=openai'
 ```
 
 ### TikTok Video Comments
@@ -134,7 +134,7 @@ Parameters:
 - cursor (integer) - Pagination cursor from previous response
 
 ```bash
-orth api run shofo /tiktok/comments --query 'video_url=https://tiktok.com/@user/video/123'
+orth run shofo /tiktok/comments --query 'video_url=https://tiktok.com/@user/video/123'
 ```
 
 ### Linkedin User Profile
@@ -144,7 +144,7 @@ Parameters:
 - username* (string) - LinkedIn username (from URL: linkedin.com/in/username). Provide either profile_url or username.
 
 ```bash
-orth api run shofo /linkedin/user-profile --query 'url=https://linkedin.com/in/johndoe'
+orth run shofo /linkedin/user-profile --query 'url=https://linkedin.com/in/johndoe'
 ```
 
 ### Linkedin User Posts
@@ -155,7 +155,7 @@ Parameters:
 - count* (integer) - Number of posts to retrieve
 
 ```bash
-orth api run shofo /linkedin/user-posts --query 'url=https://linkedin.com/in/johndoe'
+orth run shofo /linkedin/user-posts --query 'url=https://linkedin.com/in/johndoe'
 ```
 
 ### Linkedin Company Profile
@@ -167,7 +167,7 @@ Parameters:
 - employee_count (string) - Number of employees to fetch (default: 0)
 
 ```bash
-orth api run shofo /linkedin/company-profile --query 'url=https://linkedin.com/company/openai'
+orth run shofo /linkedin/company-profile --query 'url=https://linkedin.com/company/openai'
 ```
 
 ### Linkedin Search Employees
@@ -180,7 +180,7 @@ Parameters:
 - count* (integer) - Number of people to retrieve
 
 ```bash
-orth api run shofo /linkedin/search-employees --query 'company_url=https://linkedin.com/company/openai'
+orth run shofo /linkedin/search-employees --query 'company_url=https://linkedin.com/company/openai'
 ```
 
 ### Instagram User Posts
@@ -192,7 +192,7 @@ Parameters:
 - reels_only (boolean) - Fetch only reels instead of all posts
 
 ```bash
-orth api run shofo /instagram/user-posts --query 'username=openai'
+orth run shofo /instagram/user-posts --query 'username=openai'
 ```
 
 ### Instagram Individual Post
@@ -202,7 +202,7 @@ Parameters:
 - code_or_url* (string) - Post shortcode (e.g., DRhvwVLAHAG) or full Instagram URL. Accepted Input Formats The code_or_url parameter accepts either a shortcode or a full URL:  • Shortcode: CxYz123ABC • Post URL: https://www.instagram.com/p/CxYz123ABC/ • Reel URL: https://www.instagram.com/reel/CxYz123ABC/
 
 ```bash
-orth api run shofo /instagram/post --query 'url=https://instagram.com/p/abc123'
+orth run shofo /instagram/post --query 'url=https://instagram.com/p/abc123'
 ```
 
 ### Instagram Post Comments
@@ -215,7 +215,7 @@ Parameters:
 - cursor (string) - Pagination cursor (next_min_id)
 
 ```bash
-orth api run shofo /instagram/comments --query 'post_url=https://instagram.com/p/abc123'
+orth run shofo /instagram/comments --query 'post_url=https://instagram.com/p/abc123'
 ```
 
 ### X/Twitter User Posts
@@ -226,7 +226,7 @@ Parameters:
 - count* (integer) - Number of tweets to retrieve
 
 ```bash
-orth api run shofo /x/user-posts --query 'username=OpenAI'
+orth run shofo /x/user-posts --query 'username=OpenAI'
 ```
 
 ### X/Twitter Individual Post
@@ -236,7 +236,7 @@ Parameters:
 - tweet_id_or_url* (string) - Tweet ID or full URL (twitter.com or x.com). Accepted Input Formats: The tweet_id_or_url parameter accepts either a tweet ID or a full URL:  • Tweet ID: 1808168603721650364 • twitter.com URL: https://twitter.com/user/status/1808168603721650364 • x.com URL: https://x.com/user/status/1808168603721650364
 
 ```bash
-orth api run shofo /x/post --query 'url=https://x.com/OpenAI/status/123456'
+orth run shofo /x/post --query 'url=https://x.com/OpenAI/status/123456'
 ```
 
 ## Use Cases

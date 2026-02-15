@@ -42,7 +42,7 @@ Parameters:
 -  steps (array) - Optional array of interaction steps to perform on the webpage before extraction. Each step is a string describing the action to take (e.g., “click on filter button”, “wait for results to load”). Example: ["click on search button", "type query in search box", "wait for results"]
 
 ```bash
-orth api run scrapegraph /v1/smartscraper --body '{
+orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://example.com/products",
   "user_prompt": "Extract all product names and prices"
 }'
@@ -59,7 +59,7 @@ Parameters:
 - stealth (boolean) - Optional parameter to enable stealth mode. When set to true, the scraper will use advanced anti-detection techniques to bypass bot protection and access protected websites. Adds +4 credits to the request cost. Default: false
 
 ```bash
-orth api run scrapegraph /v1/searchscraper --body '{"user_prompt": "Find the latest iPhone prices from major retailers"}'
+orth run scrapegraph /v1/searchscraper --body '{"user_prompt": "Find the latest iPhone prices from major retailers"}'
 ```
 
 ### Scrape
@@ -72,7 +72,7 @@ Parameters:
 - stealth (string) - Enable stealth mode for anti-bot protection. Adds additional credits. Default: false
 
 ```bash
-orth api run scrapegraph /v1/scrape --body '{"website_url": "https://example.com"}'
+orth run scrapegraph /v1/scrape --body '{"website_url": "https://example.com"}'
 ```
 
 ### Start SmartCrawler
@@ -94,7 +94,7 @@ Parameters:
 - stealth (string)
 
 ```bash
-orth api run scrapegraph /v1/crawl --body '{
+orth run scrapegraph /v1/crawl --body '{
   "url": "https://docs.example.com",
   "prompt": "Extract all API endpoints and their descriptions"
 }'
@@ -110,7 +110,7 @@ Parameters:
 - stealth (boolean) - Optional parameter to enable stealth mode. When set to true, the scraper will use advanced anti-detection techniques to bypass bot protection and access protected websites. Adds +4 credits to the request cost.
 
 ```bash
-orth api run scrapegraph /v1/sitemap --body '{"website_url": "https://example.com"}'
+orth run scrapegraph /v1/sitemap --body '{"website_url": "https://example.com"}'
 ```
 
 ### Start Markdownify
@@ -122,42 +122,42 @@ Parameters:
 - stealth (boolean) - Enable stealth mode to bypass bot protection using advanced anti-detection techniques. Adds +4 credits to the request cost
 
 ```bash
-orth api run scrapegraph /v1/markdownify --body '{"website_url": "https://example.com/article"}'
+orth run scrapegraph /v1/markdownify --body '{"website_url": "https://example.com/article"}'
 ```
 
 ### Get SearchScraper Status (free)
 Get the status and results of a previous search request
 
 ```bash
-orth api run scrapegraph /v1/searchscraper/{request_id}
+orth run scrapegraph /v1/searchscraper/{request_id}
 ```
 
 ### Get Markdownify Status (free)
 Check the status and retrieve results of a Markdownify request.
 
 ```bash
-orth api run scrapegraph /v1/markdownify/{request_id}
+orth run scrapegraph /v1/markdownify/{request_id}
 ```
 
 ### Get Sitemap Status (free)
 Check the status and retrieve results of a Sitemap request.
 
 ```bash
-orth api run scrapegraph /v1/sitemap/{request_id}
+orth run scrapegraph /v1/sitemap/{request_id}
 ```
 
 ### Get SmartCrawler Status (free)
 Get the status and results of a previous smartcrawl request
 
 ```bash
-orth api run scrapegraph /v1/crawl/{task_id}
+orth run scrapegraph /v1/crawl/{task_id}
 ```
 
 ### Get SmartScraper Status (free)
 Check the status and retrieve results of a SmartScraper request.
 
 ```bash
-orth api run scrapegraph /v1/smartscraper/{request_id}
+orth run scrapegraph /v1/smartscraper/{request_id}
 ```
 
 ## Use Cases

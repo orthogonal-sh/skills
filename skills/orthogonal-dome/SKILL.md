@@ -39,7 +39,7 @@ Parameters:
 - limit (integer) - Maximum number of snapshots to return (default: 100, max: 200). Ignored when fetching the latest orderbook without start_time and end_time.
 
 ```bash
-orth api run dome /kalshi/orderbooks --query 'ticker={ticker}'
+orth run dome /kalshi/orderbooks --query 'ticker={ticker}'
 ```
 
 ### Market Price
@@ -49,7 +49,7 @@ Parameters:
 - at_time (integer) - Optional Unix timestamp (in seconds) to fetch a historical market price. If not provided, returns the most real-time price available.
 
 ```bash
-orth api run dome /polymarket/market-price/{token_id}
+orth run dome /polymarket/market-price/{token_id}
 ```
 
 ### Market Price
@@ -59,7 +59,7 @@ Parameters:
 - at_time (integer) - Optional Unix timestamp (in seconds) to fetch a historical market price. If not provided, returns the most real-time price available.
 
 ```bash
-orth api run dome /kalshi/market-price/{market_ticker}
+orth run dome /kalshi/market-price/{market_ticker}
 ```
 
 ### Trade History
@@ -73,7 +73,7 @@ Parameters:
 - offset (integer) - Number of trades to skip for pagination
 
 ```bash
-orth api run dome /kalshi/trades --query 'ticker={ticker}'
+orth run dome /kalshi/trades --query 'ticker={ticker}'
 ```
 
 ### Sport by Date
@@ -83,7 +83,7 @@ Parameters:
 - date* (string) - The date to find matching markets for in YYYY-MM-DD format
 
 ```bash
-orth api run dome /matching-markets/sports/nba --query 'date=2024-03-01'
+orth run dome /matching-markets/sports/nba --query 'date=2024-03-01'
 ```
 
 ### Sports
@@ -94,7 +94,7 @@ Parameters:
 - kalshi_event_ticker (string[]) - The Kalshi event ticker(s) to find matching markets for. To get multiple markets at once, provide the query param multiple times with different tickers. Can not be combined with polymarket_market_slug.
 
 ```bash
-orth api run dome /matching-markets/sports
+orth run dome /matching-markets/sports
 ```
 
 ### Positions
@@ -105,7 +105,7 @@ Parameters:
 - pagination_key (string) - Pagination key returned from previous request to fetch next page of results
 
 ```bash
-orth api run dome /polymarket/positions/wallet/{wallet_address}
+orth run dome /polymarket/positions/wallet/{wallet_address}
 ```
 
 ### Binance Prices
@@ -119,7 +119,7 @@ Parameters:
 - pagination_key (string) - Pagination key (base64-encoded) to fetch the next page of results. Returned in the response when more data is available.
 
 ```bash
-orth api run dome /crypto-prices/binance --query 'currency=btcusdt'
+orth run dome /crypto-prices/binance --query 'currency=btcusdt'
 ```
 
 ### Activity
@@ -135,7 +135,7 @@ Parameters:
 - offset (integer) - Number of activities to skip for pagination
 
 ```bash
-orth api run dome /polymarket/activity --query 'user={wallet_address}'
+orth run dome /polymarket/activity --query 'user={wallet_address}'
 ```
 
 ### Markets
@@ -155,7 +155,7 @@ Parameters:
 - end_time (integer) - Filter markets until this Unix timestamp in seconds (inclusive)
 
 ```bash
-orth api run dome /polymarket/markets --query 'search=election' 'status=open'
+orth run dome /polymarket/markets --query 'search=election' 'status=open'
 ```
 
 ### Orderbook History
@@ -169,7 +169,7 @@ Parameters:
 - pagination_key (string) - Pagination key to get the next chunk of data. Ignored when fetching the latest orderbook without start_time and end_time.
 
 ```bash
-orth api run dome /polymarket/orderbooks --query 'token_id={token_id}'
+orth run dome /polymarket/orderbooks --query 'token_id={token_id}'
 ```
 
 ### Wallet
@@ -183,7 +183,7 @@ Parameters:
 - end_time (integer) - Optional end date for metrics calculation (Unix timestamp in seconds). Only used when with_metrics=true.
 
 ```bash
-orth api run dome /polymarket/wallet --query 'address={wallet_address}'
+orth run dome /polymarket/wallet --query 'address={wallet_address}'
 ```
 
 ### Candlesticks
@@ -195,7 +195,7 @@ Parameters:
 - interval (enum<integer>) - Interval length: 1 = 1m, 60 = 1h, 1440 = 1d. Defaults to 1m. ⚠️ Note: There are range limits for interval — specifically: 1 (1m): max range 1 week 60 (1h): max range 1 month 1440 (1d): max range 1 year
 
 ```bash
-orth api run dome /polymarket/candlesticks/{condition_id} --query 'interval=1h'
+orth run dome /polymarket/candlesticks/{condition_id} --query 'interval=1h'
 ```
 
 ### Chainlink Prices
@@ -209,7 +209,7 @@ Parameters:
 - pagination_key (string) - Pagination key (base64-encoded) to fetch the next page of results. Returned in the response when more data is available.
 
 ```bash
-orth api run dome /crypto-prices/chainlink --query 'currency=btc/usd'
+orth run dome /crypto-prices/chainlink --query 'currency=btc/usd'
 ```
 
 ### Wallet Profit-and-Loss
@@ -221,7 +221,7 @@ Parameters:
 - end_time (integer) - Defaults to the current date if not provided.
 
 ```bash
-orth api run dome /polymarket/wallet/pnl/{wallet_address}
+orth run dome /polymarket/wallet/pnl/{wallet_address}
 ```
 
 ### Trade History
@@ -238,7 +238,7 @@ Parameters:
 - user (string) - Filter orders by user (wallet address)
 
 ```bash
-orth api run dome /polymarket/orders --query 'market={market_id}'
+orth run dome /polymarket/orders --query 'market={market_id}'
 ```
 
 ### Markets
@@ -254,7 +254,7 @@ Parameters:
 - offset (integer) - Number of markets to skip for pagination
 
 ```bash
-orth api run dome /kalshi/markets --query 'search=fed%20rate'
+orth run dome /kalshi/markets --query 'search=fed%20rate'
 ```
 
 ## Use Cases

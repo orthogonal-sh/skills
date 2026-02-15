@@ -13,7 +13,7 @@ Research market size, trends, competitors, and growth opportunities for any indu
 Find companies in the market:
 
 ```bash
-orth api run fiber /v1/natural-language-search/companies --body '{
+orth run fiber /v1/natural-language-search/companies --body '{
   "query": "AI software companies with over 100 employees, Series B or later funding"
 }'
 ```
@@ -22,7 +22,7 @@ orth api run fiber /v1/natural-language-search/companies --body '{
 Get detailed info on key players:
 
 ```bash
-orth api run fiber /v1/company-search --body '{
+orth run fiber /v1/company-search --body '{
   "searchParams": {
     "company_names": ["OpenAI", "Anthropic", "Cohere"],
     "include_financials": true
@@ -34,7 +34,7 @@ orth api run fiber /v1/company-search --body '{
 Identify leadership at key companies:
 
 ```bash
-orth api run fiber /v1/people-search --body '{
+orth run fiber /v1/people-search --body '{
   "searchParams": {
     "company_names": ["OpenAI", "Anthropic"],
     "job_titles": ["CEO", "CTO", "VP Product", "Head of Sales"]
@@ -46,12 +46,12 @@ orth api run fiber /v1/people-search --body '{
 
 ```bash
 # Find companies by industry and size
-orth api run fiber /v1/natural-language-search/companies --body '{
+orth run fiber /v1/natural-language-search/companies --body '{
   "query": "EdTech companies with 50-500 employees founded after 2018"
 }'
 
 # Search by specific criteria
-orth api run fiber /v1/company-search --body '{
+orth run fiber /v1/company-search --body '{
   "searchParams": {
     "industries": ["Enterprise Software"],
     "employee_count_min": 100,

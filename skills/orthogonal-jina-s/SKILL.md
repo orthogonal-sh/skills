@@ -20,7 +20,7 @@ Parameters:
 - q (string) - Search query
 
 ```bash
-orth api run jina-s / --query 'q=latest%20AI%20news'
+orth run jina-s / --query 'q=latest%20AI%20news'
 ```
 
 ## Use Cases

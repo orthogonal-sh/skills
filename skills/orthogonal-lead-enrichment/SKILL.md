@@ -13,21 +13,21 @@ Enrich partial lead data with emails, phone numbers, and company information usi
 Use Hunter to find email:
 
 ```bash
-orth api run hunter /v2/email-finder --query domain=stripe.com first_name=John last_name=Doe
+orth run hunter /v2/email-finder --query domain=stripe.com first_name=John last_name=Doe
 ```
 
 ### Step 2: Verify Email
 Verify the email is deliverable:
 
 ```bash
-orth api run hunter /v2/email-verifier --query 'email=john@stripe.com'
+orth run hunter /v2/email-verifier --query 'email=john@stripe.com'
 ```
 
 ### Step 3: Get More Contact Info
 Use Sixtyfour for additional enrichment:
 
 ```bash
-orth api run sixtyfour /enrich-lead --body '{
+orth run sixtyfour /enrich-lead --body '{
   "lead_info": {
     "first_name": "John",
     "last_name": "Doe",
@@ -42,7 +42,7 @@ orth api run sixtyfour /enrich-lead --body '{
 Use Sixtyfour to find phone:
 
 ```bash
-orth api run sixtyfour /find-phone --body '{
+orth run sixtyfour /find-phone --body '{
   "lead": {
     "first_name": "John",
     "last_name": "Doe",
@@ -55,14 +55,14 @@ orth api run sixtyfour /find-phone --body '{
 Get detailed company information:
 
 ```bash
-orth api run hunter /v2/companies/find --query 'domain=stripe.com'
+orth run hunter /v2/companies/find --query 'domain=stripe.com'
 ```
 
 ### Step 6: Get LinkedIn Data
 Fetch real-time LinkedIn profile:
 
 ```bash
-orth api run fiber /v1/linkedin-live-fetch/profile/single --body '{"identifier": "https://linkedin.com/in/johndoe"}'
+orth run fiber /v1/linkedin-live-fetch/profile/single --body '{"identifier": "https://linkedin.com/in/johndoe"}'
 ```
 
 ## Full Enrichment Pipeline
@@ -74,19 +74,19 @@ export COMPANY="Stripe"
 export DOMAIN="stripe.com"
 
 # 2. Find email (Hunter)
-orth api run hunter /v2/email-finder --query domain=$DOMAIN first_name=John last_name=Doe
+orth run hunter /v2/email-finder --query domain=$DOMAIN first_name=John last_name=Doe
 
 # 3. Verify email
-orth api run hunter /v2/email-verifier --query "email=john@stripe.com"
+orth run hunter /v2/email-verifier --query "email=john@stripe.com"
 
 # 4. Get full lead profile (Sixtyfour)
-orth api run sixtyfour /enrich-lead --body '{"lead_info": {"first_name": "John", "last_name": "Doe", "company": "Stripe"}, "struct": {"email": "Work email"}}'
+orth run sixtyfour /enrich-lead --body '{"lead_info": {"first_name": "John", "last_name": "Doe", "company": "Stripe"}, "struct": {"email": "Work email"}}'
 
 # 5. Find phone
-orth api run sixtyfour /find-phone --body '{"lead": {"first_name": "John", "last_name": "Doe", "company": "Stripe"}}'
+orth run sixtyfour /find-phone --body '{"lead": {"first_name": "John", "last_name": "Doe", "company": "Stripe"}}'
 
 # 6. Get company details
-orth api run hunter /v2/companies/find --query "domain=stripe.com"
+orth run hunter /v2/companies/find --query "domain=stripe.com"
 ```
 
 ## Tips

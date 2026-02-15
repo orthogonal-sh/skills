@@ -24,7 +24,7 @@ Parameters:
 - mode (string) - Email discovery mode. Allowed values: `"PROFESSIONAL"` (default) for company emails, `"PERSONAL"` for personal emails.
 
 ```bash
-orth api run sixtyfour /find-email --body '{
+orth run sixtyfour /find-email --body '{
   "lead": {
     "first_name": "John",
     "last_name": "Doe",
@@ -43,7 +43,7 @@ Parameters:
 - research_plan (string) - Optional research plan to guide enrichment
 
 ```bash
-orth api run sixtyfour /enrich-lead --body '{
+orth run sixtyfour /enrich-lead --body '{
   "lead_info": {
     "first_name": "John",
     "last_name": "Doe",
@@ -66,7 +66,7 @@ Parameters:
 - email (string) - Email address
 
 ```bash
-orth api run sixtyfour /find-phone --body '{
+orth run sixtyfour /find-phone --body '{
   "lead": {
     "first_name": "John",
     "last_name": "Doe",
@@ -87,7 +87,7 @@ Parameters:
 - people_focus_prompt (string) - Description of people to find, typically includes the roles or responsibilities of the people you’re looking for
 
 ```bash
-orth api run sixtyfour /enrich-company --body '{
+orth run sixtyfour /enrich-company --body '{
   "target_company": {"domain": "acme.com"},
   "struct": {"description": "Company description", "industry": "Industry"}
 }'

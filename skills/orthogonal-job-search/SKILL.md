@@ -13,7 +13,7 @@ Search for jobs matching your skills, experience level, and location preferences
 Use Fiber to search for jobs:
 
 ```bash
-orth api run fiber /v1/job-search --body '{
+orth run fiber /v1/job-search --body '{
   "searchParams": {
     "job_titles": ["Software Engineer", "Full Stack Developer"],
     "locations": ["San Francisco", "Remote"],
@@ -26,7 +26,7 @@ orth api run fiber /v1/job-search --body '{
 Get company information for interesting roles:
 
 ```bash
-orth api run fiber /v1/company-search --body '{
+orth run fiber /v1/company-search --body '{
   "searchParams": {
     "company_names": ["Stripe", "Figma", "Notion"]
   }
@@ -37,14 +37,14 @@ orth api run fiber /v1/company-search --body '{
 Use Brand.dev for detailed company info:
 
 ```bash
-orth api run brand-dev /v1/brand/retrieve --query 'domain=stripe.com'
+orth run brand-dev /v1/brand/retrieve --query 'domain=stripe.com'
 ```
 
 ### Step 4: Find Hiring Managers
 Find people at the company to network with:
 
 ```bash
-orth api run fiber /v1/people-search --body '{
+orth run fiber /v1/people-search --body '{
   "searchParams": {
     "company_names": ["Stripe"],
     "job_titles": ["Engineering Manager", "VP Engineering", "CTO"]
@@ -56,14 +56,14 @@ orth api run fiber /v1/people-search --body '{
 Find email for outreach:
 
 ```bash
-orth api run hunter /v2/email-finder --query domain=stripe.com first_name=John last_name=Doe
+orth run hunter /v2/email-finder --query domain=stripe.com first_name=John last_name=Doe
 ```
 
 ## Example Usage
 
 ```bash
 # Search for remote AI jobs
-orth api run fiber /v1/job-search --body '{
+orth run fiber /v1/job-search --body '{
   "searchParams": {
     "job_titles": ["Machine Learning Engineer", "AI Engineer"],
     "locations": ["Remote"],
@@ -72,7 +72,7 @@ orth api run fiber /v1/job-search --body '{
 }'
 
 # Research a company
-orth api run fiber /v1/natural-language-search/companies --body '{
+orth run fiber /v1/natural-language-search/companies --body '{
   "query": "Tell me about Anthropic - funding, team size, culture"
 }'
 ```

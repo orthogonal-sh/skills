@@ -26,7 +26,7 @@ Parameters:
 - skip_cache (boolean) - Default: false. Set to true to bypass cache and always fetch fresh content
 
 ```bash
-orth api run riveter /v1/scrape --body '{"url": "https://example.com/article"}'
+orth run riveter /v1/scrape --body '{"url": "https://example.com/article"}'
 ```
 
 ### Run
@@ -38,7 +38,7 @@ Parameters:
 - run_key (string) - Custom identifier for this run (optional, will be generated if not provided)
 
 ```bash
-orth api run riveter /v1/run --body '{
+orth run riveter /v1/run --body '{
   "input": {
     "urls": ["https://example.com/products"]
   },
@@ -56,7 +56,7 @@ Parameters:
 - run_key* (string) - The run key (UUID) of the project run to retrieve data for
 
 ```bash
-orth api run riveter /v1/run_data --query 'run_key=abc123'
+orth run riveter /v1/run_data --query 'run_key=abc123'
 ```
 
 ### Run status (free)
@@ -66,7 +66,7 @@ Parameters:
 - run_key* (string) - The run key (UUID) of the project run to check
 
 ```bash
-orth api run riveter /v1/run_status --query 'run_key=abc123'
+orth run riveter /v1/run_status --query 'run_key=abc123'
 ```
 
 ### Stop run (free)
@@ -76,7 +76,7 @@ Parameters:
 - run_key* (string) - The run key (UUID) of the project run to stop
 
 ```bash
-orth api run riveter /v1/stop_run --query 'run_key=abc123'
+orth run riveter /v1/stop_run --query 'run_key=abc123'
 ```
 
 ## Use Cases

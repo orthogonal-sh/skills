@@ -37,7 +37,7 @@ Parameters:
 - parseOperators (string) - Extract operators from query string
 
 ```bash
-orth api run andi /v1/search --query 'q=how%20does%20RAG%20work'
+orth run andi /v1/search --query 'q=how%20does%20RAG%20work'
 ```
 
 ## Use Cases

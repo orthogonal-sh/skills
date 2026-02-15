@@ -13,14 +13,14 @@ Test API endpoints, validate responses, and generate documentation examples.
 Make GET requests to test endpoints:
 
 ```bash
-orth api run linkup /fetch --body '{"url": "https://api.example.com/health"}'
+orth run linkup /fetch --body '{"url": "https://api.example.com/health"}'
 ```
 
 ### Step 2: Test POST Endpoints
 Test POST requests by fetching API docs:
 
 ```bash
-orth api run scrapegraph /v1/smartscraper --body '{
+orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://api.example.com/docs",
   "user_prompt": "Extract all API endpoints, methods, parameters, and example responses"
 }'
@@ -30,14 +30,14 @@ orth api run scrapegraph /v1/smartscraper --body '{
 Fetch and parse API docs:
 
 ```bash
-orth api run scrapegraph /v1/markdownify --body '{"website_url": "https://api.example.com/docs"}'
+orth run scrapegraph /v1/markdownify --body '{"website_url": "https://api.example.com/docs"}'
 ```
 
 ### Step 4: Validate Response Schema
 Check response structure:
 
 ```bash
-orth api run riveter /v1/run --body '{
+orth run riveter /v1/run --body '{
   "url": "https://api.example.com/endpoint",
   "schema": {
     "id": "string",
@@ -51,13 +51,13 @@ orth api run riveter /v1/run --body '{
 
 ```bash
 # Extract API spec from docs
-orth api run scrapegraph /v1/smartscraper --body '{
+orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://stripe.com/docs/api",
   "user_prompt": "Extract API authentication methods and example curl commands"
 }'
 
 # Fetch API page
-orth api run linkup /fetch --body '{"url": "https://api.openai.com/v1/models"}'
+orth run linkup /fetch --body '{"url": "https://api.openai.com/v1/models"}'
 ```
 
 ## Tips
