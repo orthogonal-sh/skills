@@ -27,7 +27,7 @@ Parameters:
 - limit (number) - Number of results per page (1-50) Required range: `1 <= x <= 50`
 
 ```bash
-orth api run exa /research/v1
+orth run exa /research/v1
 ```
 
 ### Answer
@@ -41,7 +41,7 @@ Parameters:
 - text (boolean) - If true, the response includes full text content in the search results
 
 ```bash
-orth api run exa /answer --body '{"query": "What are the best practices for prompt engineering?"}'
+orth run exa /answer --body '{"query": "What are the best practices for prompt engineering?"}'
 ```
 
 ### Search
@@ -67,7 +67,7 @@ Parameters:
 - contents (object)
 
 ```bash
-orth api run exa /search --body '{
+orth run exa /search --body '{
   "query": "startups building AI coding assistants",
   "num_results": 10,
   "contents": {"text": true}
@@ -82,7 +82,7 @@ Parameters:
 - events (string) - Set to "true" to include the detailed event log of all operations performed
 
 ```bash
-orth api run exa /research/v1/{researchId}
+orth run exa /research/v1/{researchId}
 ```
 
 ### Find similar links
@@ -104,7 +104,7 @@ Parameters:
 - contents (object)
 
 ```bash
-orth api run exa /findSimilar --body '{
+orth run exa /findSimilar --body '{
   "url": "https://example.com/article",
   "num_results": 10
 }'
@@ -119,7 +119,7 @@ Parameters:
 - outputSchema (object) - JSON Schema to enforce structured output. When provided, the research output will be validated against this schema and returned as parsed JSON.
 
 ```bash
-orth api run exa /research/v1 --body '{"instructions": "Research the current state of AI coding assistants"}'
+orth run exa /research/v1 --body '{"instructions": "Research the current state of AI coding assistants"}'
 ```
 
 ### Get contents
@@ -139,7 +139,7 @@ Parameters:
 - context (string) - Return page contents as a context string for LLM. When true, combines all result contents into one string. We recommend using 10000+ characters for best results, though no limit works best. Context strings often perform better than highlights for RAG applications.
 
 ```bash
-orth api run exa /contents --body '{
+orth run exa /contents --body '{
   "ids": ["https://example.com"],
   "text": true,
   "summary": true

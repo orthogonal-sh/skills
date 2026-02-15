@@ -28,7 +28,7 @@ Parameters:
 - vendor_data (string) - Unique identifier for vendor/user (UUID or email) for session tracking
 
 ```bash
-orth api run didit /v3/email/send --body '{"email": "user@example.com"}'
+orth run didit /v3/email/send --body '{"email": "user@example.com"}'
 ```
 
 ### Check Phone Code (free)
@@ -42,7 +42,7 @@ Parameters:
 - voip_number_action (string) - Action for VoIP numbers: NO_ACTION (default) or DECLINE
 
 ```bash
-orth api run didit /v3/phone/check --body '{"phone_number": "+1234567890", "code": "123456"}'
+orth run didit /v3/phone/check --body '{"phone_number": "+1234567890", "code": "123456"}'
 ```
 
 ### Send Phone Code
@@ -55,7 +55,7 @@ Parameters:
 - vendor_data (string) - Unique identifier for vendor/user (UUID or email) for session tracking
 
 ```bash
-orth api run didit /v3/phone/send --body '{"phone_number": "+1234567890"}'
+orth run didit /v3/phone/send --body '{"phone_number": "+1234567890"}'
 ```
 
 ### AML Screening
@@ -79,7 +79,7 @@ Parameters:
 - vendor_data (string) - A unique identifier for the vendor or user, such as a UUID or email. This field enables proper session tracking and user data aggregation across multiple verification sessions.
 
 ```bash
-orth api run didit /v3/aml --body '{"full_name": "John Doe"}'
+orth run didit /v3/aml --body '{"full_name": "John Doe"}'
 ```
 
 ### Check Email Code (free)
@@ -94,7 +94,7 @@ Parameters:
 - undeliverable_email_action (string) - Action for undeliverable emails: NO_ACTION (default) or DECLINE
 
 ```bash
-orth api run didit /v3/email/check --body '{"email": "user@example.com", "code": "123456"}'
+orth run didit /v3/email/check --body '{"email": "user@example.com", "code": "123456"}'
 ```
 
 ### Database Validation API
@@ -113,7 +113,7 @@ Parameters:
 - address (string) - Residential address
 
 ```bash
-orth api run didit /v3/database-validation --body '{"issuing_state": "ESP", "validation_type": "one_by_one", "identification_number": "12345678A"}'
+orth run didit /v3/database-validation --body '{"issuing_state": "ESP", "validation_type": "one_by_one", "identification_number": "12345678A"}'
 ```
 
 ## Use Cases

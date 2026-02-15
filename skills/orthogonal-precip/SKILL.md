@@ -39,7 +39,7 @@ Parameters:
 - format (string)
 
 ```bash
-orth api run precip /api/v1/last-48 --query latitude=37.7749 longitude=-122.4194
+orth run precip /api/v1/last-48 --query latitude=37.7749 longitude=-122.4194
 ```
 
 ### Air Temperature
@@ -54,7 +54,7 @@ Parameters:
 - format (string) - Output format: `geojson`, `json` or `csv`
 
 ```bash
-orth api run precip /api/v1/temperature-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
+orth run precip /api/v1/temperature-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
 ### Hourly Soil Moisture
@@ -69,7 +69,7 @@ Parameters:
 - format (string)
 
 ```bash
-orth api run precip /api/v1/soil-moisture-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
+orth run precip /api/v1/soil-moisture-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
 ### Wind Direction
@@ -84,7 +84,7 @@ Parameters:
 - format (string) - Output format: `geojson`, `json` or `csv`
 
 ```bash
-orth api run precip /api/v1/wind-direction-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
+orth run precip /api/v1/wind-direction-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
 ### Daily Precipitation Data
@@ -99,7 +99,7 @@ Parameters:
 - format (string)
 
 ```bash
-orth api run precip /api/v1/daily --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-31
+orth run precip /api/v1/daily --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-31
 ```
 
 ### Wind Gusts
@@ -114,7 +114,7 @@ Parameters:
 - format (string) - Output format: `geojson`, `json` or `csv`
 
 ```bash
-orth api run precip /api/v1/wind-speed-gust-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
+orth run precip /api/v1/wind-speed-gust-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
 ### Recent Rain Event
@@ -127,7 +127,7 @@ Parameters:
 - format (string)
 
 ```bash
-orth api run precip /api/v1/recent-rain --query latitude=37.7749 longitude=-122.4194
+orth run precip /api/v1/recent-rain --query latitude=37.7749 longitude=-122.4194
 ```
 
 ### Map Layer Tiles
@@ -137,7 +137,7 @@ Parameters:
 - time (string)
 
 ```bash
-orth api run precip /api/v1/map/precipitation/ImageServer/tile/5/12/10
+orth run precip /api/v1/map/precipitation/ImageServer/tile/5/12/10
 ```
 
 ### Wind Speed
@@ -152,7 +152,7 @@ Parameters:
 - format (string) - Output format: `geojson`, `json` or `csv`
 
 ```bash
-orth api run precip /api/v1/wind-speed-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
+orth run precip /api/v1/wind-speed-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
 ### Cloud Cover
@@ -167,7 +167,7 @@ Parameters:
 - format (string) - Output format: `geojson`, `json` or `csv`
 
 ```bash
-orth api run precip /api/v1/cloud-cover-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
+orth run precip /api/v1/cloud-cover-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
 ### Soil Temperature
@@ -182,7 +182,7 @@ Parameters:
 - format (string) - Output format: `geojson`, `json` or `csv`
 
 ```bash
-orth api run precip /api/v1/temp-0-10cm-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
+orth run precip /api/v1/temp-0-10cm-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
 ### Specific Humidity
@@ -197,7 +197,7 @@ Parameters:
 - format (string)
 
 ```bash
-orth api run precip /api/v1/specific-humidity-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
+orth run precip /api/v1/specific-humidity-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
 ### Hourly Precipitation Data
@@ -212,7 +212,7 @@ Parameters:
 - format (string)
 
 ```bash
-orth api run precip /api/v1/hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-07
+orth run precip /api/v1/hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-07
 ```
 
 ### Daily Soil Moisture
@@ -227,7 +227,7 @@ Parameters:
 - format (string)
 
 ```bash
-orth api run precip /api/v1/soil-moisture-daily --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-31
+orth run precip /api/v1/soil-moisture-daily --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-31
 ```
 
 ### Embeddable HTML UI
@@ -248,7 +248,7 @@ Available options:
 When not provided, shows all widgets.
 
 ```bash
-orth api run precip /embed/location --query lat=37.7749 lon=-122.4194
+orth run precip /embed/location --query lat=37.7749 lon=-122.4194
 ```
 
 ### Solar Radiation
@@ -263,7 +263,7 @@ Parameters:
 - format (string) - Output format: `geojson`, `json` or `csv`
 
 ```bash
-orth api run precip /api/v1/solar-radiation-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
+orth run precip /api/v1/solar-radiation-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
 ### Relative Humidity
@@ -278,7 +278,7 @@ Parameters:
 - format (string) - Output format: `geojson`, `json` or `csv`
 
 ```bash
-orth api run precip /api/v1/relative-humidity-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
+orth run precip /api/v1/relative-humidity-hourly --query latitude=37.7749 longitude=-122.4194 start=2024-01-01 end=2024-01-02
 ```
 
 ## Use Cases

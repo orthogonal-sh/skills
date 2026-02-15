@@ -13,14 +13,14 @@ Extract text, tables, and structured data from PDF documents.
 Use Linkup to fetch PDF URLs:
 
 ```bash
-orth api run linkup /fetch --body '{"url": "https://example.com/document.pdf"}'
+orth run linkup /fetch --body '{"url": "https://example.com/document.pdf"}'
 ```
 
 ### Step 2: Extract with AI
 Use ScrapeGraph to extract specific content:
 
 ```bash
-orth api run scrapegraph /v1/smartscraper --body '{
+orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://example.com/report.pdf",
   "user_prompt": "Extract all financial figures, tables, and key metrics from this document"
 }'
@@ -30,7 +30,7 @@ orth api run scrapegraph /v1/smartscraper --body '{
 Get structured table data:
 
 ```bash
-orth api run riveter /v1/run --body '{
+orth run riveter /v1/run --body '{
   "input": {
     "urls": ["https://example.com/report.pdf"]
   },
@@ -44,20 +44,20 @@ orth api run riveter /v1/run --body '{
 Get readable markdown output:
 
 ```bash
-orth api run scrapegraph /v1/markdownify --body '{"website_url": "https://example.com/document.pdf"}'
+orth run scrapegraph /v1/markdownify --body '{"website_url": "https://example.com/document.pdf"}'
 ```
 
 ## Example Usage
 
 ```bash
 # Extract data from financial report
-orth api run scrapegraph /v1/smartscraper --body '{
+orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://example.com/annual-report.pdf",
   "user_prompt": "Extract revenue, profit, and key business metrics with their values"
 }'
 
 # Extract invoice data
-orth api run riveter /v1/run --body '{
+orth run riveter /v1/run --body '{
   "input": {"urls": ["https://example.com/invoice.pdf"]},
   "output": {
     "vendor": {"prompt": "Vendor name", "contexts": ["urls"]},

@@ -27,7 +27,7 @@ Parameters:
 - email* (string) - Email address to enrich
 
 ```bash
-orth api run hunter /v2/combined/find --query 'email=jane@company.com'
+orth run hunter /v2/combined/find --query 'email=jane@company.com'
 ```
 
 ### Email Enrichment
@@ -38,7 +38,7 @@ Parameters:
 - linkedin_handle (string) - LinkedIn handle to enrich
 
 ```bash
-orth api run hunter /v2/people/find --query 'email=john@company.com'
+orth run hunter /v2/people/find --query 'email=john@company.com'
 ```
 
 ### Email Count
@@ -50,7 +50,7 @@ Parameters:
 - type (string) - Filter: personal or generic
 
 ```bash
-orth api run hunter /v2/email-count --query 'domain=google.com'
+orth run hunter /v2/email-count --query 'domain=google.com'
 ```
 
 ### Discover Companies
@@ -65,7 +65,7 @@ Parameters:
 - offset (integer) - Skip N results for pagination
 
 ```bash
-orth api run hunter /v2/discover --body '{"query": "AI startups in San Francisco"}'
+orth run hunter /v2/discover --body '{"query": "AI startups in San Francisco"}'
 ```
 
 ### Company Enrichment
@@ -75,7 +75,7 @@ Parameters:
 - domain* (string) - Company domain to enrich (e.g. hunter.io)
 
 ```bash
-orth api run hunter /v2/companies/find --query 'domain=anthropic.com'
+orth run hunter /v2/companies/find --query 'domain=anthropic.com'
 ```
 
 ### Domain Search
@@ -90,7 +90,7 @@ Parameters:
 - department (string) - Filter by department (sales, marketing, etc)
 
 ```bash
-orth api run hunter /v2/domain-search --query 'domain=stripe.com'
+orth run hunter /v2/domain-search --query 'domain=stripe.com'
 ```
 
 ### Email Finder
@@ -105,7 +105,7 @@ Parameters:
 - linkedin_handle (string) - LinkedIn profile handle
 
 ```bash
-orth api run hunter /v2/email-finder --query domain=openai.com first_name=Sam last_name=Altman
+orth run hunter /v2/email-finder --query domain=openai.com first_name=Sam last_name=Altman
 ```
 
 ### Email Verifier
@@ -115,7 +115,7 @@ Parameters:
 - email* (string) - Email address to verify
 
 ```bash
-orth api run hunter /v2/email-verifier --query 'email=john@example.com'
+orth run hunter /v2/email-verifier --query 'email=john@example.com'
 ```
 
 ## Use Cases

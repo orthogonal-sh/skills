@@ -44,7 +44,7 @@ Parameters:
 - metadata (object) - User-defined metadata. Not supported yet
 
 ```bash
-orth api run olostep /v1/scrapes --body '{"url_to_scrape": "https://example.com/page"}'
+orth run olostep /v1/scrapes --body '{"url_to_scrape": "https://example.com/page"}'
 ```
 
 ### Create Answer
@@ -55,7 +55,7 @@ Parameters:
 - json_format (object) - The desired output JSON object with empty values as a schema, or simply describe the data you want as a string.
 
 ```bash
-orth api run olostep /v1/answers --body '{"task": "What are the latest AI developments?"}'
+orth run olostep /v1/answers --body '{"task": "What are the latest AI developments?"}'
 ```
 
 ### Maps
@@ -71,7 +71,7 @@ Parameters:
 - cursor (string) - OPTIONAL: Pagination cursor from a previous response. When provided, returns the next set of URLs from where the previous request left off due to response size limit.
 
 ```bash
-orth api run olostep /v1/maps --body '{"url": "https://example.com"}'
+orth run olostep /v1/maps --body '{"url": "https://example.com"}'
 ```
 
 ### Start Crawl
@@ -91,7 +91,7 @@ Parameters:
 - timeout (number) - End the crawl after n seconds with the pages completed until then. May take ~10s extra from provided timeout.
 
 ```bash
-orth api run olostep /v1/crawls --body '{
+orth run olostep /v1/crawls --body '{
   "start_url": "https://example.com",
   "max_pages": 100
 }'
@@ -107,7 +107,7 @@ Parameters:
 - links_on_page (object) - Get all the links present on each page in the batch.
 
 ```bash
-orth api run olostep /v1/batches --body '{
+orth run olostep /v1/batches --body '{
   "items": [
     {"url_to_scrape": "https://example.com/page1"},
     {"url_to_scrape": "https://example.com/page2"}
@@ -119,42 +119,42 @@ orth api run olostep /v1/batches --body '{
 Retrieves the list of items processed for a batch. You can then use the `retrieve_id` to get the content with the Retrieve Endpoint
 
 ```bash
-orth api run olostep /v1/batches/{batch_id}/items
+orth run olostep /v1/batches/{batch_id}/items
 ```
 
 ### Crawl Info
 Fetches information about a specific crawl.
 
 ```bash
-orth api run olostep /v1/crawls/{crawl_id}
+orth run olostep /v1/crawls/{crawl_id}
 ```
 
 ### Crawl Pages
 Fetches the list of pages for a specific crawl.
 
 ```bash
-orth api run olostep /v1/crawls/{crawl_id}/pages
+orth run olostep /v1/crawls/{crawl_id}/pages
 ```
 
 ### Get Answer
 This endpoint retrieves a previously completed answer by its ID.
 
 ```bash
-orth api run olostep /v1/answers/{answer_id}
+orth run olostep /v1/answers/{answer_id}
 ```
 
 ### Get Scrape
 Can be used to retrieve response for a scrape.
 
 ```bash
-orth api run olostep /v1/scrapes/{scrape_id}
+orth run olostep /v1/scrapes/{scrape_id}
 ```
 
 ### Batch Info
 Retrieves the status and progress information about a batch. To retrieve the content for a batch, see here
 
 ```bash
-orth api run olostep /v1/batches/{batch_id}
+orth run olostep /v1/batches/{batch_id}
 ```
 
 ### Retrieve Content
@@ -165,7 +165,7 @@ Parameters:
 - formats (string[]) - Optional array to retrieve only specific formats in production. If not provided, all formats will be returned.
 
 ```bash
-orth api run olostep /v1/retrieve --body '{"retrieve_id": "abc123"}'
+orth run olostep /v1/retrieve --body '{"retrieve_id": "abc123"}'
 ```
 
 ## Use Cases

@@ -18,7 +18,7 @@ Send SMS messages via simple HTTP API.
 Checking SMS delivery status
 
 ```bash
-orth api run textbelt /status/{message_id}
+orth run textbelt /status/{message_id}
 ```
 
 ### Send an SMS
@@ -34,7 +34,7 @@ Parameters:
 - webhookData (string) - Endpoint supports a webhookData field.  This data is passed as data in the webhook request. There is a maximum length of 100 characters in the webhookData field.
 
 ```bash
-orth api run textbelt /text --body '{
+orth run textbelt /text --body '{
   "phone": "+1234567890",
   "message": "Hello from Orthogonal!"
 }'

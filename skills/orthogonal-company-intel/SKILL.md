@@ -13,14 +13,14 @@ Generate full intelligence reports on any company including overview, team, fund
 Get basic company information:
 
 ```bash
-orth api run brand-dev /v1/brand/retrieve --query 'domain=stripe.com'
+orth run brand-dev /v1/brand/retrieve --query 'domain=stripe.com'
 ```
 
 ### Step 2: Find Leadership Team
 Get info on key executives:
 
 ```bash
-orth api run fiber /v1/people-search --body '{
+orth run fiber /v1/people-search --body '{
   "searchParams": {
     "company_names": ["Stripe"],
     "job_titles": ["CEO", "CTO", "CFO", "COO", "VP", "Head of"]
@@ -32,7 +32,7 @@ orth api run fiber /v1/people-search --body '{
 Analyze products and pricing:
 
 ```bash
-orth api run scrapegraph /v1/smartscraper --body '{
+orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://stripe.com/pricing",
   "user_prompt": "Extract all products, pricing tiers, and features"
 }'
@@ -42,7 +42,7 @@ orth api run scrapegraph /v1/smartscraper --body '{
 Track company growth:
 
 ```bash
-orth api run fiber /v1/company-search --body '{
+orth run fiber /v1/company-search --body '{
   "searchParams": {
     "company_names": ["Stripe"]
   }
@@ -57,16 +57,16 @@ DOMAIN="stripe.com"
 COMPANY="Stripe"
 
 # 1. Basic info
-orth api run brand-dev /v1/brand/retrieve --query "domain=$DOMAIN"
+orth run brand-dev /v1/brand/retrieve --query "domain=$DOMAIN"
 
 # 2. Leadership team
-orth api run fiber /v1/people-search --body "{\"searchParams\": {\"company_names\": [\"$COMPANY\"], \"job_titles\": [\"CEO\", \"CTO\", \"CFO\"]}}"
+orth run fiber /v1/people-search --body "{\"searchParams\": {\"company_names\": [\"$COMPANY\"], \"job_titles\": [\"CEO\", \"CTO\", \"CFO\"]}}"
 
 # 3. Products & pricing
-orth api run scrapegraph /v1/smartscraper --body "{\"website_url\": \"https://$DOMAIN/pricing\", \"user_prompt\": \"Extract all products, pricing tiers, and features\"}"
+orth run scrapegraph /v1/smartscraper --body "{\"website_url\": \"https://$DOMAIN/pricing\", \"user_prompt\": \"Extract all products, pricing tiers, and features\"}"
 
 # 4. Company data
-orth api run fiber /v1/company-search --body "{\"searchParams\": {\"company_names\": [\"$COMPANY\"]}}"
+orth run fiber /v1/company-search --body "{\"searchParams\": {\"company_names\": [\"$COMPANY\"]}}"
 ```
 
 ## Tips

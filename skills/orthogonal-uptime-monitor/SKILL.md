@@ -13,14 +13,14 @@ Monitor website uptime, check response times, and verify service availability.
 Verify site is accessible:
 
 ```bash
-orth api run linkup /fetch --body '{"url": "https://yoursite.com"}'
+orth run linkup /fetch --body '{"url": "https://yoursite.com"}'
 ```
 
 ### Step 2: Verify Page Content
 Ensure page loads correctly:
 
 ```bash
-orth api run scrapegraph /v1/smartscraper --body '{
+orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://yoursite.com",
   "user_prompt": "Check if page loads and contains expected content. Report any error messages."
 }'
@@ -30,14 +30,14 @@ orth api run scrapegraph /v1/smartscraper --body '{
 Check API endpoints:
 
 ```bash
-orth api run linkup /fetch --body '{"url": "https://api.yoursite.com/health"}'
+orth run linkup /fetch --body '{"url": "https://api.yoursite.com/health"}'
 ```
 
 ### Step 4: Check Multiple Endpoints
 Monitor critical paths:
 
 ```bash
-orth api run olostep /v1/batches --body '{
+orth run olostep /v1/batches --body '{
   "urls": [
     "https://yoursite.com",
     "https://yoursite.com/login",
@@ -51,7 +51,7 @@ orth api run olostep /v1/batches --body '{
 Check official status:
 
 ```bash
-orth api run scrapegraph /v1/smartscraper --body '{
+orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://status.yoursite.com",
   "user_prompt": "Extract current service status, any incidents, and affected components"
 }'
@@ -61,7 +61,7 @@ orth api run scrapegraph /v1/smartscraper --body '{
 Use SMS for critical alerts:
 
 ```bash
-orth api run textbelt /text --body '{
+orth run textbelt /text --body '{
   "phone": "+1234567890",
   "message": "ALERT: yoursite.com is down! Check immediately."
 }'
@@ -74,7 +74,7 @@ SITES=("https://example.com" "https://api.example.com/health")
 
 for site in "${SITES[@]}"; do
   echo "Checking: $site"
-  orth api run linkup /fetch --body "{\"url\": \"$site\"}"
+  orth run linkup /fetch --body "{\"url\": \"$site\"}"
 done
 ```
 
@@ -82,16 +82,16 @@ done
 
 ```bash
 # Quick status check
-orth api run linkup /fetch --body '{"url": "https://stripe.com"}'
+orth run linkup /fetch --body '{"url": "https://stripe.com"}'
 
 # Check status page
-orth api run scrapegraph /v1/smartscraper --body '{
+orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://status.github.com",
   "user_prompt": "What is the current status of GitHub services?"
 }'
 
 # Monitor competitor uptime
-orth api run linkup /fetch --body '{"url": "https://competitor.com"}'
+orth run linkup /fetch --body '{"url": "https://competitor.com"}'
 ```
 
 ## What to Monitor

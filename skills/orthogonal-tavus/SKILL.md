@@ -18,7 +18,7 @@ Create real-time video conversations with AI-powered digital personas.
 This endpoint returns a list of all Personas. You can first list the Personas to choose which one you'd like to create a conversation with. Then, using the Create Conversation endpoint, you can start a conversation with that persona providing the persona ID.
 
 ```bash
-orth api run tavus /v2/personas
+orth run tavus /v2/personas
 ```
 
 ### Create Conversation
@@ -28,7 +28,7 @@ Parameters:
 - persona_id* (string) - p1b06420cfdc
 
 ```bash
-orth api run tavus /v2/conversations --body '{
+orth run tavus /v2/conversations --body '{
   "persona_id": "your-persona-id",
   "conversation_name": "Customer Support Call"
 }'

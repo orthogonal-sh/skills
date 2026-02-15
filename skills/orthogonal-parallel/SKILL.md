@@ -28,35 +28,35 @@ Web research API that returns OpenAI ChatCompletions-compatible responses.
 Retrieve a FindAll run.
 
 ```bash
-orth api run parallel /v1beta/findall/runs/{findall_id}
+orth run parallel /v1beta/findall/runs/{findall_id}
 ```
 
 ### FindAll Run Result (free)
 Retrieve the FindAll run result at the time of the request.
 
 ```bash
-orth api run parallel /v1beta/findall/runs/{findall_id}/result
+orth run parallel /v1beta/findall/runs/{findall_id}/result
 ```
 
 ### Cancel FindAll Run (free)
 Cancel a FindAll run.
 
 ```bash
-orth api run parallel /v1beta/findall/runs/{findall_id}/cancel
+orth run parallel /v1beta/findall/runs/{findall_id}/cancel
 ```
 
 ### Retrieve Task Run Input (free)
 Retrieves the input of a run by run_id.
 
 ```bash
-orth api run parallel /v1/tasks/runs/{run_id}/input
+orth run parallel /v1/tasks/runs/{run_id}/input
 ```
 
 ### Retrieve Task Run (free)
 Retrieves run status by run_id.The run result is available from the /result endpoint.
 
 ```bash
-orth api run parallel /v1/tasks/runs/{run_id}
+orth run parallel /v1/tasks/runs/{run_id}
 ```
 
 ### Ingest FindAll Run
@@ -66,7 +66,7 @@ Parameters:
 - objective* (string) - Input model for FindAll ingest.
 
 ```bash
-orth api run parallel /v1beta/findall/ingest --body '{"objective": "Find all AI startups in San Francisco"}'
+orth run parallel /v1beta/findall/ingest --body '{"objective": "Find all AI startups in San Francisco"}'
 ```
 
 ### Retrieve Task Run Result (free)
@@ -76,7 +76,7 @@ Parameters:
 - timeout (integer)
 
 ```bash
-orth api run parallel /v1/tasks/runs/{run_id}/result
+orth run parallel /v1/tasks/runs/{run_id}/result
 ```
 
 ### Create FindAll Run
@@ -93,7 +93,7 @@ Parameters:
 - webhook (Webhook · object) - Webhook for the FindAll run.
 
 ```bash
-orth api run parallel /v1beta/findall/runs --body '{
+orth run parallel /v1beta/findall/runs --body '{
   "goal": "Find all AI startups in San Francisco"
 }'
 ```
@@ -113,7 +113,7 @@ Parameters:
 - fetch_policy (object) - Fetch policy: determines when to return cached content from the index (faster) vs fetching live content (fresher). Default is to disable live fetch and return cached content from the index.
 
 ```bash
-orth api run parallel /v1beta/search --body '{"objective": "AI agent frameworks comparison 2024"}'
+orth run parallel /v1beta/search --body '{"objective": "AI agent frameworks comparison 2024"}'
 ```
 
 ### Chat API
@@ -126,7 +126,7 @@ Parameters:
 - response_format (object)
 
 ```bash
-orth api run parallel /chat/completions --body '{
+orth run parallel /chat/completions --body '{
   "model": "parallel",
   "messages": [
     {"role": "user", "content": "What are the latest developments in quantum computing?"}
@@ -146,7 +146,7 @@ Parameters:
 - full_content (boolean) - Include full content from each URL. Note that if neither objective nor search_queries is provided, excerpts are redundant with full content. default:false
 
 ```bash
-orth api run parallel /v1beta/extract --body '{"urls": ["https://example.com/article"]}'
+orth run parallel /v1beta/extract --body '{"urls": ["https://example.com/article"]}'
 ```
 
 ### Create Task Run
@@ -163,7 +163,7 @@ Parameters:
 - webhook (object) - Callback URL (webhook endpoint) that will receive an HTTP POST when the run completes.This feature is not available via the Python SDK. To enable this feature in your API requests, specify the parallel-beta header with webhook-2025-08-12 value.
 
 ```bash
-orth api run parallel /v1/tasks/runs --body '{
+orth run parallel /v1/tasks/runs --body '{
   "processor": "base",
   "input": "Research the competitive landscape of AI coding assistants"
 }'

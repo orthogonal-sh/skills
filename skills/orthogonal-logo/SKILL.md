@@ -21,7 +21,7 @@ Parameters:
 - strategy (string)
 
 ```bash
-orth api run logo /search --query 'q=Stripe'
+orth run logo /search --query 'q=Stripe'
 ```
 
 ## Use Cases

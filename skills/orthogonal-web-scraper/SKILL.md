@@ -13,14 +13,14 @@ Scrape websites, extract structured data, and convert content to usable formats.
 Extract content from a single page:
 
 ```bash
-orth api run olostep /v1/scrapes --body '{"url_to_scrape": "https://example.com/page"}'
+orth run olostep /v1/scrapes --body '{"url_to_scrape": "https://example.com/page"}'
 ```
 
 ### Step 2: AI-Powered Extraction
 Extract specific data using natural language:
 
 ```bash
-orth api run scrapegraph /v1/smartscraper --body '{
+orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://example.com/products",
   "user_prompt": "Extract all product names, prices, descriptions, and image URLs"
 }'
@@ -30,7 +30,7 @@ orth api run scrapegraph /v1/smartscraper --body '{
 Define a schema for consistent output:
 
 ```bash
-orth api run riveter /v1/run --body '{
+orth run riveter /v1/run --body '{
   "input": {
     "urls": ["https://example.com/products"]
   },
@@ -46,7 +46,7 @@ orth api run riveter /v1/run --body '{
 Crawl multiple pages:
 
 ```bash
-orth api run olostep /v1/crawls --body '{
+orth run olostep /v1/crawls --body '{
   "start_url": "https://docs.example.com",
   "max_pages": 50
 }'
@@ -56,30 +56,30 @@ orth api run olostep /v1/crawls --body '{
 Get clean markdown output:
 
 ```bash
-orth api run scrapegraph /v1/markdownify --body '{"website_url": "https://example.com/article"}'
+orth run scrapegraph /v1/markdownify --body '{"website_url": "https://example.com/article"}'
 ```
 
 ### Step 6: Get Site Map
 Discover all URLs on a site:
 
 ```bash
-orth api run tavily /map --body '{"url": "https://example.com"}'
+orth run tavily /map --body '{"url": "https://example.com"}'
 ```
 
 ## Example Usage
 
 ```bash
 # Scrape product listings
-orth api run scrapegraph /v1/smartscraper --body '{
+orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://amazon.com/s?k=laptop",
   "user_prompt": "Extract product names, prices, ratings, and number of reviews"
 }'
 
 # Get all URLs from a site
-orth api run olostep /v1/maps --body '{"url": "https://docs.stripe.com"}'
+orth run olostep /v1/maps --body '{"url": "https://docs.stripe.com"}'
 
 # Convert docs to markdown
-orth api run scrapegraph /v1/markdownify --body '{"website_url": "https://docs.openai.com/api"}'
+orth run scrapegraph /v1/markdownify --body '{"website_url": "https://docs.openai.com/api"}'
 ```
 
 ## Tips

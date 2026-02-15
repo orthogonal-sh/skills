@@ -13,35 +13,35 @@ Build targeted email campaigns with verified email addresses and personalized ou
 Get all emails for target companies:
 
 ```bash
-orth api run hunter /v2/domain-search --query 'domain=stripe.com'
+orth run hunter /v2/domain-search --query 'domain=stripe.com'
 ```
 
 ### Step 2: Find Specific Person's Email
 Find email for specific contacts:
 
 ```bash
-orth api run hunter /v2/email-finder --query domain=stripe.com first_name=John last_name=Doe
+orth run hunter /v2/email-finder --query domain=stripe.com first_name=John last_name=Doe
 ```
 
 ### Step 3: Verify Emails
 Check deliverability before sending:
 
 ```bash
-orth api run hunter /v2/email-verifier --query 'email=john@stripe.com'
+orth run hunter /v2/email-verifier --query 'email=john@stripe.com'
 ```
 
 ### Step 4: Batch Verification with Fiber
 Validate multiple emails:
 
 ```bash
-orth api run fiber /v1/validate-email/single --body '{"email": "john@stripe.com"}'
+orth run fiber /v1/validate-email/single --body '{"email": "john@stripe.com"}'
 ```
 
 ### Step 5: Enrich for Personalization
 Get info for personalized outreach:
 
 ```bash
-orth api run sixtyfour /enrich-lead --body '{
+orth run sixtyfour /enrich-lead --body '{
   "lead_info": {
     "first_name": "John",
     "last_name": "Doe",
@@ -55,14 +55,14 @@ orth api run sixtyfour /enrich-lead --body '{
 Research company for personalization:
 
 ```bash
-orth api run brand-dev /v1/brand/retrieve --query 'domain=stripe.com'
+orth run brand-dev /v1/brand/retrieve --query 'domain=stripe.com'
 ```
 
 ## Campaign Building Pipeline
 
 ```bash
 # 1. Find target companies
-orth api run fiber /v1/company-search --body '{
+orth run fiber /v1/company-search --body '{
   "searchParams": {
     "industries": ["SaaS"],
     "employee_count_min": 50,
@@ -71,13 +71,13 @@ orth api run fiber /v1/company-search --body '{
 }'
 
 # 2. Get emails for each company
-orth api run hunter /v2/domain-search --query 'domain=company.com'
+orth run hunter /v2/domain-search --query 'domain=company.com'
 
 # 3. Verify each email
-orth api run hunter /v2/email-verifier --query 'email=person@company.com'
+orth run hunter /v2/email-verifier --query 'email=person@company.com'
 
 # 4. Enrich for personalization
-orth api run sixtyfour /enrich-lead --body '{"lead_info": {"first_name": "John", "last_name": "Doe", "company": "Company"}, "struct": {"email": "Work email"}}'
+orth run sixtyfour /enrich-lead --body '{"lead_info": {"first_name": "John", "last_name": "Doe", "company": "Company"}, "struct": {"email": "Work email"}}'
 ```
 
 ## Tips

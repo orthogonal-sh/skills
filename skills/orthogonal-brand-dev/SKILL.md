@@ -33,7 +33,7 @@ Parameters:
 - timeoutMS (integer) - Optional timeout in milliseconds for the request. If the request takes longer than this value, it will be aborted with a 408 status code. Maximum allowed value is 300000ms (5 minutes).
 
 ```bash
-orth api run brand-dev /v1/brand/fonts --query 'domain=vercel.com'
+orth run brand-dev /v1/brand/fonts --query 'domain=vercel.com'
 ```
 
 ### Identify brand from transaction data
@@ -50,7 +50,7 @@ Parameters:
 - timeoutMS (integer) - Optional timeout in milliseconds for the request. If the request takes longer than this value, it will be aborted with a 408 status code. Maximum allowed value is 300000ms (5 minutes).
 
 ```bash
-orth api run brand-dev /v1/brand/transaction_identifier --query 'transaction_title=STRIPE%20PAYMENT'
+orth run brand-dev /v1/brand/transaction_identifier --query 'transaction_title=STRIPE%20PAYMENT'
 ```
 
 ### Retrieve NAICS code for any brand
@@ -63,7 +63,7 @@ Parameters:
 - maxResults (integer) - Maximum number of NAICS codes to return. Must be between 1 and 10. Defaults to 5.
 
 ```bash
-orth api run brand-dev /v1/brand/naics --query 'input=openai.com'
+orth run brand-dev /v1/brand/naics --query 'input=openai.com'
 ```
 
 ### Retrieve brand data by email address
@@ -76,7 +76,7 @@ Parameters:
 - timeoutMS (integer) - Optional timeout in milliseconds for the request. If the request takes longer than this value, it will be aborted with a 408 status code. Maximum allowed value is 300000ms (5 minutes).
 
 ```bash
-orth api run brand-dev /v1/brand/retrieve-by-email --query 'email=john@stripe.com'
+orth run brand-dev /v1/brand/retrieve-by-email --query 'email=john@stripe.com'
 ```
 
 ### Retrieve simplified brand data by domain
@@ -87,7 +87,7 @@ Parameters:
 - timeoutMS (integer) - Optional timeout in milliseconds for the request. If the request takes longer than this value, it will be aborted with a 408 status code. Maximum allowed value is 300000ms (5 minutes).
 
 ```bash
-orth api run brand-dev /v1/brand/retrieve-simplified --query 'domain=notion.so'
+orth run brand-dev /v1/brand/retrieve-simplified --query 'domain=notion.so'
 ```
 
 ### Retrieve brand data by ISIN
@@ -100,7 +100,7 @@ Parameters:
 - timeoutMS (integer) - Optional timeout in milliseconds for the request. If the request takes longer than this value, it will be aborted with a 408 status code. Maximum allowed value is 300000ms (5 minutes).
 
 ```bash
-orth api run brand-dev /v1/brand/retrieve-by-isin --query 'isin=US0378331005'
+orth run brand-dev /v1/brand/retrieve-by-isin --query 'isin=US0378331005'
 ```
 
 ### Extract products from a brand's website
@@ -112,7 +112,7 @@ Parameters:
 - timeoutMS (integer) - Optional timeout in milliseconds for the request. If the request takes longer than this value, it will be aborted with a 408 status code. Maximum allowed value is 300000ms (5 minutes).
 
 ```bash
-orth api run brand-dev /v1/brand/ai/products --body '{"domain": "stripe.com"}'
+orth run brand-dev /v1/brand/ai/products --body '{"domain": "stripe.com"}'
 ```
 
 ### Retrieve brand data by domain
@@ -125,7 +125,7 @@ Parameters:
 - timeoutMS (integer) - Optional timeout in milliseconds for the request. If the request takes longer than this value, it will be aborted with a 408 status code. Maximum allowed value is 300000ms (5 minutes).
 
 ```bash
-orth api run brand-dev /v1/brand/retrieve --query 'domain=stripe.com'
+orth run brand-dev /v1/brand/retrieve --query 'domain=stripe.com'
 ```
 
 ### Retrieve brand data by company name
@@ -138,7 +138,7 @@ Parameters:
 - timeoutMS (integer) - Optional timeout in milliseconds for the request. If the request takes longer than this value, it will be aborted with a 408 status code. Maximum allowed value is 300000ms (5 minutes).
 
 ```bash
-orth api run brand-dev /v1/brand/retrieve-by-name --query 'name=Stripe'
+orth run brand-dev /v1/brand/retrieve-by-name --query 'name=Stripe'
 ```
 
 ### Retrieve brand data by stock ticker
@@ -152,7 +152,7 @@ Parameters:
 - timeoutMS (integer) - Optional timeout in milliseconds for the request. If the request takes longer than this value, it will be aborted with a 408 status code. Maximum allowed value is 300000ms (5 minutes).
 
 ```bash
-orth api run brand-dev /v1/brand/retrieve-by-ticker --query 'ticker=AAPL'
+orth run brand-dev /v1/brand/retrieve-by-ticker --query 'ticker=AAPL'
 ```
 
 ### Extract design system and styleguide from website
@@ -164,7 +164,7 @@ Parameters:
 - prioritize (string) - Optional parameter to prioritize screenshot capture for styleguide extraction. If 'speed', optimizes for faster capture with basic quality. If 'quality', optimizes for higher quality with longer wait times. Defaults to 'quality' if not provided.
 
 ```bash
-orth api run brand-dev /v1/brand/styleguide --query 'domain=linear.app'
+orth run brand-dev /v1/brand/styleguide --query 'domain=linear.app'
 ```
 
 ### Take screenshot of website
@@ -177,7 +177,7 @@ Parameters:
 - prioritize (string) - Optional parameter to prioritize screenshot capture. If 'speed', optimizes for faster capture with basic quality. If 'quality', optimizes for higher quality with longer wait times. Defaults to 'quality' if not provided.
 
 ```bash
-orth api run brand-dev /v1/brand/screenshot --query 'domain=github.com'
+orth run brand-dev /v1/brand/screenshot --query 'domain=github.com'
 ```
 
 ### Query website data using AI
@@ -190,7 +190,7 @@ Parameters:
 - specific_pages (object) - Optional object specifying which pages to analyze
 
 ```bash
-orth api run brand-dev /v1/brand/ai/query --body '{
+orth run brand-dev /v1/brand/ai/query --body '{
   "domain": "anthropic.com",
   "data_to_extract": [{"name": "products", "description": "What products does this company offer?"}]
 }'

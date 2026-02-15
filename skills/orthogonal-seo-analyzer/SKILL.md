@@ -13,14 +13,14 @@ Analyze websites for SEO performance, keywords, content quality, and competitor 
 Map the website structure:
 
 ```bash
-orth api run tavily /map --body '{"url": "https://example.com"}'
+orth run tavily /map --body '{"url": "https://example.com"}'
 ```
 
 ### Step 2: Extract Page Content
 Get content for analysis:
 
 ```bash
-orth api run scrapegraph /v1/smartscraper --body '{
+orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://example.com",
   "user_prompt": "Extract page title, meta description, headings (H1, H2, H3), main content, and internal links"
 }'
@@ -30,7 +30,7 @@ orth api run scrapegraph /v1/smartscraper --body '{
 Find linking opportunities:
 
 ```bash
-orth api run exa /search --body '{
+orth run exa /search --body '{
   "query": "blogs and websites that accept guest posts about productivity software",
   "num_results": 20
 }'
@@ -40,7 +40,7 @@ orth api run exa /search --body '{
 
 ```bash
 # Quick site analysis
-orth api run scrapegraph /v1/smartscraper --body '{
+orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://mysite.com",
   "user_prompt": "Analyze this page for SEO: title tag, meta description, heading structure, keyword usage, content length"
 }'

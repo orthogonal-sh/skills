@@ -13,7 +13,7 @@ Track brand mentions, competitor activity, and industry conversations across the
 Track competitor mentions:
 
 ```bash
-orth api run exa /search --body '{
+orth run exa /search --body '{
   "query": "Notion reviews opinions user feedback",
   "num_results": 30,
   "contents": {"text": true}
@@ -24,7 +24,7 @@ orth api run exa /search --body '{
 
 ```bash
 # Track competitor launches
-orth api run exa /search --body '{
+orth run exa /search --body '{
   "query": "Notion new features announcement launch 2024",
   "num_results": 20
 }'
