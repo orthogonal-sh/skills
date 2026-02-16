@@ -52,16 +52,27 @@ orth run notte /scrape -d '{"url":"https://example.com"}'
 
 ## Response
 
-### Screenshot returns:
-- Image data (base64 or URL)
-- Page dimensions
-- Screenshot timestamp
+### Brand.dev Response
+Returns screenshot URL:
+- **status** (string) - `ok` on success
+- **domain** (string) - Domain that was screenshotted
+- **screenshot** (string) - Public URL to the screenshot image (PNG)
+- **screenshotType** (string) - `viewport` (above-the-fold) or `full_page`
+- **code** (integer) - HTTP status code
 
-### With Notte scrape:
-- Screenshot
-- Page content (markdown)
-- Page title
-- Metadata
+### Notte Response
+Returns page content + session:
+- **markdown** (string) - Page content as markdown text
+- **images** (array|null) - Extracted images (if any)
+- **structured** (object|null) - Structured data (if extraction was requested)
+- **session.session_id** (string) - Session ID for follow-up actions
+- **session.status** (string) - `active` while session is open
+- **session.credit_usage** (integer) - Credits consumed
+
+To take an explicit screenshot via Notte session:
+```bash
+orth run notte /sessions/{session_id}/page/screenshot
+```
 
 ## Examples
 
@@ -79,6 +90,14 @@ orth run brand-dev /v1/brand/screenshot --query 'domain=vercel.com'
 ```bash
 orth run notte /scrape -d '{"url":"https://example.com/article"}'
 ```
+
+## Error Handling
+
+- **400** - Missing required parameter (`domain` for Brand.dev, `url` for Notte)
+- **404** - Domain not found or page doesn't exist
+- **504** - Page took too long to load — retry or try simpler URL
+- Brand.dev only screenshots the homepage (pass domain, not full URL)
+- Notte sessions auto-expire after `idle_timeout_minutes` (default 3) — take screenshots promptly
 
 ## Tips
 

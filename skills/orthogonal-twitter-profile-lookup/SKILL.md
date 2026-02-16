@@ -21,10 +21,16 @@ Uses the Shofo API to scrape Twitter/X profile data and tweets.
 
 ## Usage
 
+### Get User Profile
+
+```bash
+orth run shofo /x/user-profile -q 'username=openai'
+```
+
 ### Get User's Posts
 
 ```bash
-orth run shofo /x/user-posts -q 'username=openai'
+orth run shofo /x/user-posts -q 'username=openai&count=10'
 ```
 
 <details>
@@ -40,11 +46,26 @@ curl -X POST "https://api.orth.sh/v1/run" \
 
 ## Parameters
 
+### Profile
 - **username** (required) - Twitter handle (without @)
+
+### Posts
+- **username** (required) - Twitter handle (without @)
+- **count** (required) - Number of posts to retrieve
 
 ## Response
 
-Posts include:
+### Profile Response
+- User display name and handle
+- Bio/description
+- Follower and following counts
+- Tweet count
+- Profile and banner image URLs
+- Verified status
+- Account creation date
+- Location and website (if set)
+
+### Posts Response
 - Tweet text content
 - Like, retweet, reply counts
 - Media attachments (images, videos)
@@ -55,18 +76,24 @@ Posts include:
 
 **User:** "What has OpenAI been posting on X?"
 ```bash
-orth run shofo /x/user-posts -q 'username=openai'
+orth run shofo /x/user-posts -q 'username=openai&count=10'
 ```
 
 **User:** "Show me Sam Altman's recent tweets"
 ```bash
-orth run shofo /x/user-posts -q 'username=sama'
+orth run shofo /x/user-posts -q 'username=sama&count=10'
 ```
 
 **User:** "What's Anthropic sharing on Twitter?"
 ```bash
-orth run shofo /x/user-posts -q 'username=AnthropicAI'
+orth run shofo /x/user-posts -q 'username=AnthropicAI&count=10'
 ```
+
+## Error Handling
+
+- **success: false** with `error: "Request failed. Please try again."` — Shofo may be temporarily unable to access the profile; retry after a few seconds
+- Protected/private accounts return errors — no workaround
+- Rate limiting may cause failures on rapid sequential requests — add short delays between calls
 
 ## Tips
 

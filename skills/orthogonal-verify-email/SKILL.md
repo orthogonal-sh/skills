@@ -39,26 +39,44 @@ orth run tomba /v1/email-verifier --query 'email=jane@company.com'
 
 ## Response
 
-Returns verification details:
-- **result** - valid, invalid, risky, unknown
-- **score** - Confidence score (0-100)
-- **status** - Detailed status explanation
-- **checks performed**:
-  - Syntax validation
-  - Domain exists and has MX records
-  - Mailbox exists (SMTP check)
-  - Catch-all detection
-  - Disposable email detection
-  - Role-based email detection (info@, support@, etc.)
+### Hunter Response
+Returns `data` object:
+- **status** (string) - `valid`, `invalid`, `accept_all`, or `unknown`
+- **score** (integer) - Confidence score 0-100
+- **result** (string) - `deliverable`, `undeliverable`, or `risky` *(deprecated — use `status`)*
+- **regexp** (boolean) - Syntax is valid
+- **gibberish** (boolean) - Address looks random
+- **disposable** (boolean) - Temporary email service
+- **webmail** (boolean) - Free webmail provider (Gmail, Yahoo, etc.)
+- **mx_records** (boolean) - Domain has MX records
+- **smtp_server** (boolean) - SMTP server responds
+- **smtp_check** (boolean) - Mailbox exists on server
+- **accept_all** (boolean) - Server accepts all addresses
+- **block** (boolean) - Email is blocked
+- **sources** (array) - Web pages where this email was found
+
+### Tomba Response
+Returns `data.email` object:
+- **status** (string) - `valid`, `invalid`, or `accept_all`
+- **result** (string) - `deliverable`, `undeliverable`, or `risky`
+- **score** (integer) - Confidence score 0-100
+- **smtp_provider** (string) - Email provider name (e.g., "Google Workspace")
+- **mx** (object) - `records` array of MX hostnames
+- **mx_check**, **smtp_server**, **smtp_check** (boolean) - Verification checks
+- **accept_all**, **greylisted**, **block** (boolean) - Server behavior flags
+- **gibberish**, **disposable**, **webmail**, **regex** (boolean) - Address quality checks
+- **whois** (object) - Domain registration: `registrar_name`, `referral_url`, `created_date`
+
+Also returns `data.sources` array with `uri`, `website_url`, `extracted_on`, `last_seen_on`, `still_on_page`.
 
 ## Result Types
 
-| Result | Meaning | Action |
+| Status | Meaning | Action |
 |--------|---------|--------|
-| **valid** | Email exists and accepts mail | Safe to send |
-| **invalid** | Email doesn't exist or bounces | Don't send |
-| **risky** | May exist but has issues | Send with caution |
-| **unknown** | Couldn't verify definitively | Verify manually |
+| **valid** | Mailbox exists and accepts mail | Safe to send |
+| **invalid** | Mailbox doesn't exist or domain has no MX | Don't send |
+| **accept_all** | Server accepts any address — can't confirm mailbox | Send with caution |
+| **unknown** | Couldn't verify (timeout, greylisting) | Verify manually |
 
 ## Examples
 
@@ -71,6 +89,14 @@ orth run hunter /v2/email-verifier --query 'email=hello@acme.com'
 ```bash
 orth run tomba /v1/email-verifier --query 'email=sarah.jones@startup.io'
 ```
+
+## Error Handling
+
+- **400** - Missing or malformed `email` parameter
+- **401** - Invalid API key — check `orth auth`
+- **429** - Rate limit exceeded — wait and retry
+- If both APIs return `unknown`, the mail server is likely blocking verification — try later
+- Tomba may return `greylisted: true` — means the server deferred; retry after a few minutes
 
 ## Tips
 

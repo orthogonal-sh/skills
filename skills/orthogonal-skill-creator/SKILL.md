@@ -106,8 +106,3 @@ bigquery-skill/
 
 Agent loads only the relevant reference file.
 
-## Detailed Guides
-
-- **Structure & anatomy**: See [references/structure.md](references/structure.md)
-- **Design patterns**: See [references/patterns.md](references/patterns.md)
-- **Writing quality descriptions**: See [references/descriptions.md](references/descriptions.md)
