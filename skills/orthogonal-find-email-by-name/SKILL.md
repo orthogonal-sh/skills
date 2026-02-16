@@ -30,13 +30,13 @@ orth run hunter /v2/email-finder --query 'domain=stripe.com&first_name=Patrick&l
 ### Find Email with Tomba
 
 ```bash
-orth run tomba /email-finder --query 'domain=intercom.com&first_name=Eoghan&last_name=McCabe'
+orth run tomba /v1/email-finder --query 'domain=intercom.com&first_name=Eoghan&last_name=McCabe'
 ```
 
 ### Find from LinkedIn Profile
 
 ```bash
-orth run tomba /linkedin --query 'url=https://linkedin.com/in/johndoe'
+orth run tomba /v1/linkedin --query 'url=https://linkedin.com/in/johndoe'
 ```
 
 ## Parameters
@@ -64,7 +64,7 @@ orth run hunter /v2/email-finder --query 'domain=notion.so&first_name=Sarah&last
 
 **User:** "I need to contact John Smith who works at Google"
 ```bash
-orth run tomba /email-finder --query 'domain=google.com&first_name=John&last_name=Smith'
+orth run tomba /v1/email-finder --query 'domain=google.com&first_name=John&last_name=Smith'
 ```
 
 ## Tips

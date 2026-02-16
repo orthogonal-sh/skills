@@ -24,42 +24,42 @@ Uses Olostep, Scrapegraph, or Riveter APIs for AI-powered data extraction.
 ### Simple Scrape with Olostep
 
 ```bash
-orth run olostep /scrape -d '{"url":"https://example.com/products"}'
+orth run olostep /v1/scrapes -d '{"url_to_scrape":"https://example.com/products"}'
 ```
 
 ### AI-Powered Extraction with Scrapegraph
 
 ```bash
-orth run scrapegraph /v1/smartscraper -d '{"url":"https://example.com/team","prompt":"Extract all team members with their names, titles, and LinkedIn URLs"}'
+orth run scrapegraph /v1/smartscraper -d '{"website_url":"https://example.com/team","user_prompt":"Extract all team members with their names, titles, and LinkedIn URLs"}'
 ```
 
 ### Schema-Based Extraction with Riveter
 
 ```bash
-orth run riveter /api/scrape -d '{"url":"https://example.com","schema":{"name":"string","price":"number","description":"string"}}'
+orth run riveter /v1/scrape -d '{"url":"https://example.com","schema":{"name":"string","price":"number","description":"string"}}'
 ```
 
 ### Get AI Answer from Web
 
 ```bash
-orth run olostep /answer -d '{"task":"Find the pricing for Notion Teams plan from their website"}'
+orth run olostep /v1/answers -d '{"task":"Find the pricing for Notion Teams plan from their website"}'
 ```
 
 ### Crawl Multiple Pages
 
 ```bash
-orth run olostep /crawl/start -d '{"url":"https://example.com","maxPages":10}'
+orth run olostep /v1/crawls -d '{"start_url":"https://example.com","max_pages":10}'
 ```
 
 ## Parameters
 
 ### Olostep Scrape
-- **url** (required) - URL to scrape
+- **url_to_scrape** (required) - URL to scrape
 - **formats** - Output formats (markdown, html, text)
 
 ### Scrapegraph
-- **url** (required) - URL to scrape
-- **prompt** (required) - Natural language description of what to extract
+- **website_url** (required) - URL to scrape
+- **user_prompt** (required) - Natural language description of what to extract
 
 ### Riveter
 - **url** (required) - URL to scrape
@@ -84,22 +84,22 @@ orth run olostep /crawl/start -d '{"url":"https://example.com","maxPages":10}'
 
 **User:** "Get all the product names and prices from this page"
 ```bash
-orth run scrapegraph /v1/smartscraper -d '{"url":"https://example.com/products","prompt":"Extract all products with name, price, and description"}'
+orth run scrapegraph /v1/smartscraper -d '{"website_url":"https://example.com/products","user_prompt":"Extract all products with name, price, and description"}'
 ```
 
 **User:** "Scrape the team page and get everyone's info"
 ```bash
-orth run scrapegraph /v1/smartscraper -d '{"url":"https://example.com/about/team","prompt":"Extract team members: name, role, bio, photo URL, LinkedIn"}'
+orth run scrapegraph /v1/smartscraper -d '{"website_url":"https://example.com/about/team","user_prompt":"Extract team members: name, role, bio, photo URL, LinkedIn"}'
 ```
 
 **User:** "What are Stripe's API pricing details?"
 ```bash
-orth run olostep /answer -d '{"task":"Find Stripe API pricing breakdown from stripe.com/pricing"}'
+orth run olostep /v1/answers -d '{"task":"Find Stripe API pricing breakdown from stripe.com/pricing"}'
 ```
 
 **User:** "Get all blog post titles and dates from this blog"
 ```bash
-orth run riveter /api/scrape -d '{"url":"https://blog.example.com","schema":{"posts":[{"title":"string","date":"string","url":"string"}]}}'
+orth run riveter /v1/scrape -d '{"url":"https://blog.example.com","schema":{"posts":[{"title":"string","date":"string","url":"string"}]}}'
 ```
 
 ## Tips

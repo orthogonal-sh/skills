@@ -40,13 +40,13 @@ curl -X POST "https://api.orth.sh/v1/run" \
 ### Get Hashtag Posts
 
 ```bash
-orth run shofo /instagram/hashtag -q 'hashtag=artificialintelligence'
+orth run shofo /instagram/hashtag -q 'keyword=artificialintelligence'
 ```
 
 ### Get Post Comments
 
 ```bash
-orth run shofo /instagram/comments -q 'post_url=https://instagram.com/p/ABC123'
+orth run shofo /instagram/comments -q 'media_id=ABC123'
 ```
 
 ## Parameters
@@ -55,10 +55,10 @@ orth run shofo /instagram/comments -q 'post_url=https://instagram.com/p/ABC123'
 - **username** (required) - Instagram username (without @)
 
 ### Hashtag Posts
-- **hashtag** (required) - Hashtag to search (without #)
+- **keyword** (required) - Hashtag to search (without #)
 
 ### Post Comments
-- **post_url** (required) - Full Instagram post URL
+- **media_id** (required) - Instagram post/media ID
 
 ## Response
 
@@ -85,12 +85,12 @@ orth run shofo /instagram/user-posts -q 'username=openai'
 
 **User:** "Show me posts with #AI hashtag"
 ```bash
-orth run shofo /instagram/hashtag -q 'hashtag=AI'
+orth run shofo /instagram/hashtag -q 'keyword=AI'
 ```
 
 **User:** "Get comments on this Instagram post"
 ```bash
-orth run shofo /instagram/comments -q 'post_url=https://instagram.com/p/ABC123'
+orth run shofo /instagram/comments -q 'media_id=ABC123'
 ```
 
 ## Tips

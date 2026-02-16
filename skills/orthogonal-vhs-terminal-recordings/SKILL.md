@@ -135,7 +135,7 @@ Enter
 Sleep 2.5s
 
 # Run command
-Type "orth run olostep /v1/scrape url=https://example.com"
+Type "orth run olostep /v1/scrapes url_to_scrape=https://example.com"
 Sleep 500ms
 Enter
 Sleep 4s

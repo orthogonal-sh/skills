@@ -29,7 +29,7 @@ orth run textbelt /text --body '{
 The response includes a `textId`. Use it to check delivery status:
 
 ```bash
-orth run textbelt /status/<textId>
+orth run textbelt /status/{textId}
 ```
 
 This endpoint is free.
