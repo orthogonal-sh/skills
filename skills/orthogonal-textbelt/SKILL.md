@@ -9,12 +9,12 @@ Send SMS messages via simple HTTP API.
 
 ## Capabilities
 
-- **Status**: Checking SMS delivery status
+- **Status**: Checking SMS delivery status (free)
 - **Send an SMS**: Send an SMS using HTTP POST
 
 ## Usage
 
-### Status
+### Status (free)
 Checking SMS delivery status
 
 ```bash

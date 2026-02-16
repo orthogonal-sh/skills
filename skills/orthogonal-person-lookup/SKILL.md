@@ -1,0 +1,82 @@
+---
+name: person-lookup
+description: Look up information about a person - work history, social profiles, contact info
+---
+
+# Person Lookup
+
+Find detailed information about a person including work history, education, social profiles, and contact information.
+
+## When to Use
+
+- User asks about a specific person
+- User wants to find someone's background
+- User asks "who is [name]?"
+- Research on a professional
+- Finding contact information
+
+## How It Works
+
+Uses the Nyne API to search person databases and aggregate professional information.
+
+## Usage
+
+### Search for a Person
+
+```bash
+orth run nyne /person/search -d '{"query":"Dario Amodei Anthropic"}'
+```
+
+<details>
+<summary>curl equivalent</summary>
+
+```bash
+curl -X POST "https://api.orth.sh/v1/run" \
+  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"api":"nyne","path":"/person/search","body":{"query":"Dario Amodei Anthropic"}}'
+```
+</details>
+
+## Parameters
+
+- **query** (required) - Search query combining name, company, or other identifiers
+  - Examples: "Sam Altman OpenAI", "Dario Amodei CEO Anthropic", "Jensen Huang NVIDIA"
+
+## Response
+
+Returns comprehensive person data:
+- Full name and current title
+- Current employer and role
+- Work history (previous companies, roles)
+- Education (schools, degrees)
+- Location
+- Social profiles (LinkedIn, Twitter, etc.)
+- Skills and expertise
+- Contact information (when available)
+
+**Note:** Nyne searches are async - the POST returns a `request_id`. Poll with GET `/person/search?request_id=<id>` until status is complete. Results may take a few seconds.
+
+## Examples
+
+**User:** "Who is Dario Amodei?"
+```bash
+orth run nyne /person/search -d '{"query":"Dario Amodei Anthropic CEO"}'
+```
+
+**User:** "Look up Sam Altman"
+```bash
+orth run nyne /person/search -d '{"query":"Sam Altman OpenAI"}'
+```
+
+**User:** "Find info about Jensen Huang"
+```bash
+orth run nyne /person/search -d '{"query":"Jensen Huang NVIDIA CEO"}'
+```
+
+## Tips
+
+- Include company name for more accurate results
+- Add job title for disambiguation
+- Results are cached - same queries are faster
+- Multiple results may be returned for common names

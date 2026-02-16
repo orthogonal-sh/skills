@@ -10,10 +10,10 @@ Verify user identities through phone/email OTP codes and screen against AML data
 ## Capabilities
 
 - **Send Email Code**: Send a one-time verification code to an email address
-- **Check Phone Code**: Verify a one-time code sent to a phone number
+- **Check Phone Code**: Verify a one-time code sent to a phone number (free)
 - **Send Phone Code**: Send a one-time verification code to a phone number
 - **AML Screening**: The AML Screening API allows you to screen individuals or companies against global watchlists and high-risk databases
-- **Check Email Code**: Verify a code sent to an email address
+- **Check Email Code**: Verify a code sent to an email address (free)
 - **Database Validation API**: Validate user-provided identity data against authoritative national and global data sources
 
 ## Usage
@@ -31,7 +31,7 @@ Parameters:
 orth api run didit /v3/email/send --body '{"email": "user@example.com"}'
 ```
 
-### Check Phone Code
+### Check Phone Code (free)
 Verify a one-time code sent to a phone number. Maximum of three verification attempts per code.
 
 Parameters:
@@ -82,7 +82,7 @@ Parameters:
 orth api run didit /v3/aml --body '{"full_name": "John Doe"}'
 ```
 
-### Check Email Code
+### Check Email Code (free)
 Verify a code sent to an email address.
 
 Parameters:

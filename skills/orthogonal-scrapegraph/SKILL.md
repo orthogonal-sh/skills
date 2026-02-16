@@ -15,11 +15,11 @@ Extract web content using AI with natural language prompts.
 - **Start SmartCrawler**: Start a new web crawl request with AI extraction or markdown conversion
 - **Start Sitemap**: Extract all URLs from a website sitemap automatically
 - **Start Markdownify**: Convert any webpage into clean, readable Markdown format
-- **Get SearchScraper Status**: Get the status and results of a previous search request
-- **Get Markdownify Status**: Check the status and retrieve results of a Markdownify request
-- **Get Sitemap Status**: Check the status and retrieve results of a Sitemap request
-- **Get SmartCrawler Status**: Get the status and results of a previous smartcrawl request
-- **Get SmartScraper Status**: Check the status and retrieve results of a SmartScraper request
+- **Get SearchScraper Status**: Get the status and results of a previous search request (free)
+- **Get Markdownify Status**: Check the status and retrieve results of a Markdownify request (free)
+- **Get Sitemap Status**: Check the status and retrieve results of a Sitemap request (free)
+- **Get SmartCrawler Status**: Get the status and results of a previous smartcrawl request (free)
+- **Get SmartScraper Status**: Check the status and retrieve results of a SmartScraper request (free)
 
 ## Usage
 
@@ -125,35 +125,35 @@ Parameters:
 orth api run scrapegraph /v1/markdownify --body '{"website_url": "https://example.com/article"}'
 ```
 
-### Get SearchScraper Status
+### Get SearchScraper Status (free)
 Get the status and results of a previous search request
 
 ```bash
 orth api run scrapegraph /v1/searchscraper/{request_id}
 ```
 
-### Get Markdownify Status
+### Get Markdownify Status (free)
 Check the status and retrieve results of a Markdownify request.
 
 ```bash
 orth api run scrapegraph /v1/markdownify/{request_id}
 ```
 
-### Get Sitemap Status
+### Get Sitemap Status (free)
 Check the status and retrieve results of a Sitemap request.
 
 ```bash
 orth api run scrapegraph /v1/sitemap/{request_id}
 ```
 
-### Get SmartCrawler Status
+### Get SmartCrawler Status (free)
 Get the status and results of a previous smartcrawl request
 
 ```bash
 orth api run scrapegraph /v1/crawl/{task_id}
 ```
 
-### Get SmartScraper Status
+### Get SmartScraper Status (free)
 Check the status and retrieve results of a SmartScraper request.
 
 ```bash
