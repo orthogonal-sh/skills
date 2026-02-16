@@ -27,7 +27,7 @@ Uses Notte or Brand.dev APIs to capture website screenshots.
 # First start a session, then screenshot
 orth run notte /sessions/start -d '{"url":"https://stripe.com"}'
 # Then take screenshot with the session_id
-orth run notte /sessions/{session_id}/screenshot
+orth run notte /sessions/{session_id}/page/screenshot
 ```
 
 ### Screenshot with Brand.dev (simpler)

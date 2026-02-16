@@ -16,14 +16,14 @@ Search TikTok for profiles, videos, and hashtag content.
 
 ## How It Works
 
-Uses the SearchAPI TikTok engines to query TikTok data.
+Uses the Shofo API to scrape TikTok data including profiles, hashtags, and trending content.
 
 ## Usage
 
-### Get TikTok Profile
+### Get TikTok Profile Videos
 
 ```bash
-orth run searchapi /api/v1/search -q 'engine=tiktok_profile&username=charlidamelio'
+orth run shofo /tiktok/profile -q 'username=charlidamelio&count=10'
 ```
 
 <details>
@@ -33,35 +33,34 @@ orth run searchapi /api/v1/search -q 'engine=tiktok_profile&username=charlidamel
 curl -X POST "https://api.orth.sh/v1/run" \
   -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"api":"searchapi","path":"/api/v1/search","query":{"engine":"tiktok_profile","username":"charlidamelio"}}'
+  -d '{"api":"shofo","path":"/tiktok/profile","query":{"username":"charlidamelio","count":"10"}}'
 ```
 </details>
 
-### Search TikTok Videos
+### Search Hashtag Videos
 
 ```bash
-orth run searchapi /api/v1/search -q 'engine=tiktok&q=AI tutorials'
+orth run shofo /tiktok/hashtag -q 'hashtag=tech&count=10'
 ```
 
-### Search Hashtag
+### Get Trending Feed
 
 ```bash
-orth run searchapi /api/v1/search -q 'engine=tiktok_hashtag&hashtag=tech'
+orth run shofo /tiktok/feed -q 'count=10'
 ```
 
 ## Parameters
 
-### Profile Lookup
-- **engine** - `tiktok_profile`
+### Profile Videos
 - **username** (required) - TikTok username (without @)
+- **count** (required) - Number of videos to retrieve
 
-### Video Search
-- **engine** - `tiktok`
-- **q** (required) - Search query
-
-### Hashtag Search
-- **engine** - `tiktok_hashtag`
+### Hashtag Videos
 - **hashtag** (required) - Hashtag to search (without #)
+- **count** (required) - Number of videos to retrieve
+
+### Trending Feed
+- **count** (required) - Number of videos to retrieve (1-100)
 
 ## Response
 
@@ -84,17 +83,17 @@ orth run searchapi /api/v1/search -q 'engine=tiktok_hashtag&hashtag=tech'
 
 **User:** "Look up charlidamelio on TikTok"
 ```bash
-orth run searchapi /api/v1/search -q 'engine=tiktok_profile&username=charlidamelio'
+orth run shofo /tiktok/profile -q 'username=charlidamelio&count=10'
 ```
 
-**User:** "Find AI tutorial videos on TikTok"
+**User:** "What's trending on TikTok?"
 ```bash
-orth run searchapi /api/v1/search -q 'engine=tiktok&q=AI tutorial'
+orth run shofo /tiktok/feed -q 'count=10'
 ```
 
 **User:** "What's trending with #tech on TikTok?"
 ```bash
-orth run searchapi /api/v1/search -q 'engine=tiktok_hashtag&hashtag=tech'
+orth run shofo /tiktok/hashtag -q 'hashtag=tech&count=10'
 ```
 
 ## Tips

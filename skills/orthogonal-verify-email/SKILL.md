@@ -30,7 +30,7 @@ orth run hunter /v2/email-verifier --query 'email=john@example.com'
 ### Verify with Tomba
 
 ```bash
-orth run tomba /email-verifier --query 'email=jane@company.com'
+orth run tomba /v1/email-verifier --query 'email=jane@company.com'
 ```
 
 ## Parameters
@@ -69,7 +69,7 @@ orth run hunter /v2/email-verifier --query 'email=hello@acme.com'
 
 **User:** "Verify sarah.jones@startup.io before I send my pitch"
 ```bash
-orth run tomba /email-verifier --query 'email=sarah.jones@startup.io'
+orth run tomba /v1/email-verifier --query 'email=sarah.jones@startup.io'
 ```
 
 ## Tips

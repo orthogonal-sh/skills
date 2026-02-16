@@ -31,12 +31,14 @@ Get specific data from images:
 
 ```bash
 orth api run riveter /v1/run --body '{
-  "url": "https://example.com/receipt.jpg",
-  "schema": {
-    "store_name": "string",
-    "date": "string",
-    "items": [{"name": "string", "price": "number"}],
-    "total": "number"
+  "input": {
+    "urls": ["https://example.com/receipt.jpg"]
+  },
+  "output": {
+    "store_name": {"prompt": "Store name", "contexts": ["urls"]},
+    "date": {"prompt": "Date", "contexts": ["urls"]},
+    "items": {"prompt": "Items with names and prices", "contexts": ["urls"]},
+    "total": {"prompt": "Total amount", "contexts": ["urls"]}
   }
 }'
 ```
