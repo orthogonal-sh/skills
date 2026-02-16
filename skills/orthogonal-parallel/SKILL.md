@@ -9,13 +9,13 @@ Web research API that returns OpenAI ChatCompletions-compatible responses.
 
 ## Capabilities
 
-- **Retrieve FindAll Run Status**: Retrieve a FindAll run
-- **FindAll Run Result**: Retrieve the FindAll run result at the time of the request
-- **Cancel FindAll Run**: Cancel a FindAll run
-- **Retrieve Task Run Input**: Retrieves the input of a run by run_id
-- **Retrieve Task Run**: Retrieves run status by run_id
+- **Retrieve FindAll Run Status**: Retrieve a FindAll run (free)
+- **FindAll Run Result**: Retrieve the FindAll run result at the time of the request (free)
+- **Cancel FindAll Run**: Cancel a FindAll run (free)
+- **Retrieve Task Run Input**: Retrieves the input of a run by run_id (free)
+- **Retrieve Task Run**: Retrieves run status by run_id (free)
 - **Ingest FindAll Run**: Transforms a natural language search objective into a structured FindAll spec
-- **Retrieve Task Run Result**: Retrieves a run result by run_id, blocking until the run is completed
+- **Retrieve Task Run Result**: Retrieves a run result by run_id, blocking until the run is completed (free)
 - **Create FindAll Run**: Starts a FindAll run
 - **Search**: Searches the web
 - **Chat API**: Parallel Chat is a web research API that returns OpenAI ChatCompletions compatible streaming text and JSON
@@ -24,35 +24,35 @@ Web research API that returns OpenAI ChatCompletions-compatible responses.
 
 ## Usage
 
-### Retrieve FindAll Run Status
+### Retrieve FindAll Run Status (free)
 Retrieve a FindAll run.
 
 ```bash
 orth api run parallel /v1beta/findall/runs/{findall_id}
 ```
 
-### FindAll Run Result
+### FindAll Run Result (free)
 Retrieve the FindAll run result at the time of the request.
 
 ```bash
 orth api run parallel /v1beta/findall/runs/{findall_id}/result
 ```
 
-### Cancel FindAll Run
+### Cancel FindAll Run (free)
 Cancel a FindAll run.
 
 ```bash
 orth api run parallel /v1beta/findall/runs/{findall_id}/cancel
 ```
 
-### Retrieve Task Run Input
+### Retrieve Task Run Input (free)
 Retrieves the input of a run by run_id.
 
 ```bash
 orth api run parallel /v1/tasks/runs/{run_id}/input
 ```
 
-### Retrieve Task Run
+### Retrieve Task Run (free)
 Retrieves run status by run_id.The run result is available from the /result endpoint.
 
 ```bash
@@ -69,7 +69,7 @@ Parameters:
 orth api run parallel /v1beta/findall/ingest --body '{"objective": "Find all AI startups in San Francisco"}'
 ```
 
-### Retrieve Task Run Result
+### Retrieve Task Run Result (free)
 Retrieves a run result by run_id, blocking until the run is completed.
 
 Parameters:

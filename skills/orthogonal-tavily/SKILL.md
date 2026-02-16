@@ -10,7 +10,7 @@ Comprehensive web search, crawling, content extraction, and deep research.
 ## Capabilities
 
 - **Tavily Search**: Execute a search query using Tavily Search
-- **Get Research Task Status**: Retrieve the status and results of a research task using its request ID
+- **Get Research Task Status**: Retrieve the status and results of a research task using its request ID (free)
 - **Create Research Task**: Tavily Research performs comprehensive research on a given topic by conducting multiple searches, analyzing sources, and generating a detailed research report
 - **Tavily Extract**: Extract web page content from one or more specified URLs using Tavily Extract
 - **Tavily Map**: Tavily Map traverses websites like a graph and can explore hundreds of paths in parallel with intelligent discovery to generate comprehensive site maps
@@ -48,7 +48,7 @@ orth api run tavily /search --body '{
 }'
 ```
 
-### Get Research Task Status
+### Get Research Task Status (free)
 Retrieve the status and results of a research task using its request ID.
 
 ```bash
