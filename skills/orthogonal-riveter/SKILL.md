@@ -11,9 +11,9 @@ Scrape web pages and extract data into your defined structure.
 
 - **Scrape**: Scrape a webpage and return the text content
 - **Run**: Copy link Define the structure of your output directly in the API request
-- **Run data**: Retrieve the processed data from a completed project run (free)
-- **Run status**: Check the current status of a project run (free)
-- **Stop run**: Stop a currently running project (free)
+- **Run data**: Retrieve the processed data from a completed project run
+- **Run status**: Check the current status of a project run
+- **Stop run**: Stop a currently running project
 
 ## Usage
 
@@ -49,7 +49,7 @@ orth api run riveter /v1/run --body '{
 }'
 ```
 
-### Run data (free)
+### Run data
 Retrieve the processed data from a completed project run
 
 Parameters:
@@ -59,7 +59,7 @@ Parameters:
 orth api run riveter /v1/run_data --query 'run_key=abc123'
 ```
 
-### Run status (free)
+### Run status
 Check the current status of a project run
 
 Parameters:
@@ -69,7 +69,7 @@ Parameters:
 orth api run riveter /v1/run_status --query 'run_key=abc123'
 ```
 
-### Stop run (free)
+### Stop run
 Stop a currently running project. This will halt all processing and mark the run as stopped. Behavior:  If the run is already stopped or success, returns success with current status. If the run is in progress, stops all pending cells and marks the run as stopped.  Stopped runs cannot be resumed
 
 Parameters:

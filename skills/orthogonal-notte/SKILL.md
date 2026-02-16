@@ -10,13 +10,13 @@ Control browser sessions, scrape web pages, and run autonomous AI agents.
 ## Capabilities
 
 - **Take Screenshot**: Take a screenshot of the current page
-- **Get Session**: Get session status and details (free)
-- **Stop Session**: Stop and clean up a browser session (free)
-- **Get Session Cookies**: Get all cookies from the browser session (free)
-- **Get Network Logs**: Get network request/response logs from the session (free)
-- **Get Agent Status**: Get agent execution status and results (free)
+- **Get Session**: Get session status and details
+- **Stop Session**: Stop and clean up a browser session
+- **Get Session Cookies**: Get all cookies from the browser session
+- **Get Network Logs**: Get network request/response logs from the session
+- **Get Agent Status**: Get agent execution status and results
 - **Observe Page**: Observe the current page state and get available actions
-- **Stop Agent**: Stop a running agent (free)
+- **Stop Agent**: Stop a running agent
 - **Scrape Webpage**: Scrape content from a URL without managing sessions
 - **Execute Page Action**: Execute an action on the page (click, type, navigate, etc
 - **Set Session Cookies**: Set cookies in the browser session
@@ -38,7 +38,7 @@ Parameters:
 orth api run notte /sessions/{session_id}/page/screenshot --body '{}'
 ```
 
-### Get Session (free)
+### Get Session
 Get session status and details.
 
 Parameters:
@@ -48,7 +48,7 @@ Parameters:
 orth api run notte /sessions/{session_id}
 ```
 
-### Stop Session (free)
+### Stop Session
 Stop and clean up a browser session.
 
 Parameters:
@@ -58,7 +58,7 @@ Parameters:
 orth api run notte /sessions/{session_id}/stop
 ```
 
-### Get Session Cookies (free)
+### Get Session Cookies
 Get all cookies from the browser session.
 
 Parameters:
@@ -68,7 +68,7 @@ Parameters:
 orth api run notte /sessions/{session_id}/cookies
 ```
 
-### Get Network Logs (free)
+### Get Network Logs
 Get network request/response logs from the session.
 
 Parameters:
@@ -78,7 +78,7 @@ Parameters:
 orth api run notte /sessions/{session_id}/network/logs --query session_id=example
 ```
 
-### Get Agent Status (free)
+### Get Agent Status
 Get agent execution status and results.
 
 Parameters:
@@ -101,7 +101,7 @@ Parameters:
 orth api run notte /sessions/{session_id}/page/observe --body '{"instruction": "Find the search box"}'
 ```
 
-### Stop Agent (free)
+### Stop Agent
 Stop a running agent.
 
 Parameters:
