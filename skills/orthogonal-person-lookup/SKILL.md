@@ -74,6 +74,13 @@ orth run nyne /person/search -d '{"query":"Sam Altman OpenAI"}'
 orth run nyne /person/search -d '{"query":"Jensen Huang NVIDIA CEO"}'
 ```
 
+## Error Handling
+
+- Nyne searches are async — if the initial POST doesn't return results, poll with GET using the `request_id`
+- **404** — Person not found; try different name spellings or add company context
+- **429** — Rate limit exceeded; wait and retry
+- Multiple results for common names — add company or title to narrow down
+
 ## Tips
 
 - Include company name for more accurate results

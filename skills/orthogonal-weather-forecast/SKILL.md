@@ -79,16 +79,38 @@ orth run precip /api/v1/last-48 -q 'latitude=37.7749&longitude=-122.4194'
 
 ## Response
 
-### Daily forecast includes:
-- High/low temperatures
-- Precipitation amounts
-- Weather conditions
+All endpoints return GeoJSON `FeatureCollection` with coordinates in `geometry` and weather data in `properties`.
 
-### Hourly forecast includes:
-- Temperature
-- Precipitation
-- Cloud cover
-- Wind speed
+### `/api/v1/daily` — properties.days[] array
+- **precip** (number) - Total precipitation in mm
+- **rain** / **snow** (number) - Rain and snow amounts in mm
+- **precip_probability** (number|null) - Probability 0-100 (null for observations)
+- **precip_type** (string) - `rain`, `snow`, `sleet`, or `freezing_rain`
+- **startTime** (string) - ISO 8601 timestamp
+- **source** (string) - `observation` or `forecast`
+
+### `/api/v1/hourly` — properties.hours[] array
+Same fields as daily, plus:
+- **slr** (number) - Snow-to-liquid ratio
+
+### `/api/v1/temperature-hourly` — properties.hours[] array
+- **temperature** (number) - Temperature in °C
+- **startTime** (string) - ISO 8601 timestamp
+
+### `/api/v1/recent-rain` — properties (single object)
+- **precip** (number) - Total precipitation in mm
+- **rain** / **snow** / **sleet** / **freezing_rain** (number) - Breakdown by type in mm
+- **precip_type** (string) - Dominant precipitation type
+- **startTime** / **endTime** (string) - Time window of the observation
+- **ago** (string) - Human-readable time since last data (e.g., "2 hours")
+- **details** (string) - Data freshness note
+
+### `/api/v1/last-48` — properties (single object)
+- **precip** (number) - Total precipitation in last 48 hours in mm
+- **rain** / **snow** / **sleet** / **freezing_rain** (number) - Breakdown by type in mm
+- **precip_type** (string) - Dominant precipitation type
+- **slr** (number) - Snow-to-liquid ratio
+- **endTime** (string) - End of the 48-hour window
 
 ## Examples
 
@@ -106,6 +128,14 @@ orth run precip /api/v1/hourly -q 'latitude=40.7128&longitude=-74.0060&start=202
 ```bash
 orth run precip /api/v1/recent-rain -q 'latitude=47.6062&longitude=-122.3321'
 ```
+
+## Error Handling
+
+- **400** - Missing required parameters (`latitude`, `longitude`, or date range for daily/hourly)
+- **422** - Invalid date format — must be `YYYY-MM-DD`
+- `precip_probability: null` means the data is from observations, not forecasts
+- `source: "observation"` = historical data; `source: "forecast"` = predicted
+- All precipitation values are in millimeters (mm), temperatures in Celsius (°C)
 
 ## Tips
 

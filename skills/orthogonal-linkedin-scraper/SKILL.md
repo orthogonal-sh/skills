@@ -47,28 +47,30 @@ orth run shofo /linkedin/company-profile -q 'company=anthropic'
 ### Get User's Posts
 
 ```bash
-orth run shofo /linkedin/user-posts -q 'username=satyanadella'
+orth run shofo /linkedin/user-posts -q 'username=satyanadella&count=5'
 ```
 
 ### Get Company Posts
 
 ```bash
-orth run shofo /linkedin/company-posts -q 'company=openai'
+orth run shofo /linkedin/company-posts -q 'company=openai&count=5'
 ```
 
 ### Search Company Employees
 
 ```bash
-orth run shofo /linkedin/search-employees -q 'company=anthropic'
+orth run shofo /linkedin/search-employees -q 'company=anthropic&count=10'
 ```
 
 ## Parameters
 
 ### User Operations
 - **username** (required) - LinkedIn username (from profile URL)
+- **count** (required for posts) - Number of posts to retrieve
 
 ### Company Operations
 - **company** (required) - Company name or LinkedIn company slug
+- **count** (required for posts/search) - Number of results to retrieve
 
 ## Response
 
@@ -102,11 +104,19 @@ orth run shofo /linkedin/company-profile -q 'company=anthropic'
 
 **User:** "Who works at OpenAI?"
 ```bash
-orth run shofo /linkedin/search-employees -q 'company=openai'
+orth run shofo /linkedin/search-employees -q 'company=openai&count=10'
 ```
+
+## Error Handling
+
+- **success: false** — Shofo may temporarily fail to access LinkedIn; retry after a few seconds
+- Missing `count` parameter may return default or error — always include it
+- Private/restricted profiles return limited or no data
+- Rate limiting may apply — add short delays between sequential requests
 
 ## Tips
 
 - Use LinkedIn username from the profile URL (linkedin.com/in/USERNAME)
 - For companies, use the company name or slug
 - Some profiles may have restricted visibility
+- For paginated results, check if response includes a cursor or next page token

@@ -86,11 +86,12 @@ cat ~/.openclaw/skills/<slug>/SKILL.md
 | Skill | Description |
 |-------|-------------|
 | `weather` | Get weather forecasts |
+| `weather-forecast` | Precipitation and temperature data via Precip API |
 | `restaurant-booking` | Book restaurant reservations via Notte |
-| `gog` | Google Workspace (Gmail, Calendar, Drive) |
-| `github` | GitHub CLI for issues, PRs, repos |
-| `web-search` | Search the web |
 | `company-intel` | Research companies |
+| `person-lookup` | Look up professional backgrounds |
+| `verify-email` | Check if an email is valid and deliverable |
+| `extract-webpage-data` | AI-powered web scraping |
 
 ## Tips
 

@@ -34,6 +34,17 @@ orth run textbelt /status/{textId}
 
 This endpoint is free.
 
+## Response
+
+### Send Response (`/text`)
+- **success** (boolean) - `true` if message was queued
+- **textId** (string) - Message ID for delivery tracking (only on success)
+- **quotaRemaining** (integer) - Remaining SMS credits
+- **error** (string) - Error message (only on failure)
+
+### Status Response (`/status/{textId}`)
+- **status** (string) - `DELIVERED`, `SENDING`, `FAILED`, or `UNKNOWN`
+
 ## Constraints
 
 - Max 800 characters per message
@@ -46,3 +57,11 @@ When sending, you can also include:
 - `sender` (string) - Business/org name for regulatory purposes
 - `replyWebhookUrl` (string) - US only: URL to receive reply webhooks
 - `webhookData` (string) - Extra data passed to webhook (max 100 chars)
+
+## Error Handling
+
+- **success: false** with `error` field describes the issue (e.g., invalid phone number, insufficient credits)
+- US/Canada numbers only work from US/Canada IP region
+- International numbers require E.164 format (e.g., `+44...`)
+- Messages containing URLs are rejected — use descriptions instead
+- Max 800 characters — longer messages are rejected, not truncated
