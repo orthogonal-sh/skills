@@ -52,13 +52,25 @@ orth run searchapi /api/v1/search -q 'engine=amazon_search&q=laptop&category_id=
 
 ## Response
 
-Returns product results with:
-- Product title
-- Price (current and original)
-- Rating and review count
-- Prime eligibility
-- Product URL
-- Thumbnail image
+Top-level keys: `search_metadata`, `search_parameters`, `search_information`, `organic_results`, `filters`, `pagination`.
+
+Each item in **`organic_results`** array:
+- **position** (integer) - Result rank
+- **asin** (string) - Amazon product ID
+- **title** (string) - Product name
+- **link** (string) - Product page URL
+- **image** (string) - Product thumbnail URL
+- **price** (string) - Display price (e.g., "$69.99")
+- **extracted_price** (number) - Numeric price for comparison
+- **original_price** / **extracted_original_price** - Pre-discount price (if on sale)
+- **currency** (string) - Currency code (e.g., "USD")
+- **rating** (number) - Star rating (0-5)
+- **reviews** (integer) - Number of reviews
+- **is_prime** (boolean) - Prime eligible
+- **is_best_seller** / **is_amazon_choice** (boolean) - Badge flags
+- **delivery** (string) - Delivery estimate text
+
+**Pagination**: Use `page=2`, `page=3`, etc. for more results.
 
 ## Examples
 
@@ -76,3 +88,11 @@ orth run searchapi /api/v1/search -q 'engine=amazon_search&q=laptop under 500'
 ```bash
 orth run searchapi /api/v1/search -q 'engine=amazon_search&q=coffee maker best rated'
 ```
+
+## Error Handling
+
+- **400** - Invalid engine name or missing `q` parameter
+- **401** - Invalid API key
+- **429** - Rate limit — wait and retry
+- Empty `organic_results` array means no products matched the query — try broader search terms
+- Use separate `-q` flags if `&` in query string causes issues: `-q 'engine=amazon_search' -q 'q=wireless earbuds'`

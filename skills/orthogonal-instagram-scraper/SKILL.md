@@ -23,7 +23,7 @@ Uses the Shofo API to scrape Instagram data.
 ### Get User Posts
 
 ```bash
-orth run shofo /instagram/user-posts -q 'username=openai'
+orth run shofo /instagram/user-posts -q 'username=openai&count=10'
 ```
 
 <details>
@@ -40,7 +40,7 @@ curl -X POST "https://api.orth.sh/v1/run" \
 ### Get Hashtag Posts
 
 ```bash
-orth run shofo /instagram/hashtag -q 'keyword=artificialintelligence'
+orth run shofo /instagram/hashtag -q 'keyword=artificialintelligence&count=10'
 ```
 
 ### Get Post Comments
@@ -53,9 +53,11 @@ orth run shofo /instagram/comments -q 'media_id=ABC123'
 
 ### User Posts
 - **username** (required) - Instagram username (without @)
+- **count** (required) - Number of posts to retrieve
 
 ### Hashtag Posts
 - **keyword** (required) - Hashtag to search (without #)
+- **count** (required) - Number of posts to retrieve
 
 ### Post Comments
 - **media_id** (required) - Instagram post/media ID
@@ -80,18 +82,25 @@ orth run shofo /instagram/comments -q 'media_id=ABC123'
 
 **User:** "What's OpenAI posting on Instagram?"
 ```bash
-orth run shofo /instagram/user-posts -q 'username=openai'
+orth run shofo /instagram/user-posts -q 'username=openai&count=10'
 ```
 
 **User:** "Show me posts with #AI hashtag"
 ```bash
-orth run shofo /instagram/hashtag -q 'keyword=AI'
+orth run shofo /instagram/hashtag -q 'keyword=AI&count=10'
 ```
 
 **User:** "Get comments on this Instagram post"
 ```bash
 orth run shofo /instagram/comments -q 'media_id=ABC123'
 ```
+
+## Error Handling
+
+- **success: false** — Shofo may temporarily fail; retry after a few seconds
+- Private accounts cannot be accessed — no workaround
+- Rate limiting may cause failures on rapid requests — add delays between calls
+- Missing `count` parameter may return default or error — always include it
 
 ## Tips
 

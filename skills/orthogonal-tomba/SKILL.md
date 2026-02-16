@@ -11,7 +11,7 @@ Find and verify email addresses from domains, LinkedIn profiles, or natural lang
 
 - **Validate Phone**: Validate a phone number and get carrier information
 - **Domain Status**: Check the status and availability of a domain
-- **Email Format**: Get the email format patterns used by a domain (e
+- **Email Format**: Get the email format patterns used by a domain (e.g. first.last, firstlast)
 - **Find Person**: Get person information from an email address
 - **Combined Enrichment**: Get combined person and company information from an email
 - **Domain Suggestions**: Get domain suggestions for a company name
@@ -161,7 +161,7 @@ Parameters:
 - domain* (string) - Domain name, e.g. stripe.com
 
 ```bash
-orth api run tomba /v1/location --query 'ip=8.8.8.8'
+orth api run tomba /v1/location --query 'domain=stripe.com'
 ```
 
 ### Domain Search

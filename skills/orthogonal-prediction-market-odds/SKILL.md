@@ -24,7 +24,7 @@ Uses the Dome API to aggregate prediction market data from Polymarket and Kalshi
 ### Get Polymarket Markets
 
 ```bash
-orth run dome /polymarket/markets
+orth run dome /polymarket/markets -q 'status=open'
 ```
 
 <details>
@@ -37,6 +37,12 @@ curl -X POST "https://api.orth.sh/v1/run" \
   -d '{"api":"dome","path":"/polymarket/markets"}'
 ```
 </details>
+
+### Search Markets
+
+```bash
+orth run dome /polymarket/markets -q 'search=election' -q 'status=open'
+```
 
 ### Get Kalshi Markets
 
@@ -79,23 +85,36 @@ orth run dome /matching-markets/sports/nba
 
 ## Response
 
-### Markets include:
-- Market question/title
-- Current Yes/No prices (probabilities)
-- Trading volume
-- End date
-- Market status
+### Markets Response (`/polymarket/markets`, `/kalshi/markets`)
+Returns `markets` array:
+- **title** (string) - Market question (e.g., "Will Trump nationalize elections?")
+- **market_slug** (string) - URL-friendly identifier
+- **condition_id** (string) - Blockchain condition ID
+- **start_time** / **end_time** (integer) - Unix timestamps
+- **completed_time** (integer|null) - Null if still open
+- **tags** (array) - Category tags (e.g., `["politics", "us election"]`)
+- **volume_1_week** / **volume_1_month** / **volume_1_year** / **volume_total** (number) - Trading volume in USD
+- **side_a** / **side_b** (object) - `id` and `label` (typically "Yes"/"No")
+- **winning_side** (object|null) - Null if unresolved
+- **image** (string) - Market thumbnail URL
 
-### Activity includes:
-- Recent trades
-- Volume changes
-- Price movements
+### Activity Response (`/polymarket/activity`)
+Returns `activities` array:
+- **title** (string) - Market title
+- **market_slug** (string) - Market identifier
+- **side** (string) - Trade side: `BUY`, `SELL`, or `MERGE`
+- **shares** (integer) - Raw share amount
+- **shares_normalized** (number) - Human-readable share amount
+- **price** (number) - Trade price (0-1, represents probability)
+- **timestamp** (integer) - Unix timestamp of the trade
+- **user** (string) - Wallet address of the trader
+- **tx_hash** (string) - Blockchain transaction hash
 
 ## Examples
 
 **User:** "What are the odds on Polymarket right now?"
 ```bash
-orth run dome /polymarket/markets
+orth run dome /polymarket/markets -q 'status=open'
 ```
 
 **User:** "Show me Kalshi prediction markets"
@@ -119,6 +138,14 @@ orth run dome /matching-markets/sports
 - "Yes" price = probability market thinks event will happen
 - Higher volume = more confidence/liquidity
 - Prices change based on trading activity
+
+## Error Handling
+
+- **400** - `search` requires `status` parameter (`open` or `closed`) — always include both
+- **401** - Invalid API key
+- **429** - Rate limit — wait and retry
+- Empty `markets` array means no markets match the search term
+- Activity endpoint returns recent trades globally — no filters required
 
 ## Tips
 

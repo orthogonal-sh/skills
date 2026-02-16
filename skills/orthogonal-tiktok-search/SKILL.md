@@ -96,6 +96,13 @@ orth run shofo /tiktok/feed -q 'count=10'
 orth run shofo /tiktok/hashtag -q 'hashtag=tech&count=10'
 ```
 
+## Error Handling
+
+- **success: false** — Shofo may temporarily fail; retry after a few seconds
+- Private accounts cannot be accessed
+- Missing `count` parameter causes errors — always include it
+- Rate limiting may apply on rapid sequential requests
+
 ## Tips
 
 - Remove @ from usernames

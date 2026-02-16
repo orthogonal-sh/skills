@@ -142,6 +142,14 @@ Returns top investors with:
 | "Find top VCs" | Fiber | /v1/investor-search |
 | "Companies that raised $10M+ in 2024" | Fiber | /v1/natural-language-search/companies |
 
+## Error Handling
+
+- **Nyne is async**: POST returns `request_id`, poll with GET — results take 5-20 seconds
+- **404** — Company not found; try alternate name or domain
+- **429** — Rate limit exceeded; wait and retry
+- Fiber returns empty results for very niche queries — broaden search terms
+- `company_name` works better than `company_domain` for Nyne lookups
+
 ## Tips
 
 - **Nyne is async**: Start with POST, poll with GET using request_id (5-20 seconds)
