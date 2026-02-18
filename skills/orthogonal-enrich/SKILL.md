@@ -129,23 +129,9 @@ orth run linkup /search --body '{
 }'
 ```
 
-### 2f. Compile Person Profile
+### 2f. Compile Person Data
 
-Cross-reference all results into a single profile:
-- **Name & title**: Compare across Fiber, Nyne, Sixtyfour, LinkedIn
-- **Emails**: List ALL found emails, labeled by type:
-  - **Work**: john@stripe.com (Hunter: score 95, verified ✓ | Tomba: verified ✓ | Fiber: valid ✓)
-  - **Personal**: johndoe@gmail.com (Tomba LinkedIn: found | Nyne: confirmed | Hunter: verified ✓)
-- **Phone**: From Sixtyfour find-phone
-- **LinkedIn**: URL + headline + summary from Fiber
-- **Twitter/X**: Recent tweets + engagement from Nyne newsfeed
-- **Work history**: Merge Nyne (deep) + Fiber (current)
-- **Education**: From Nyne + Fiber
-- **Recent activity**: LinkedIn posts (Fiber) + Twitter (Nyne) + Linkup research (news, talks, interviews)
-- **Company**: Once employer is identified, run full company enrichment (Section 3) and include summary
-
-**When APIs disagree**: Show both values with source labels, e.g.:
-> **Title**: VP Engineering (Fiber) / Senior VP Engineering (LinkedIn) -- CONFLICT
+Cross-reference all API results. Merge name, title, emails (work + personal with verification status), phone, LinkedIn, Twitter, work history, education, and recent activity. When APIs disagree, keep both values with source labels. Once employer is identified, run full company enrichment (Section 3). See **Section 5** for output formatting.
 
 ## 3. Company Enrichment
 
@@ -231,18 +217,9 @@ orth run linkup /search --body '{
 }'
 ```
 
-### 3f. Compile Company Profile
+### 3f. Compile Company Data
 
-Cross-reference all results into a single report:
-- **Overview**: Name, domain, industry, description, logo (Brand.dev) + employee count, HQ (LinkedIn)
-- **Leadership**: Key executives from Fiber natural-language-search
-- **Funding**: Rounds, amounts, dates (Nyne) + investors
-- **Products**: From Brand.dev ai/products + Scrapegraph pricing
-- **Competitors**: From Exa findSimilar
-- **Recent news**: From Linkup deep search
-- **Social presence**: LinkedIn page stats + recent posts
-
-**When APIs disagree**: Show both values with source labels.
+Cross-reference all API results. Merge overview, leadership, funding, products, competitors, news, and social presence. When APIs disagree, keep both values with source labels. See **Section 5** for output formatting.
 
 ## 4. Full Pipeline Example — `enrich john@stripe.com`
 
@@ -304,9 +281,74 @@ orth run exa /findSimilar --body '{"url": "https://stripe.com", "numResults": 10
 orth run linkup /search --body '{"q": "Stripe recent news funding announcements", "depth": "deep", "outputType": "sourcedAnswer"}'
 ```
 
-**Step 4: Compile** — Merge all results into one comprehensive report. List all emails (work + personal) with type labels and verification status. Cross-reference, flag conflicts, present consolidated person + company profile.
+**Step 4: Compile & Format** — Merge all results, cross-reference, flag conflicts, then present using the two-tier output format (Section 5): summary card first, full details below.
 
-## 5. Tips
+## 5. Output Format
+
+**Always present results in two tiers: a scannable summary card on top, then full details below.**
+
+### Tier 1: Summary Card
+
+Lead with this. A sales rep should be able to scan it in 30 seconds.
+
+**For a Person (+ their company):**
+
+```
+## 🔍 {Full Name} — {Title} at {Company}
+
+**Contact**
+- ✉️ Work: {email} ({verification status})
+- ✉️ Personal: {email} ({verification status})
+- 📱 {phone}
+- 🔗 LinkedIn: {url}
+- 𝕏 Twitter: {url}
+
+**Bio**: {One-liner from best available source}
+
+**Personalization Angles**
+1. {Recent activity, talk, post, or news mention — with date}
+2. {Another angle}
+3. {Another angle}
+
+**Company Snapshot**: {Company} · {industry} · {employee count} employees · HQ: {location}
+Latest funding: {round type} — ${amount} ({date}) · Total raised: ${total} · Valuation: ${valuation}
+```
+
+**For a Company (standalone):**
+
+```
+## 🏢 {Company Name}
+
+**Overview**
+- 🌐 {domain}
+- 🏷️ {industry}
+- 👥 {employee count} employees
+- 📍 HQ: {location}
+
+**Funding**: {latest round} — ${amount} ({date}) · Total raised: ${total} · Valuation: ${valuation}
+
+**Key Decision Makers**
+| Name | Title | Email |
+|------|-------|-------|
+| {name} | {title} | {email} |
+| ... | ... | ... |
+
+**Recent News & Icebreakers**
+1. {headline — date — source}
+2. {headline — date — source}
+3. {headline — date — source}
+```
+
+### Tier 2: Full Details
+
+Below a clear separator (`---`), include the complete deep-dive for those who want to dig in:
+
+- **Person**: Full work history, education, all social profiles, all LinkedIn posts, all tweets + engagement, publications, full Linkup research, all email sources + verification breakdown
+- **Company**: Full description, all funding rounds with dates/amounts/investors, complete leadership list, products + pricing tiers, competitor analysis, full news results, social presence stats
+
+Present Tier 2 with clear section headers. Include source labels on every data point. Flag all conflicts between APIs.
+
+## 6. Tips
 
 - **Parallelize**: Run all independent API calls concurrently — person and company enrichment can run simultaneously
 - **Nyne is async**: POST returns `request_id`, poll with GET until status is complete (5-20 seconds)
