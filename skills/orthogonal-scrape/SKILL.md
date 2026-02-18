@@ -1,6 +1,6 @@
 ---
 name: scrape
-description: Scrape websites, extract structured data, and automate browsers. Use when asked to scrape, extract, crawl, parse, or pull data from web pages, social media profiles, or any URL.
+description: Scrape websites, extract structured data, and automate browsers. Use when asked to scrape, extract, crawl, parse, or pull data from web pages or any URL.
 ---
 
 # Scrape — General-Purpose Web Scraping & Data Extraction
@@ -172,63 +172,7 @@ orth run riveter /v1/run --body '{
 
 Key parameters: Output `format` options (number/json/url/text/email/tag/date/boolean), `tools` (web_search/web_scrape/query_pdf/query_image), `max_tool_calls` (0-10), `run_when` (always/any_filled/all_filled).
 
-## 4. Shofo — Social Media Scraping
-
-Best for: Scraping profiles, posts, and comments from LinkedIn, Instagram, TikTok, and X/Twitter.
-
-**LinkedIn:**
-```bash
-# User profile
-orth run shofo /linkedin/user-profile --query 'username=johndoe'
-# User posts
-orth run shofo /linkedin/user-posts --query 'username=johndoe&count=5'
-# Company profile
-orth run shofo /linkedin/company-profile --query 'company=openai'
-# Company posts
-orth run shofo /linkedin/company-posts --query 'company=openai&count=5'
-# Search employees
-orth run shofo /linkedin/search-employees --query 'company=openai&count=10'
-```
-
-**Instagram:**
-```bash
-# User profile
-orth run shofo /instagram/user-profile --query 'username=openai'
-# User posts
-orth run shofo /instagram/user-posts --query 'username=openai&count=10'
-# Individual post
-orth run shofo /instagram/post --query 'code_or_url=https://instagram.com/p/abc123'
-# Post comments
-orth run shofo /instagram/comments --query 'media_id=abc123&count=20'
-# Hashtag posts
-orth run shofo /instagram/hashtag --query 'keyword=artificialintelligence&count=10'
-```
-
-**TikTok:**
-```bash
-# User profile videos
-orth run shofo /tiktok/profile --query 'username=openai&count=10'
-# Video comments
-orth run shofo /tiktok/comments --query 'video_id=123&count=10'
-# Hashtag videos
-orth run shofo /tiktok/hashtag --query 'hashtag=ai&count=10'
-# Trending feed
-orth run shofo /tiktok/feed --query 'count=10'
-```
-
-**X/Twitter:**
-```bash
-# User profile
-orth run shofo /x/user-profile --query 'username=OpenAI'
-# User posts
-orth run shofo /x/user-posts --query 'username=OpenAI&count=10'
-# Individual tweet
-orth run shofo /x/post --query 'tweet_id_or_url=https://x.com/OpenAI/status/123456'
-# Tweet comments
-orth run shofo /x/comments --query 'tweet_id=123456&count=10'
-```
-
-## 5. Brand.dev — Brand Assets, Logos & Company Data
+## 4. Brand.dev — Brand Assets, Logos & Company Data
 
 Best for: Extracting brand logos, colors, fonts, design systems, screenshots, and AI-powered data extraction from company websites.
 
@@ -272,7 +216,7 @@ orth run brand-dev /v1/brand/ai/query --body '{
 orth run brand-dev /v1/brand/ai/products --body '{"domain": "stripe.com"}'
 ```
 
-## 6. Notte — Browser Automation & Page Interaction
+## 5. Notte — Browser Automation & Page Interaction
 
 Best for: Scraping pages that require browser interaction, CAPTCHAs, login flows, or complex JavaScript rendering. Also supports autonomous AI agents for multi-step browser tasks.
 
@@ -322,7 +266,6 @@ Key parameters: `proxies` (rotate proxies), `solve_captchas` (auto-solve), `head
 - **Simple page scrape**: Start with Olostep for raw content or Scrapegraph SmartScraper for AI-extracted data
 - **Natural language extraction**: Scrapegraph is the go-to — describe what you want in English, optionally pass an `output_schema`
 - **Structured/schema-based extraction**: Riveter lets you define exact fields and formats for consistent output
-- **Social media**: Shofo is the only option — covers LinkedIn, Instagram, TikTok, and X/Twitter profiles, posts, and comments
 - **Brand assets & logos**: Brand.dev for logos, colors, fonts, design systems, and screenshots
 - **Bot protection**: Use Scrapegraph's `stealth: true` or Notte's `proxies: true` + `solve_captchas: true`
 - **JavaScript-heavy SPAs**: Use Scrapegraph's `render_heavy_js: true` or Notte browser sessions
@@ -341,7 +284,6 @@ List all endpoints for any API, or add a path for parameter details:
 orth api show scrapegraph
 orth api show olostep
 orth api show riveter
-orth api show shofo
 orth api show brand-dev
 orth api show notte
 ```
