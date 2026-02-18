@@ -22,7 +22,7 @@ Detect input type, then route:
 | Twitter/X handle | `@handle` or `x.com/` | Person + Company (from results) |
 
 **Person always cascades to company.** Once person enrichment reveals their employer (company name, domain, or LinkedIn company URL), automatically run full company enrichment too. The only time you skip company is if you truly can't identify one.
-**If LinkedIn person URL provided:** extract username for Shofo calls, full URL for Fiber calls.
+**If LinkedIn person URL provided:** use full URL for Fiber calls, extract username/slug for other endpoints.
 
 ## 2. Person Enrichment
 
@@ -100,22 +100,24 @@ orth run sixtyfour /find-phone --body '{
 }'
 ```
 
-### 2d. Social Profiles
+### 2d. Social Profiles & Activity
 
-**LinkedIn** (cross-reference Shofo + Fiber):
+**LinkedIn profile** (Fiber):
 ```bash
-orth run shofo /linkedin/user-profile -q username=johndoe
 orth run fiber /v1/linkedin-live-fetch/profile/single --body '{"identifier": "https://linkedin.com/in/johndoe"}'
 ```
 
-**Twitter/X** (if handle known or discovered):
+**LinkedIn recent posts** (Fiber):
 ```bash
-orth run shofo /x/user-profile -q username=johndoe
+orth run fiber /v1/linkedin-live-fetch/profile-posts --body '{"identifier": "https://linkedin.com/in/johndoe"}'
 ```
 
-**Recent LinkedIn activity:**
+**Twitter/X activity** (Nyne — async, returns tweets + engagement metrics):
 ```bash
-orth run shofo /linkedin/user-posts -q username=johndoe count=5
+# Step 1: POST with Twitter URL
+orth run -X POST nyne /person/newsfeed -d '{"social_media_url": "https://x.com/HANDLE"}'
+# Step 2: Poll with GET
+orth run nyne /person/newsfeed -q request_id=REQUEST_ID
 ```
 
 ### 2e. Open-Ended Research
@@ -135,11 +137,11 @@ Cross-reference all results into a single profile:
   - **Work**: john@stripe.com (Hunter: score 95, verified ✓ | Tomba: verified ✓ | Fiber: valid ✓)
   - **Personal**: johndoe@gmail.com (Tomba LinkedIn: found | Nyne: confirmed | Hunter: verified ✓)
 - **Phone**: From Sixtyfour find-phone
-- **LinkedIn**: URL + headline + summary from both Shofo and Fiber (flag differences)
-- **Twitter/X**: Profile + recent activity
-- **Work history**: Merge Nyne (deep) + Fiber (current) + LinkedIn
-- **Education**: From Nyne + LinkedIn
-- **Recent activity**: LinkedIn posts + Linkup research (news, talks, interviews)
+- **LinkedIn**: URL + headline + summary from Fiber
+- **Twitter/X**: Recent tweets + engagement from Nyne newsfeed
+- **Work history**: Merge Nyne (deep) + Fiber (current)
+- **Education**: From Nyne + Fiber
+- **Recent activity**: LinkedIn posts (Fiber) + Twitter (Nyne) + Linkup research (news, talks, interviews)
 - **Company**: Once employer is identified, run full company enrichment (Section 3) and include summary
 
 **When APIs disagree**: Show both values with source labels, e.g.:
@@ -168,9 +170,8 @@ orth run brand-dev /v1/brand/retrieve-by-email --query email=john@stripe.com
 orth run hunter /v2/domain-search --query domain=stripe.com
 ```
 
-**LinkedIn** (cross-reference Shofo + Fiber):
+**Fiber company data** (LinkedIn-enriched):
 ```bash
-orth run shofo /linkedin/company-profile -q company=stripe
 orth run fiber /v1/kitchen-sink/company --body '{"companyDomain": {"domain": "stripe.com"}}'
 ```
 
@@ -181,10 +182,6 @@ orth run fiber /v1/kitchen-sink/company --body '{"companyDomain": {"domain": "st
 orth run fiber /v1/natural-language-search/profiles --body '{"query": "CEO, CTO, CFO, COO, VP at Stripe", "pageSize": 10}'
 ```
 
-**Employee search:**
-```bash
-orth run shofo /linkedin/search-employees -q company=stripe count=10
-```
 
 ### 3c. Funding
 
@@ -238,7 +235,7 @@ orth run linkup /search --body '{
 
 Cross-reference all results into a single report:
 - **Overview**: Name, domain, industry, description, logo (Brand.dev) + employee count, HQ (LinkedIn)
-- **Leadership**: Key executives from Fiber natural-language-search + Shofo employees
+- **Leadership**: Key executives from Fiber natural-language-search
 - **Funding**: Rounds, amounts, dates (Nyne) + investors
 - **Products**: From Brand.dev ai/products + Scrapegraph pricing
 - **Competitors**: From Exa findSimilar
@@ -276,13 +273,12 @@ orth run linkup /search --body '{"q": "john stripe.com", "depth": "deep", "outpu
 
 Once you have the person's full name + LinkedIn from Step 2, fire off:
 ```bash
-# LinkedIn profiles
-orth run shofo /linkedin/user-profile -q username=LINKEDIN_USERNAME
+# LinkedIn profile + posts
 orth run fiber /v1/linkedin-live-fetch/profile/single --body '{"identifier": "LINKEDIN_URL"}'
-orth run shofo /linkedin/user-posts -q username=LINKEDIN_USERNAME count=5
+orth run fiber /v1/linkedin-live-fetch/profile-posts --body '{"identifier": "LINKEDIN_URL"}'
 
 # Twitter (if discovered)
-orth run shofo /x/user-profile -q username=TWITTER_HANDLE
+orth run -X POST nyne /person/newsfeed -d '{"social_media_url": "https://x.com/TWITTER_HANDLE"}'
 ```
 
 **Step 3: Company enrichment** (run in parallel with person):
@@ -290,12 +286,10 @@ orth run shofo /x/user-profile -q username=TWITTER_HANDLE
 # Overview
 orth run brand-dev /v1/brand/retrieve --query domain=stripe.com
 orth run hunter /v2/domain-search --query domain=stripe.com
-orth run shofo /linkedin/company-profile -q company=stripe
 orth run fiber /v1/kitchen-sink/company --body '{"companyDomain": {"domain": "stripe.com"}}'
 
 # Leadership
 orth run fiber /v1/natural-language-search/profiles --body '{"query": "CEO, CTO, CFO, COO, VP at Stripe", "pageSize": 10}'
-orth run shofo /linkedin/search-employees -q company=stripe count=10
 
 # Funding
 orth run -X POST nyne /company/funding -d '{"company_name": "Stripe"}'
@@ -322,8 +316,8 @@ orth run linkup /search --body '{"q": "Stripe recent news funding announcements"
 - **Email verification**: Verify every email (work + personal) with all 3 verifiers (Hunter, Tomba, Fiber) and take consensus
 - **Person → Company**: Person enrichment always cascades — once you identify their employer, run full company enrichment automatically
 - **Linkup deep search**: Best for personalization angles — recent talks, interviews, blog posts, news mentions
-- **Shofo can be flaky**: LinkedIn profile/company endpoints may return 400 intermittently — retry once, and rely on Fiber as the primary LinkedIn data source
 - **Sixtyfour enrich-lead is slow**: Takes 30-60 seconds (AI web research). Fire it early and don't block on it
+- **Nyne newsfeed for Twitter/X**: Pass the Twitter URL to get recent tweets + engagement. Async like other Nyne endpoints
 - **Adaptive**: Skip APIs that don't apply (e.g., don't run email-finder if email is already known, don't run funding search for public megacorps)
 - **Tomba linkedin**: If you have a LinkedIn URL but no email, Tomba's LinkedIn finder is very effective
 - **Company from email**: Brand.dev's retrieve-by-email endpoint handles domain extraction automatically
