@@ -13,15 +13,15 @@ Detect input type, then route:
 
 | Input | Contains | Route |
 |-------|----------|-------|
-| Email | `@` | Person enrichment + extract domain for company |
-| LinkedIn person URL | `linkedin.com/in/` | Person enrichment |
-| LinkedIn company URL | `linkedin.com/company/` | Company enrichment |
-| Domain | `*.com`, `*.io`, etc. | Company enrichment |
-| Company name | No special pattern | Company enrichment |
-| Name + company | "John Doe at Stripe" | Person enrichment |
-| Twitter/X handle | `@handle` or `x.com/` | Person enrichment |
+| Email | `@` | Person + Company (extract domain) |
+| LinkedIn person URL | `linkedin.com/in/` | Person + Company (from results) |
+| LinkedIn company URL | `linkedin.com/company/` | Company only |
+| Domain | `*.com`, `*.io`, etc. | Company only |
+| Company name | No special pattern | Company only |
+| Name + company | "John Doe at Stripe" | Person + Company |
+| Twitter/X handle | `@handle` or `x.com/` | Person + Company (from results) |
 
-**If email provided:** always run BOTH person (full pipeline) AND company (extract domain) enrichment.
+**Person always cascades to company.** Once person enrichment reveals their employer (company name, domain, or LinkedIn company URL), automatically run full company enrichment too. The only time you skip company is if you truly can't identify one.
 **If LinkedIn person URL provided:** extract username for Shofo calls, full URL for Fiber calls.
 
 ## 2. Person Enrichment
@@ -58,30 +58,40 @@ orth run nyne /person/search -q 'request_id=REQUEST_ID'
 ```bash
 orth api run sixtyfour /enrich-lead --body '{
   "lead_info": {"first_name": "John", "last_name": "Doe", "company": "Stripe", "linkedin_url": "https://linkedin.com/in/johndoe"},
-  "struct": {"email": "Work email", "phone": "Phone number", "title": "Job title", "bio": "Short bio"}
+  "struct": {"work_email": "Work email", "personal_email": "Personal email (Gmail, etc.)", "phone": "Phone number", "title": "Job title", "bio": "Short bio"}
 }'
 ```
 
 ### 2b. Email — Find & Verify
 
-**Find email** (cross-reference Hunter + Tomba):
+Collect ALL emails — work AND personal. Many use cases (recruiting, etc.) need personal emails. Present each email with its type (work/personal) and verification status.
+
+**Find work email** (cross-reference Hunter + Tomba):
 ```bash
-# Hunter
+# Hunter (returns work email)
 orth run hunter /v2/email-finder --query 'domain=stripe.com&first_name=John&last_name=Doe'
 
-# Tomba
+# Tomba (returns work email + sometimes personal)
 orth run tomba /v1/email-finder --query 'domain=stripe.com&company=Stripe&first_name=John&last_name=Doe'
-
-# Tomba from LinkedIn (if URL available)
-orth run tomba /v1/linkedin --query 'url=https://linkedin.com/in/johndoe'
 ```
 
-**Verify email** (run all three, compare):
+**Find personal email** — these sources often return personal (Gmail, etc.):
+```bash
+# Tomba from LinkedIn (often returns personal email)
+orth run tomba /v1/linkedin --query 'url=https://linkedin.com/in/johndoe'
+
+# Tomba enrich (returns all known emails for a person)
+orth run tomba /v1/enrich --query 'email=john@stripe.com'
+```
+Nyne person/search and Sixtyfour enrich-lead (Section 2a) also return personal emails — check their results.
+
+**Verify ALL found emails** (run all three verifiers per email):
 ```bash
 orth run hunter /v2/email-verifier --query 'email=john@stripe.com'
 orth run tomba /v1/email-verifier --query 'email=john@stripe.com'
 orth api run fiber /v1/validate-email/single --body '{"email": "john@stripe.com"}'
 ```
+Verify every email found — work and personal. Run verifiers in parallel across all emails.
 
 ### 2c. Phone
 ```bash
@@ -121,13 +131,16 @@ orth api run linkup /search --body '{
 
 Cross-reference all results into a single profile:
 - **Name & title**: Compare across Fiber, Nyne, Sixtyfour, LinkedIn
-- **Email**: Show all found emails with confidence scores + verification status from each verifier
+- **Emails**: List ALL found emails, labeled by type:
+  - **Work**: john@stripe.com (Hunter: score 95, verified ✓ | Tomba: verified ✓ | Fiber: valid ✓)
+  - **Personal**: johndoe@gmail.com (Tomba LinkedIn: found | Nyne: confirmed | Hunter: verified ✓)
 - **Phone**: From Sixtyfour find-phone
 - **LinkedIn**: URL + headline + summary from both Shofo and Fiber (flag differences)
 - **Twitter/X**: Profile + recent activity
 - **Work history**: Merge Nyne (deep) + Fiber (current) + LinkedIn
 - **Education**: From Nyne + LinkedIn
 - **Recent activity**: LinkedIn posts + Linkup research (news, talks, interviews)
+- **Company**: Once employer is identified, run full company enrichment (Section 3) and include summary
 
 **When APIs disagree**: Show both values with source labels, e.g.:
 > **Title**: VP Engineering (Fiber) / Senior VP Engineering (LinkedIn) -- CONFLICT
@@ -248,12 +261,16 @@ Cross-reference all results into a single report:
 # Profile (3 sources)
 orth api run fiber /v1/kitchen-sink/person --body '{"emailAddress": "john@stripe.com", "companyDomain": {"domain": "stripe.com"}}'
 orth run nyne /person/search -d '{"query": "john stripe.com"}'
-orth api run sixtyfour /enrich-lead --body '{"lead_info": {"email": "john@stripe.com", "company": "Stripe"}, "struct": {"phone": "Phone", "title": "Title", "bio": "Bio"}}'
+orth api run sixtyfour /enrich-lead --body '{"lead_info": {"email": "john@stripe.com", "company": "Stripe"}, "struct": {"work_email": "Work email", "personal_email": "Personal email", "phone": "Phone", "title": "Title", "bio": "Bio"}}'
 
-# Email verify (3 sources)
+# Find personal email
+orth run tomba /v1/enrich --query 'email=john@stripe.com'
+
+# Verify work email (3 sources)
 orth run hunter /v2/email-verifier --query 'email=john@stripe.com'
 orth run tomba /v1/email-verifier --query 'email=john@stripe.com'
 orth api run fiber /v1/validate-email/single --body '{"email": "john@stripe.com"}'
+# Also verify any personal emails found with the same 3 verifiers
 
 # Phone
 orth api run sixtyfour /find-phone --body '{"lead": {"email": "john@stripe.com", "company": "Stripe"}}'
@@ -298,7 +315,7 @@ orth api run exa /findSimilar --body '{"url": "https://stripe.com", "numResults"
 orth api run linkup /search --body '{"q": "Stripe recent news funding announcements", "depth": "deep", "outputType": "sourcedAnswer"}'
 ```
 
-**Step 4: Compile** — Merge all results into one comprehensive report. Cross-reference, flag conflicts, present consolidated person + company profile.
+**Step 4: Compile** — Merge all results into one comprehensive report. List all emails (work + personal) with type labels and verification status. Cross-reference, flag conflicts, present consolidated person + company profile.
 
 ## 5. Tips
 
@@ -306,7 +323,9 @@ orth api run linkup /search --body '{"q": "Stripe recent news funding announceme
 - **Nyne is async**: POST returns `request_id`, poll with GET until status is complete (5-20 seconds)
 - **Conflicts**: When APIs disagree, show both values with source labels — never silently pick one
 - **LinkedIn URLs**: Dramatically improve match rates for Fiber and Tomba — extract from any source that returns them
-- **Email verification**: Always verify emails before outreach — use all 3 verifiers (Hunter, Tomba, Fiber) and take consensus
+- **All emails matter**: Always collect both work AND personal emails — recruiting and hiring use cases need personal emails. Label each as work/personal
+- **Email verification**: Verify every email (work + personal) with all 3 verifiers (Hunter, Tomba, Fiber) and take consensus
+- **Person → Company**: Person enrichment always cascades — once you identify their employer, run full company enrichment automatically
 - **Linkup deep search**: Best for personalization angles — recent talks, interviews, blog posts, news mentions
 - **Adaptive**: Skip APIs that don't apply (e.g., don't run email-finder if email is already known, don't run funding search for public megacorps)
 - **Tomba linkedin**: If you have a LinkedIn URL but no email, Tomba's LinkedIn finder is very effective
