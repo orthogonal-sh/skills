@@ -358,7 +358,7 @@ Present Tier 2 with clear section headers. Include source labels on every data p
 - **Email verification**: Verify every email (work + personal) with all 3 verifiers (Hunter, Tomba, Fiber) and take consensus
 - **Person → Company**: Person enrichment always cascades — once you identify their employer, run full company enrichment automatically
 - **Linkup deep search**: Best for personalization angles — recent talks, interviews, blog posts, news mentions
-- **Sixtyfour enrich-lead is slow**: Takes 30-60 seconds (AI web research). Fire it early and don't block on it
+- **Sixtyfour enrich-lead is slow**: Takes 30-60 seconds (AI web research). Fire it early, don't block on it — continue processing other API results and merge Sixtyfour data when it arrives
 - **Nyne newsfeed for Twitter/X**: Pass the Twitter URL to get recent tweets + engagement. Async like other Nyne endpoints
 - **Adaptive**: Skip APIs that don't apply (e.g., don't run email-finder if email is already known, don't run funding search for public megacorps)
 - **Tomba linkedin**: If you have a LinkedIn URL but no email, Tomba's LinkedIn finder is very effective
