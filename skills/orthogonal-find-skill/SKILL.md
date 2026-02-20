@@ -21,10 +21,10 @@ orth skills search "browser automation"
 orth skills list
 
 # Get details about a specific skill
-orth skills info <slug>
+orth skills show <owner/slug>
 
-# Install a skill
-orth skills add <slug>
+# Install a skill (use full slug with namespace)
+orth skills add <owner/slug>
 ```
 
 ## Finding Skills
@@ -57,15 +57,19 @@ Browse all skills at: https://orthogonal.com/skills
 
 ## Installing Skills
 
+Skills use a namespaced slug format: `owner/skill-name` (e.g. `orthogonal/find-skill`).
+
 ```bash
-# Install by slug
-orth skills add restaurant-booking
+# Install by full slug (namespace/name)
+orth skills add orthogonal/restaurant-booking
 
 # Install and view the skill file
-orth skills add weather && cat ~/.openclaw/skills/weather/SKILL.md
+orth skills add orthogonal/weather && cat ~/.openclaw/skills/orthogonal-weather/SKILL.md
 ```
 
-Skills are installed to `~/.openclaw/skills/<slug>/`
+> **Note:** The CLI expects the full slug with namespace prefix (e.g. `orthogonal/find-skill`), not just the short name.
+
+Skills are installed to `~/.openclaw/skills/<slug>/` and `.agent/skills/<slug>/` (project-local).
 
 ## Using Installed Skills
 
@@ -86,12 +90,11 @@ cat ~/.openclaw/skills/<slug>/SKILL.md
 | Skill | Description |
 |-------|-------------|
 | `weather` | Get weather forecasts |
-| `weather-forecast` | Precipitation and temperature data via Precip API |
 | `restaurant-booking` | Book restaurant reservations via Notte |
+| `gog` | Google Workspace (Gmail, Calendar, Drive) |
+| `github` | GitHub CLI for issues, PRs, repos |
+| `web-search` | Search the web |
 | `company-intel` | Research companies |
-| `person-lookup` | Look up professional backgrounds |
-| `verify-email` | Check if an email is valid and deliverable |
-| `extract-webpage-data` | AI-powered web scraping |
 
 ## Tips
 
