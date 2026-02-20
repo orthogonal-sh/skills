@@ -64,12 +64,12 @@ Skills use a namespaced slug format: `owner/skill-name` (e.g. `orthogonal/find-s
 orth skills add orthogonal/restaurant-booking
 
 # Install and view the skill file
-orth skills add orthogonal/weather && cat ~/.openclaw/skills/orthogonal-weather/SKILL.md
+orth skills add orthogonal/weather && cat <your-skills-directory>/orthogonal-weather/SKILL.md
 ```
 
 > **Note:** The CLI expects the full slug with namespace prefix (e.g. `orthogonal/find-skill`), not just the short name.
 
-Skills are installed to `~/.openclaw/skills/<slug>/` and `.agent/skills/<slug>/` (project-local).
+Skills are installed to your agent's skills directory (e.g. `~/.openclaw/skills/`, `~/.claude/skills/`, `.agent/skills/`, or wherever your agent reads skill files).
 
 ## Using Installed Skills
 
@@ -82,7 +82,7 @@ After installing, the skill's `SKILL.md` contains:
 Read the skill file to understand how to use it:
 
 ```bash
-cat ~/.openclaw/skills/<slug>/SKILL.md
+cat <your-skills-directory>/<slug>/SKILL.md
 ```
 
 ## Tips
