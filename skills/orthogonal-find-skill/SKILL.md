@@ -85,17 +85,6 @@ Read the skill file to understand how to use it:
 cat ~/.openclaw/skills/<slug>/SKILL.md
 ```
 
-## Popular Skills
-
-| Skill | Description |
-|-------|-------------|
-| `weather` | Get weather forecasts |
-| `restaurant-booking` | Book restaurant reservations via Notte |
-| `gog` | Google Workspace (Gmail, Calendar, Drive) |
-| `github` | GitHub CLI for issues, PRs, repos |
-| `web-search` | Search the web |
-| `company-intel` | Research companies |
-
 ## Tips
 
 - Search is semantic - describe what you want to do
