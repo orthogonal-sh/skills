@@ -151,6 +151,19 @@ A skill is a `SKILL.md` file that tells an AI agent how to do something. When yo
 | [tavus](skills/orthogonal-tavus) | AI video conversations with real-time personas |
 | [vhs-terminal-recordings](skills/orthogonal-vhs-terminal-recordings) | Create polished terminal GIF recordings |
 
+### 💻 Development & Design
+
+| Skill | Description |
+|-------|-------------|
+| [react-best-practices](skills/react-best-practices) | React and Next.js performance optimization, component patterns, anti-patterns |
+| [frontend-design](skills/frontend-design) | Creating distinctive, production-grade frontend interfaces |
+| [web-design-guidelines](skills/web-design-guidelines) | Web accessibility (WCAG), responsive design, semantic HTML, performance |
+| [ui-ux-design](skills/ui-ux-design) | UI/UX design principles, user research, interaction design, usability heuristics |
+| [brainstorming](skills/brainstorming) | Structured brainstorming and ideation techniques |
+| [supabase-postgres](skills/supabase-postgres) | Supabase and PostgreSQL best practices, schema design, RLS, edge functions |
+| [test-driven-development](skills/test-driven-development) | TDD workflow, test strategies, mocking, testing best practices |
+| [code-review](skills/code-review) | Code review best practices, feedback, anti-patterns, security checks |
+
 ### 🤖 Meta
 
 | Skill | Description |
