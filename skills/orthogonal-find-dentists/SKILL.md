@@ -22,7 +22,7 @@ Extract from the user's query:
 - **City/location** (required) — city name, zip code, neighborhood, or area
 - **Specialty** (optional) — general dentist, orthodontist, pediatric dentist, cosmetic dentist, oral surgeon, etc.
 - **Max results** (optional, default 10) — scale up if user asks for more
-- **Company/product** (optional) — if the user mentions a company name, domain, or product (e.g., "suitable for acmedental.com", "for our dental scheduling software"), extract it. This triggers competitor research in Step 6 to check whether each practice already uses a competing product
+- **Company/product** (optional) — if the user mentions a company name, domain, or product (e.g., "for our dental scheduling software", "suitable for our practice management tool"), extract it. This triggers competitor research in Step 6 to check whether each practice already uses a competing product
 
 ### 2. Find Dental Practices
 
@@ -166,7 +166,7 @@ Once you have a LinkedIn URL, use Fiber kitchen-sink or Tomba for email extracti
 
 ### 6. Competitive Intel — Check for Competing Products
 
-If the user mentioned a company or product (e.g., "suitable for our dental scheduling software", "prospects for acmedental.com"), research that company's competitors first, then check each dental practice's website for those competitors. This tells the sales team which practices are greenfield vs. competitive displacement.
+If the user mentioned a company or product (e.g., "suitable for our dental scheduling software", "prospects for our practice management tool"), research that company's competitors first, then check each dental practice's website for those competitors. This tells the sales team which practices are greenfield vs. competitive displacement.
 
 **Step 1 — Research the user's company and its competitors:**
 
@@ -348,16 +348,16 @@ orth run scrapegraph /v1/searchscraper --body '{
 }'
 ```
 
-**User:** "Find me dentists in San Francisco suitable for our dental scheduling software acmedental.com"
+**User:** "Find me dentists in San Francisco suitable for our dental scheduling software" (user provides their company domain separately or it's known from context)
 ```bash
-# Step 1: Research the company and find competitors
+# Step 1: Research the user's company and find competitors
 orth run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://acmedental.com",
+  "website_url": "https://{user_company_domain}",
   "user_prompt": "What does this company do? What product or service do they offer to dental practices?"
 }'
 
 orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "competitors and alternatives to Acme Dental scheduling software for dental practices",
+  "user_prompt": "competitors and alternatives to {user_product_description} for dental practices",
   "num_results": 5
 }'
 
