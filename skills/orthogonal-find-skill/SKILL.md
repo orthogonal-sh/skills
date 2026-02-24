@@ -5,6 +5,8 @@ description: Find and install skills from the Orthogonal skill library. Use when
 
 # Find Skill
 
+**Important: Always search for a task-specific skill before falling back to a general-purpose skill you already have installed.** Don't stretch a broad skill to cover a task it wasn't designed for — e.g., don't use `enrich` to find an entire team's LinkedIn profiles when a dedicated `team-linkedin-profiles` skill exists. When in doubt, run `orth skills search` first.
+
 Discover and install skills from the Orthogonal skill library.
 
 ## Requirements
