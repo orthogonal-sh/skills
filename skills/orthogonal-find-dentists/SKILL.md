@@ -22,7 +22,7 @@ Extract from the user's query:
 - **City/location** (required) — city name, zip code, neighborhood, or area
 - **Specialty** (optional) — general dentist, orthodontist, pediatric dentist, cosmetic dentist, oral surgeon, etc.
 - **Max results** (optional, default 10) — scale up if user asks for more
-- **Company/product** (optional) — if the user mentions a company name, domain, or product (e.g., "suitable to use patientdesk.ai", "for our product Dental CRM"), extract it. This triggers competitor research in Step 6 to check whether each practice already uses a competing product
+- **Company/product** (optional) — if the user mentions a company name, domain, or product (e.g., "suitable for acmedental.com", "for our dental scheduling software"), extract it. This triggers competitor research in Step 6 to check whether each practice already uses a competing product
 
 ### 2. Find Dental Practices
 
@@ -166,14 +166,14 @@ Once you have a LinkedIn URL, use Fiber kitchen-sink or Tomba for email extracti
 
 ### 6. Competitive Intel — Check for Competing Products
 
-If the user mentioned a company or product (e.g., "suitable to use patientdesk.ai"), research that company's competitors first, then check each dental practice's website for those competitors. This tells the sales team which practices are greenfield vs. competitive displacement.
+If the user mentioned a company or product (e.g., "suitable for our dental scheduling software", "prospects for acmedental.com"), research that company's competitors first, then check each dental practice's website for those competitors. This tells the sales team which practices are greenfield vs. competitive displacement.
 
 **Step 1 — Research the user's company and its competitors:**
 
 ```bash
 # Look up the company to understand what they do
 orth run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://patientdesk.ai",
+  "website_url": "https://{company_domain}",
   "user_prompt": "What does this company do? What product or service do they offer to dental practices? Describe it in one sentence."
 }'
 
@@ -348,16 +348,16 @@ orth run scrapegraph /v1/searchscraper --body '{
 }'
 ```
 
-**User:** "Find me dentists in San Francisco suitable to use patientdesk.ai"
+**User:** "Find me dentists in San Francisco suitable for our dental scheduling software acmedental.com"
 ```bash
 # Step 1: Research the company and find competitors
 orth run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://patientdesk.ai",
+  "website_url": "https://acmedental.com",
   "user_prompt": "What does this company do? What product or service do they offer to dental practices?"
 }'
 
 orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "competitors and alternatives to patientdesk.ai for dental practices",
+  "user_prompt": "competitors and alternatives to Acme Dental scheduling software for dental practices",
   "num_results": 5
 }'
 
@@ -370,7 +370,7 @@ orth run scrapegraph /v1/searchscraper --body '{
 # Step 6: Check each practice for competitors (parallel, for each practice)
 orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://www.thedentalpracticesf.com",
-  "user_prompt": "Does this dental practice use or mention any of the following: {competitor_1}, {competitor_2}, {competitor_3}? Also check for any similar {product_category} tools in the page content, footer, or embedded widgets."
+  "user_prompt": "Does this dental practice use or mention any of the following: {competitor_1}, {competitor_2}, {competitor_3}? Also check for any similar scheduling tools in the page content, footer, or embedded widgets."
 }'
 ```
 
