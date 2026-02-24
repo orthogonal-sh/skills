@@ -110,39 +110,40 @@ Target: ~40-60 unique handles after dedup. Curated list pages typically mention 
 
 ### 5. Get Twitter Profiles + Engagement
 
-Fetch Twitter data for ALL candidates using Riveter web scraping. Each call returns the full profile AND recent tweets with engagement metrics in a single response ($0.05/call).
+Use Scrape Creators to fetch structured Twitter data. This is a two-step process: fetch profiles for ALL candidates (cheap, 1 credit each), then fetch tweets only for the top ~25-30 after initial filtering.
+
+**Step 1 — Fetch profiles for all candidates:**
 
 ```bash
-orth run riveter /v1/scrape --body '{
-  "url": "https://x.com/examplehandle"
-}'
+orth run scrape-creators /v1/twitter/profile --query 'handle=examplehandle'
 ```
 
-Run these in parallel for all candidates. From each scraped profile page, extract:
+Returns structured JSON with: `screen_name`, `name`, `description` (bio), `followers_count`, `following_count`, `statuses_count`, `location`, `verified`, `created_at`, `profile_image_url`, and website URL. The profile URL is `https://x.com/{screen_name}`.
 
-**Profile data:**
-- Display name, bio, location
-- Follower count, following count, post count
-- Website link (from bio)
-- Joined date
+Run these in parallel for all candidates. Apply **hard filters** to narrow the pool:
+- Fewer than 1,000 followers
+- Empty bio or bio completely unrelated to the niche
+- Suspended or not-found accounts (API returns error)
 
-**Engagement data** (from the tweets visible on the page):
-- Per-tweet: likes, retweets, replies, views
+**Step 2 — Fetch tweets for top ~25-30 candidates** (after profile filtering):
+
+```bash
+orth run scrape-creators /v1/twitter/user-tweets --query 'handle=examplehandle'
+```
+
+Returns an array of tweet objects, each with: `full_text`, `favorite_count` (likes), `retweet_count`, `reply_count`, `views_count`, `created_at`, `url`, and media attachments. All engagement numbers are exact integers — no parsing needed.
+
+From the tweet data, calculate:
 - **Average likes** per tweet
 - **Average retweets** per tweet
 - **Average replies** per tweet
 - **Engagement rate**: (avg likes + avg retweets + avg replies) / followers * 100
-- **Post frequency**: inferred from tweet dates
-- **Content themes**: what topics they tweet about most
+- **Post frequency**: inferred from `created_at` dates
+- **Content themes**: what topics they tweet about most (from `full_text`)
 
-**Hard filters — discard profiles that meet any of these:**
-- Fewer than 1,000 followers
+**Additional hard filters** (applied after tweet fetch):
 - No tweets in the last 30 days (inactive)
-- Empty bio or bio completely unrelated to the niche
-- Protected/private accounts (Riveter returns a login wall)
-- Suspended or not-found accounts
-
-**Parsing tips:** Riveter returns the page as plain text. Tweet engagement numbers appear as `likes`, `retweets`, and `replies` counts next to each tweet. Follower count appears in the profile header. Parse these numbers to calculate metrics.
+- Protected/private accounts
 
 Skip reply-only accounts (>80% of tweets are replies to others with minimal engagement).
 
@@ -235,7 +236,8 @@ Only if the user requests more detail on specific influencers:
 
 **Full tweet analysis** (recent content, top tweets, audience reactions):
 ```bash
-orth run riveter /v1/scrape --body '{"url": "https://x.com/TARGET"}'
+orth run scrape-creators /v1/twitter/profile --query 'handle=TARGET'
+orth run scrape-creators /v1/twitter/user-tweets --query 'handle=TARGET'
 ```
 
 If deeper tweet history is needed, Nyne can fetch recent newsfeed data asynchronously:
@@ -269,9 +271,9 @@ orth run sixtyfour /enrich-lead --body '{
 - **Brand accounts vs personal** — Filter out corporate accounts (@stripe, @shopify). Look for individual creators even if they work at companies (e.g., @pmarca not @a16z)
 - **Engagement rate varies by tier** — >5% is elite for any size. 2-3% is strong for 50K+ followers. <0.5% is a red flag regardless of follower count
 - **Content themes matter more than follower count** — An account with 8K followers tweeting daily about the exact niche beats a 200K account that occasionally mentions it
-- **Riveter returns profile + tweets in one call** — Each scrape of `x.com/username` returns the full profile header (name, bio, followers) AND recent tweets with engagement metrics (likes, retweets, replies, views). No need for separate profile and posts calls
-- **Riveter costs $0.05/call** — For 60 candidates that's $3 total. Fetch all candidates since you get both profile and engagement data at once
-- **Parse Riveter text output carefully** — Riveter returns the page as plain text. Follower counts appear near the top ("3M Followers"), engagement numbers appear next to each tweet. Views are the last number after likes/retweets/replies
+- **Scrape Creators returns structured JSON** — No text parsing needed. Profile endpoint returns exact `followers_count`, `description`, `screen_name`, etc. Tweet endpoint returns `favorite_count`, `retweet_count`, `reply_count`, `views_count` as integers
+- **Two-step profile + tweets** — Fetch profiles first for all candidates (1 credit each), apply hard filters (followers, bio relevance), then fetch tweets only for the top ~25-30. This saves credits compared to fetching tweets for everyone
+- **Each tweet includes a direct URL** — The `url` field on each tweet object gives you `https://x.com/{handle}/status/{id}`. The profile URL is `https://x.com/{screen_name}`
 - **Check for newsletters/Substacks** — Many Twitter influencers run newsletters. These are high-signal for partnership potential and often listed in the bio
 - **Fiber catches LinkedIn-heavy people** — Some professionals (B2B especially) are more discoverable via LinkedIn but still have active Twitter accounts. Don't skip Strategy C for B2B niches
 - **Fiber kitchen-sink has no Twitter URL param** — Use `profileIdentifier` (LinkedIn URL) for best match rate. Fall back to `personName` + `companyName` if no LinkedIn URL is available
