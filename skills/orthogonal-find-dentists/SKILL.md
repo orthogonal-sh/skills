@@ -22,7 +22,7 @@ Extract from the user's query:
 - **City/location** (required) — city name, zip code, neighborhood, or area
 - **Specialty** (optional) — general dentist, orthodontist, pediatric dentist, cosmetic dentist, oral surgeon, etc.
 - **Max results** (optional, default 10) — scale up if user asks for more
-- **What they're selling** (optional) — helps tailor the competitive intel and intent signals. If not stated, keep it generic
+- **Company/product** (optional) — if the user mentions a company name, domain, or product (e.g., "suitable to use patientdesk.ai", "for our product Dental CRM"), extract it. This triggers competitor research in Step 6 to check whether each practice already uses a competing product
 
 ### 2. Find Dental Practices
 
@@ -164,11 +164,40 @@ Once you have a LinkedIn URL, use Fiber kitchen-sink or Tomba for email extracti
 
 **Realistic expectations:** Decision maker personal emails are hard to find for dental practices. Most contact info you'll get is practice-level (info@, office@). This is still valuable — the key insight is knowing WHO to ask for when you call or email.
 
-### 6. Competitive Intel — What Software/Services Do They Already Use?
+### 6. Competitive Intel — Check for Competing Products
 
-Scrape each practice's website to understand what tools and services they currently have. This helps the sales team tailor their pitch and avoid wasting time on practices that already have a competing product.
+If the user mentioned a company or product (e.g., "suitable to use patientdesk.ai"), research that company's competitors first, then check each dental practice's website for those competitors. This tells the sales team which practices are greenfield vs. competitive displacement.
 
-Tailor the scraping prompt to whatever the user is selling. If the user hasn't specified, use a broad prompt:
+**Step 1 — Research the user's company and its competitors:**
+
+```bash
+# Look up the company to understand what they do
+orth run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://patientdesk.ai",
+  "user_prompt": "What does this company do? What product or service do they offer to dental practices? Describe it in one sentence."
+}'
+
+# Find competitors
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "competitors and alternatives to {company} for dental practices",
+  "num_results": 5
+}'
+```
+
+From these results, build a list of competitor product names to check for.
+
+**Step 2 — Check each practice's website for competing products:**
+
+```bash
+orth run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://smithfamilydental.com",
+  "user_prompt": "Does this dental practice use or mention any of the following products or services: {competitor_1}, {competitor_2}, {competitor_3}? Also check for any similar {product_category} tools. Look in the page content, footer, embedded widgets, and any third-party integrations."
+}'
+```
+
+Run in parallel for all practices.
+
+**If no company/product was mentioned**, use a broad tech stack scan instead:
 
 ```bash
 orth run scrapegraph /v1/smartscraper --body '{
@@ -177,14 +206,9 @@ orth run scrapegraph /v1/smartscraper --body '{
 }'
 ```
 
-If the user specifies what they're selling, narrow the prompt. For example:
-- Selling practice management software: *"Does this practice mention any practice management software like Dentrix, Eaglesoft, Open Dental, or similar?"*
-- Selling marketing services: *"Does this practice have active social media links, a blog, patient review widgets, or SEO-optimized content?"*
-- Selling payment solutions: *"What payment methods does this practice accept? Do they mention financing, payment plans, or specific payment processors?"*
-
-Run in parallel for all practices. Flag practices based on whether they already have a solution in the user's category:
-- **No competing solution detected** — top priority prospect
-- **Has a competing solution** — lower priority, but may be open to switching
+Flag practices based on findings:
+- **No competing solution detected** — top priority prospect (greenfield)
+- **Uses a competitor** — note which one. Lower priority, but may be open to switching. The sales team can tailor their pitch against the specific competitor
 - **Unknown** — couldn't determine from website
 
 ### 7. Intent Signals — Identify Ready-to-Buy Prospects
@@ -281,8 +305,8 @@ Found {N} practices, ranked by sales readiness:
 
 ## APIs Used
 
-1. **Scrapegraph** `/v1/searchscraper` — find dental practices via web search AND find practices hiring receptionists (primary for both)
-2. **Scrapegraph** `/v1/smartscraper` — scrape practice websites for decision maker names, emails, competitive intel
+1. **Scrapegraph** `/v1/searchscraper` — find dental practices via web search, find hiring signals, and research competitors
+2. **Scrapegraph** `/v1/smartscraper` — scrape practice websites for decision maker names, emails, and check for competing products
 3. **Tavily** `/search` — supplemental web search, job board discovery, new practice detection
 4. **Exa** `/search` — find directory pages, LinkedIn URL discovery for decision makers
 5. **Fiber** `/v1/kitchen-sink/person` — enrich decision maker with LinkedIn URL (when available)
@@ -321,6 +345,32 @@ orth run scrapegraph /v1/smartscraper --body '{
 orth run scrapegraph /v1/searchscraper --body '{
   "user_prompt": "dental practices hiring receptionist or front desk in San Francisco, list the practice name, job title, and salary",
   "num_results": 10
+}'
+```
+
+**User:** "Find me dentists in San Francisco suitable to use patientdesk.ai"
+```bash
+# Step 1: Research the company and find competitors
+orth run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://patientdesk.ai",
+  "user_prompt": "What does this company do? What product or service do they offer to dental practices?"
+}'
+
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "competitors and alternatives to patientdesk.ai for dental practices",
+  "num_results": 5
+}'
+
+# Step 2: Find practices (parallel)
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "dentists in San Francisco with practice name, phone number, email address, office address, and website URL",
+  "num_results": 10
+}'
+
+# Step 6: Check each practice for competitors (parallel, for each practice)
+orth run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://www.thedentalpracticesf.com",
+  "user_prompt": "Does this dental practice use or mention any of the following: {competitor_1}, {competitor_2}, {competitor_3}? Also check for any similar {product_category} tools in the page content, footer, or embedded widgets."
 }'
 ```
 
