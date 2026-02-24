@@ -45,7 +45,7 @@ orth run exa /search --body '{
 }'
 ```
 
-Use `numResults: 50` by default — best balance of coverage vs context window size (~30K tokens). Each Exa result averages ~600-800 tokens of structured data, so 100 results would consume ~70K tokens and roughly half tend to be noise (wrong companies). If the user explicitly wants exhaustive results, bump to 100 (max). Exa costs 1 cent per request on Orthogonal regardless of numResults.
+Use `numResults: 50` by default — best balance of coverage vs context window size (~31K tokens). Each Exa result averages ~800 tokens of structured data, so 100 results would consume ~81K tokens and roughly half tend to be noise (wrong companies). If the user explicitly wants exhaustive results, bump to 100 (max). Exa costs 1 cent per request on Orthogonal regardless of numResults.
 
 Try multiple query variations if results are sparse:
 - `"{company} {team} team"`
@@ -113,7 +113,7 @@ This returns full work history, education, skills, and recent activity. Run thes
 - **Add industry context** to all search queries — "Mercury fintech" finds the right Mercury much more reliably than just "Mercury"
 - **Expand title keywords** — Teams use varied titles. "Data team" could include data scientist, data engineer, analytics engineer, ML engineer, data analyst
 - **Exa vs Hunter** — Exa finds the most team members with best structured data. Hunter surfaces senior/executive people and provides email addresses. Use both in parallel for best coverage
-- **Context window** — Each Exa result averages ~700 tokens. 50 results ≈ 30K tokens, 100 results ≈ 70K tokens. Default to 50; only go to 100 if the user wants exhaustive results
+- **Context window** — Each Exa result averages ~800 tokens. 50 results ≈ 31K tokens, 100 results ≈ 81K tokens. Default to 50; only go to 100 if the user wants exhaustive results
 - **Handle pagination** — If Exa returns exactly `numResults`, there are likely more. Bump to 100 or run follow-up queries with different title keywords
 - **Small teams** — For niche teams (e.g., "fraud" at a 200-person startup), expect 3-8 results. This is normal
 - **Large teams** — For broad teams (e.g., "engineering" at a 5,000-person company), suggest the user narrow by sub-team or seniority
