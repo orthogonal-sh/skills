@@ -5,14 +5,14 @@ description: Build a sales prospect list of dental practices in a city — finds
 
 # Find Dentists — Sales Prospecting for Dental Practices
 
-Build a prioritized prospect list of dental practices in any city. Goes beyond basic contact info — finds the decision maker (practice owner or office manager), whether the practice already uses a virtual/AI receptionist, and intent signals like receptionist job postings that indicate they're ready to buy.
+Build a prioritized prospect list of dental practices in any city. Goes beyond basic contact info — finds the decision maker (practice owner or office manager), what software and services the practice already uses, and intent signals like job postings that indicate they're actively hiring or growing.
 
 ## When to Use
 
 - User wants to prospect dental practices in a city for sales outreach
 - User asks "find me dentists in [city]" or "get dental practice leads in [area]"
 - User is selling a product/service to dental practices and needs a lead list
-- User wants to identify high-priority prospects (hiring receptionists, new practices, no existing solution)
+- User wants to identify high-priority prospects (actively hiring, new practices, or missing a specific solution)
 
 ## Workflow
 
@@ -164,34 +164,47 @@ Once you have a LinkedIn URL, use Fiber kitchen-sink or Tomba for email extracti
 
 **Realistic expectations:** Decision maker personal emails are hard to find for dental practices. Most contact info you'll get is practice-level (info@, office@). This is still valuable — the key insight is knowing WHO to ask for when you call or email.
 
-### 6. Check for Existing Virtual/AI Receptionist (Competitive Intel)
+### 6. Competitive Intel — What Software/Services Do They Already Use?
 
-Scrape each practice's website to detect whether they already use a virtual receptionist, AI phone answering, or automated scheduling service.
+Scrape each practice's website to understand what tools and services they currently have. This helps the sales team tailor their pitch and avoid wasting time on practices that already have a competing product.
+
+Tailor the scraping prompt to whatever the user is selling. If the user hasn't specified, use a broad prompt:
 
 ```bash
 orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://smithfamilydental.com",
-  "user_prompt": "Does this dental practice use any virtual receptionist, AI receptionist, AI phone answering, automated call handling, or after-hours answering service? Look for mentions of these services, integrations, or third-party tools in the page content, footer, or widgets. Also check if they have online scheduling or a chatbot."
+  "user_prompt": "What software, tools, and third-party services does this dental practice use? Look for: online scheduling/booking systems, patient portals, practice management software, payment processors, chatbots, answering services, marketing tools, review platforms, or any other integrations mentioned in the page content, footer, or embedded widgets."
 }'
 ```
 
-Run in parallel for all practices. In testing, this correctly detected online scheduling and no AI receptionist. Flag practices as:
-- **No existing solution detected** — top priority prospect
-- **Has online scheduling only** — may still need phone handling
-- **Has virtual/AI receptionist** — lower priority, competitive switch opportunity
+If the user specifies what they're selling, narrow the prompt. For example:
+- Selling practice management software: *"Does this practice mention any practice management software like Dentrix, Eaglesoft, Open Dental, or similar?"*
+- Selling marketing services: *"Does this practice have active social media links, a blog, patient review widgets, or SEO-optimized content?"*
+- Selling payment solutions: *"What payment methods does this practice accept? Do they mention financing, payment plans, or specific payment processors?"*
+
+Run in parallel for all practices. Flag practices based on whether they already have a solution in the user's category:
+- **No competing solution detected** — top priority prospect
+- **Has a competing solution** — lower priority, but may be open to switching
 - **Unknown** — couldn't determine from website
 
 ### 7. Intent Signals — Identify Ready-to-Buy Prospects
 
-These signals indicate a practice is actively looking for reception/phone help, making them high-priority targets.
+These signals indicate a practice is actively growing or hiring, making them high-priority targets.
 
-**Signal A — Hiring receptionists** (strongest buying signal):
+**Signal A — Active job postings** (strongest buying signal):
 
-Use Scrapegraph searchscraper to find dental practices with open receptionist positions:
+Use Scrapegraph searchscraper to find dental practices with open positions. Tailor the job title to what the user is selling — e.g., if selling staffing solutions, look for any open roles; if selling a specific product, look for roles that product would replace or support:
 
 ```bash
+# Example: find practices hiring for front desk / receptionist roles
 orth run scrapegraph /v1/searchscraper --body '{
   "user_prompt": "dental practices hiring receptionist or front desk in {city}, list the practice name, job title, and salary",
+  "num_results": 10
+}'
+
+# Example: find practices hiring dental assistants
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "dental practices hiring dental assistant in {city}, list the practice name, job title, and salary",
   "num_results": 10
 }'
 ```
@@ -202,7 +215,7 @@ For more comprehensive job listing coverage, also scrape job board listing pages
 
 ```bash
 orth run tavily /search --body '{
-  "query": "dental receptionist job opening {city}",
+  "query": "dental {role} job opening {city}",
   "max_results": 5,
   "include_answer": false
 }'
@@ -210,7 +223,7 @@ orth run tavily /search --body '{
 # Then scrape the top job listing page for specific practice names
 orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://www.glassdoor.com/Job/{city}-dental-receptionist-jobs-SRCH_...",
-  "user_prompt": "Extract all dental practice names that are hiring receptionists, along with the job title, salary if listed, and location"
+  "user_prompt": "Extract all dental practice names that are hiring, along with the job title, salary if listed, and location"
 }'
 ```
 
@@ -227,9 +240,11 @@ orth run tavily /search --body '{
 }'
 ```
 
+New practices are more open to adopting new tools and services from day one.
+
 **Signal C — Practice size** (from the team page scrape in Step 4):
 
-Solo practices and small group practices (2-5 dentists) are typically the sweet spot — large enough to need help with call volume, small enough that they don't have a full reception team.
+Solo practices and small group practices (2-5 dentists) are typically the sweet spot for most dental products — large enough to have real operational needs, small enough that they don't have enterprise procurement processes.
 
 ### 8. Present Results
 
@@ -243,25 +258,25 @@ Found {N} practices, ranked by sales readiness:
 ### High Priority (strong buying signals)
 | # | Practice | Decision Maker | Title | Phone | Email | Signal |
 |---|----------|---------------|-------|-------|-------|--------|
-| 1 | Smith Dental | Sarah Johnson | Office Manager | (415) 555-1234 | info@smithdental.com | Hiring receptionist |
+| 1 | Smith Dental | Sarah Johnson | Office Manager | (415) 555-1234 | info@smithdental.com | Actively hiring |
 | 2 | ... | ... | ... | ... | ... | New practice |
 
-### Medium Priority (no existing solution detected)
+### Medium Priority (no competing solution detected)
 | # | Practice | Decision Maker | Title | Phone | Email | Notes |
 |---|----------|---------------|-------|-------|-------|-------|
-| 3 | ... | ... | ... | ... | ... | Solo practice, no AI receptionist |
+| 3 | ... | ... | ... | ... | ... | Solo practice, no competing solution found |
 
-### Lower Priority (existing solution detected)
+### Lower Priority (competing solution detected)
 | # | Practice | Decision Maker | Title | Phone | Email | Current Solution |
 |---|----------|---------------|-------|-------|-------|-----------------|
-| 8 | ... | ... | ... | ... | ... | Has virtual receptionist |
+| 8 | ... | ... | ... | ... | ... | Uses {competing product} |
 
 ### Summary
 - Total practices found: {N}
 - Decision makers identified: {count}/{N}
-- Practices hiring receptionists: {count} (high priority)
-- Practices with no existing solution: {count}
-- Practices with existing solution: {count}
+- Practices actively hiring: {count} (high priority)
+- Practices with no competing solution: {count}
+- Practices with competing solution: {count}
 ```
 
 ## APIs Used
@@ -296,13 +311,13 @@ orth run scrapegraph /v1/smartscraper --body '{
   "user_prompt": "Extract the names and roles of all staff. Identify the practice owner, office manager, or managing dentist. Also extract any email addresses and phone numbers."
 }'
 
-# Step 6: Competitive intel (run in parallel)
+# Step 6: Competitive intel (run in parallel — tailor prompt to what you're selling)
 orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://www.thedentalpracticesf.com",
-  "user_prompt": "Does this dental practice use any virtual receptionist, AI receptionist, AI phone answering, automated call handling, or after-hours answering service? Look for mentions in the page content, footer, or widgets. Also check for online scheduling or chatbot."
+  "user_prompt": "What software, tools, and third-party services does this dental practice use? Look for online scheduling systems, patient portals, practice management software, payment processors, chatbots, answering services, or any integrations in the page content, footer, or widgets."
 }'
 
-# Step 7: Intent signals — who is hiring?
+# Step 7: Intent signals — who is actively hiring?
 orth run scrapegraph /v1/searchscraper --body '{
   "user_prompt": "dental practices hiring receptionist or front desk in San Francisco, list the practice name, job title, and salary",
   "num_results": 10
@@ -358,8 +373,9 @@ orth run scrapegraph /v1/searchscraper --body '{
 - **Website team pages are the #1 source for decision makers** — In testing, scraping the About/Team page found the owner or office manager on 5/5 practice websites. This is far more reliable than LinkedIn-based people search for small dental practices
 - **Scrapegraph searchscraper is the workhorse** — Use it for finding practices AND for finding which practices are hiring receptionists. In testing it returned 57 practices and 11 hiring signals in separate single calls
 - **Combine decision maker name + practice phone** — Even if you can't find a personal email, knowing the decision maker's name + calling the practice phone is a strong outreach combo. "Hi, can I speak with Rosie Franco, your office manager?" beats a cold call to the front desk
-- **Job postings are the strongest intent signal** — A practice hiring a receptionist is actively spending money to solve the exact problem. Cross-reference hiring practices with your prospect list for instant high-priority leads
-- **Competitive intel from websites is imperfect** — "No solution detected" means nothing was visible on the website — not that they definitely don't have one. Note this caveat in results
+- **Job postings are the strongest intent signal** — A practice actively hiring indicates growth or staffing challenges — both make them receptive to new solutions. Cross-reference hiring practices with your prospect list for instant high-priority leads
+- **Competitive intel from websites is imperfect** — "No competing solution detected" means nothing was visible on the website — not that they definitely don't have one. Note this caveat in results
+- **Tailor competitive intel to what you're selling** — The smartscraper prompt should check for tools in your product category specifically. A broad prompt works as a default, but a targeted prompt yields more actionable results
 - **Practice size matters** — Solo practices and small groups (2-5 dentists) are the sweet spot. Very large dental chains (Western Dental, Pacific Dental Services) have enterprise procurement. Filter these out
 - **Scrape the homepage, not subpages** — When extracting decision maker info, scraping the homepage works more reliably than trying specific paths (/about, /team) which sometimes 422. The homepage usually mentions the lead dentist(s)
 - **Phone numbers have ~100% coverage** — Every practice has a phone. Decision maker personal emails are rare (~20-30%). Practice general emails (info@, office@) are findable ~50-60% of the time
