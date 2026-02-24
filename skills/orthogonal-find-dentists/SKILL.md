@@ -272,7 +272,7 @@ Solo practices and small group practices (2-5 dentists) are typically the sweet 
 
 ### 8. Present Results
 
-Output a prioritized prospect list:
+Output a prioritized prospect list. **Always show the full website URL** (e.g., `https://smithdental.com`) — not just "Website" or a markdown link. The sales team needs to be able to click or copy-paste the URL directly:
 
 ```
 ## Dental Practice Prospects in {City}
@@ -280,20 +280,20 @@ Output a prioritized prospect list:
 Found {N} practices, ranked by sales readiness:
 
 ### High Priority (strong buying signals)
-| # | Practice | Decision Maker | Title | Phone | Email | Signal |
-|---|----------|---------------|-------|-------|-------|--------|
-| 1 | Smith Dental | Sarah Johnson | Office Manager | (415) 555-1234 | info@smithdental.com | Actively hiring |
-| 2 | ... | ... | ... | ... | ... | New practice |
+| # | Practice | Decision Maker | Title | Phone | Email | Website | Signal |
+|---|----------|---------------|-------|-------|-------|---------|--------|
+| 1 | Smith Dental | Sarah Johnson | Office Manager | (415) 555-1234 | info@smithdental.com | https://smithdental.com | Actively hiring |
+| 2 | ... | ... | ... | ... | ... | ... | New practice |
 
 ### Medium Priority (no competing solution detected)
-| # | Practice | Decision Maker | Title | Phone | Email | Notes |
-|---|----------|---------------|-------|-------|-------|-------|
-| 3 | ... | ... | ... | ... | ... | Solo practice, no competing solution found |
+| # | Practice | Decision Maker | Title | Phone | Email | Website | Notes |
+|---|----------|---------------|-------|-------|-------|---------|-------|
+| 3 | ... | ... | ... | ... | ... | https://... | Solo practice, no competing solution found |
 
 ### Lower Priority (competing solution detected)
-| # | Practice | Decision Maker | Title | Phone | Email | Current Solution |
-|---|----------|---------------|-------|-------|-------|-----------------|
-| 8 | ... | ... | ... | ... | ... | Uses {competing product} |
+| # | Practice | Decision Maker | Title | Phone | Email | Website | Current Solution |
+|---|----------|---------------|-------|-------|-------|---------|-----------------|
+| 8 | ... | ... | ... | ... | ... | https://... | Uses {competing product} |
 
 ### Summary
 - Total practices found: {N}
