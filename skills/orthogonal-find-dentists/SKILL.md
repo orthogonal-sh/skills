@@ -1,19 +1,19 @@
 ---
 name: find-dentists
-description: Find dentist contact information (phone, email, address) in a given city. Use when asked to find dentists, look up dental practices, get dentist phone numbers, or build a list of dentists in a specific area.
+description: Find dentist contact information (phone, email, address) in a given city for sales prospecting and outreach. Use when asked to find dentists, build a prospect list of dental practices, get dentist phone numbers for outreach, or generate leads in a specific area.
 ---
 
 # Find Dentists
 
-Find dentist and dental practice contact information — phone numbers, email addresses, office addresses, and websites — for any city or area. Ideal for building outreach lists, finding local providers, or compiling dental practice directories.
+Find dentist and dental practice contact information — phone numbers, email addresses, office addresses, and websites — for any city or area. Built for sales teams selling to dental practices (e.g., AI receptionist software, dental supplies, practice management tools) who need prospect lists with verified contact info for outreach.
 
 ## When to Use
 
-- User asks to find dentists in a city or area
-- User needs dentist contact info (phone, email, address)
-- User wants a list of dental practices in a location
-- User asks for a specific specialty (orthodontist, pediatric dentist, oral surgeon, etc.)
-- Lead generation for dental industry vendors or services
+- User wants to prospect dental practices in a city for sales outreach
+- User needs dentist contact info (phone, email, address) to build a lead list
+- User asks "find me dentists in [city]" or "get dentist contacts in [area]"
+- User wants to target a specific specialty (orthodontist, pediatric dentist, oral surgeon, etc.)
+- Sales teams selling to dentists — AI receptionist, practice management software, dental supplies, marketing services, etc.
 
 ## Workflow
 
