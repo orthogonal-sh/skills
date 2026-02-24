@@ -15,7 +15,7 @@ Extract from the user's query:
 - **Company name or domain** (required) — the brand seeking influencers
 - **Niche/vertical** (optional) — e.g., "fintech Twitter", "AI/ML creators", "DTC beauty"
 - **Size preference** (optional) — mid-tier (10K-100K), macro (100K+), or mixed (default: 10K+ minimum)
-- **Max results** (optional, default 10 — scale up if user asks for more)
+- **Max results** (optional, default 20 — scale up or down if the user asks)
 
 ### 2. Resolve the Company
 
@@ -139,7 +139,7 @@ Target: ~100-150 unique handles after dedup. Curated list pages typically mentio
 
 ### 5. Get Twitter Profiles + Engagement
 
-Use Scrape Creators to fetch structured Twitter data. This is a two-step process: fetch profiles for ALL candidates (cheap, 1 credit each), then fetch tweets only for the top ~25-30 after initial filtering.
+Use Scrape Creators to fetch structured Twitter data. This is a two-step process: fetch profiles for ALL candidates (cheap, 1 credit each), then fetch tweets for the top ~2x the target result count after profile filtering (e.g., ~40 if targeting 20 results).
 
 **Step 1 — Fetch profiles for all candidates:**
 
@@ -147,21 +147,44 @@ Use Scrape Creators to fetch structured Twitter data. This is a two-step process
 orth run scrape-creators /v1/twitter/profile --query 'handle=examplehandle'
 ```
 
-Returns structured JSON with: `screen_name`, `name`, `description` (bio), `followers_count`, `following_count`, `statuses_count`, `location`, `verified`, `created_at`, `profile_image_url`, and website URL. The profile URL is `https://x.com/{screen_name}`.
+Returns nested JSON. Key fields are inside `core` and `legacy` objects:
+- `core.screen_name`, `core.name` — handle and display name
+- `legacy.description` — bio text
+- `legacy.followers_count`, `legacy.friends_count`, `legacy.statuses_count` — counts
+- `legacy.location`, `legacy.created_at` — location and account age
+- `is_blue_verified` — verification status
 
-Run these in parallel for all candidates. Apply **hard filters** to narrow the pool:
+The profile URL is `https://x.com/{screen_name}`.
+
+**IMPORTANT — Parallelize profile fetches:** Do NOT fetch profiles one-by-one in a sequential loop. Instead, launch ALL profile fetch calls in parallel (multiple tool calls in a single message). This dramatically reduces total wait time from minutes to seconds. Group into batches of 10-15 parallel calls if needed.
+
+Apply **hard filters** to narrow the pool:
 - Fewer than 10,000 followers (default minimum — adjustable if user specifies a different threshold)
 - Empty bio or bio completely unrelated to the niche
 - Suspended or not-found accounts (API returns error)
 - Bio indicates they've left X (e.g., "find me on Mastodon/Bluesky", "abandoned this site")
+- **Too broad/generic accounts** — Remove accounts whose content is not specifically relevant to the target niche. For example, a general "tech evangelist" account with 500K+ followers that rarely tweets about the niche is less valuable than a 20K-follower specialist. If an account's bio and recent tweets show no specific connection to the target niche or adjacent niches, exclude it regardless of follower count
 
-**Step 2 — Fetch tweets for top candidates** (after profile filtering — fetch ~2x the target result count to allow for filtering):
+**Step 2 — Fetch tweets for top candidates** (after profile filtering — fetch ~2x the target result count to allow for filtering, e.g., ~40 if targeting 20 results):
 
 ```bash
 orth run scrape-creators /v1/twitter/user-tweets --query 'handle=examplehandle'
 ```
 
-Returns an array of tweet objects, each with: `full_text`, `favorite_count` (likes), `retweet_count`, `reply_count`, `views_count`, `created_at`, `url`, and media attachments. All engagement numbers are exact integers — no parsing needed.
+Returns an array of tweet objects. **IMPORTANT — The data is nested inside each tweet object:**
+- `legacy.full_text` — tweet text
+- `legacy.favorite_count` — likes (integer)
+- `legacy.retweet_count` — retweets (integer)
+- `legacy.reply_count` — replies (integer)
+- `legacy.created_at` — timestamp
+- `views.count` — view count (may not always be present)
+- `url` — direct link to the tweet (top-level field)
+
+Note: `favorite_count`, `retweet_count`, `reply_count` are inside the `legacy` object, NOT at the top level of each tweet.
+
+**IMPORTANT — Parallelize tweet fetches:** Just like profile fetches, launch ALL tweet fetch calls in parallel (multiple tool calls in a single message). Do NOT use sequential for-loops. This is the single biggest speed optimization.
+
+For each candidate, identify the **top 3 tweets by engagement** (likes + retweets + replies). Save the best one with its URL for inclusion in the final results table.
 
 From the tweet data, calculate:
 - **Average likes** per tweet
@@ -194,7 +217,7 @@ Apply a composite scoring model:
 - Engagement rate benchmarks: >3% excellent, 1-3% good, <1% below average (varies by follower tier)
 - Content quality: Penalize accounts that are >50% retweets. Reward original threads, insights, and media-rich posts.
 
-Rank all candidates by composite score. Select the top N (default 10) for the final list.
+Rank all candidates by composite score. Select the top N (default 20) for the final list. 20 is a good default — enough to give the user real options without overwhelming them. Scale up if the user asks for more, but always include at least the top 20 if that many qualify.
 
 ### 7. Enrich Contacts
 
@@ -217,7 +240,7 @@ orth run exa /search --body '{
 }'
 ```
 
-Run these in parallel for all candidates without LinkedIn URLs. Match by name + job title/company from their Twitter bio. LinkedIn URLs are indexed by Exa, unlike Twitter profiles.
+Launch ALL these Exa searches in parallel (multiple tool calls in a single message). Match by name + job title/company from their Twitter bio. LinkedIn URLs are indexed by Exa, unlike Twitter profiles.
 
 **Step 3 — Fiber kitchen-sink** (best coverage for professionals):
 ```bash
@@ -246,17 +269,17 @@ Also extract from enrichment results:
 
 ### 8. Present Results
 
-Output a ranked markdown table with the final influencer list:
+Output a ranked markdown table with ALL qualifying influencers. Use **full plain-text URLs** — do NOT use markdown link syntax like `[text](url)` or `[@handle](url)` because these often don't render as clickable links in all contexts. Instead, write out the full URL directly.
 
 ```
 ## Twitter Influencers for {Company} — {Niche}
 
 Found {N} influencers ranked by relevance and engagement:
 
-| # | Name | Handle | Followers | Eng. Rate | Why They Fit | Email | LinkedIn |
-|---|------|--------|-----------|-----------|--------------|-------|----------|
-| 1 | Jane Smith | [@janesmith](https://x.com/janesmith) | 45.2K | 3.8% | {1-line reason} | jane@... | [Profile](https://linkedin.com/in/...) |
-| 2 | ... | ... | ... | ... | ... | ... | ... |
+| # | Name | Twitter | Followers | Eng. Rate | Why They Fit | Top Tweet | Email | LinkedIn |
+|---|------|---------|-----------|-----------|--------------|-----------|-------|----------|
+| 1 | Jane Smith | https://x.com/janesmith | 45.2K | 3.8% | {1-line reason} | https://x.com/janesmith/status/123 | jane@... | https://linkedin.com/in/janesmith |
+| 2 | ... | ... | ... | ... | ... | ... | ... | ... |
 
 ### Size Distribution
 - Mid-tier (10K-100K): {count}
@@ -267,6 +290,10 @@ Found {N} influencers ranked by relevance and engagement:
 - Influencers marked with "DM preferred" indicated in their bio they prefer DMs over email
 - {Any caveats about the search — e.g., niche is small so fewer results}
 ```
+
+**Default to showing 20 results.** This is double the old default of 10, giving the user more options without overwhelming them. If fewer than 20 qualify, show all that qualify. If the user asks for more, scale up accordingly.
+
+The **Top Tweet** column should contain the URL to each influencer's highest-engagement tweet (by likes + retweets + replies). This gives the user an immediate feel for the influencer's content style and reach.
 
 Include a brief summary of search coverage: how many candidates were found, how many passed filtering, and any gaps (e.g., "Few macro influencers found in this niche — consider broadening to adjacent topics").
 
@@ -311,9 +338,12 @@ orth run sixtyfour /enrich-lead --body '{
 - **Brand accounts vs personal** — Filter out corporate accounts (@stripe, @shopify). Look for individual creators even if they work at companies (e.g., @pmarca not @a16z)
 - **Engagement rate varies by tier** — >5% is elite for any size. 2-3% is strong for 50K+ followers. <0.5% is a red flag regardless of follower count
 - **Content themes matter more than follower count** — An account with 8K followers tweeting daily about the exact niche beats a 200K account that occasionally mentions it
-- **Scrape Creators returns structured JSON** — No text parsing needed. Profile endpoint returns exact `followers_count`, `description`, `screen_name`, etc. Tweet endpoint returns `favorite_count`, `retweet_count`, `reply_count`, `views_count` as integers
-- **Two-step profile + tweets** — Fetch profiles first for all candidates (1 credit each), apply hard filters (followers, bio relevance), then fetch tweets only for ~2x the target result count. This saves credits compared to fetching tweets for everyone
-- **Each tweet includes a direct URL** — The `url` field on each tweet object gives you `https://x.com/{handle}/status/{id}`. The profile URL is `https://x.com/{screen_name}`
+- **Scrape Creators returns nested JSON** — Profile data is inside `core` (name, screen_name) and `legacy` (followers_count, description, etc.) objects. Tweet engagement data is inside each tweet's `legacy` object (`legacy.favorite_count`, `legacy.retweet_count`, `legacy.reply_count`), NOT at the top level. Always access `tweet['legacy']['favorite_count']`, not `tweet['favorite_count']`
+- **Two-step profile + tweets** — Fetch profiles first for all candidates (1 credit each), apply hard filters (followers, bio relevance), then fetch tweets for ~2x the target result count. This saves credits compared to fetching tweets for everyone
+- **Each tweet includes a direct URL** — The `url` field on each tweet object (top-level, not inside legacy) gives you `https://x.com/{handle}/status/{id}`. The profile URL is `https://x.com/{screen_name}`
+- **ALWAYS parallelize API calls** — The single biggest performance improvement. Never fetch profiles or tweets in sequential for-loops. Always use multiple parallel tool calls in a single message. For example, fetch 10-15 profiles simultaneously, wait for results, then fetch the next batch. Same for tweets, LinkedIn lookups, and email enrichment. This can reduce total execution time from 10+ minutes to 2-3 minutes
+- **Default to 20 results** — Double the old default of 10. Enough to give real options without overwhelming. Scale up if the user asks for more
+- **Use full URLs, not markdown links** — Write `https://x.com/handle` and `https://linkedin.com/in/name` as plain text in the results table. Markdown link syntax like `[@handle](url)` or `[Profile](url)` often doesn't render as clickable links and makes the output harder to use
 - **Check for newsletters/Substacks** — Many Twitter influencers run newsletters. These are high-signal for partnership potential and often listed in the bio
 - **Fiber catches LinkedIn-heavy people** — Some professionals (B2B especially) are more discoverable via LinkedIn but still have active Twitter accounts. Don't skip Strategy C for B2B niches
 - **Fiber kitchen-sink has no Twitter URL param** — Use `profileIdentifier` (LinkedIn URL) for best match rate. The name+company fallback has very low match rates for influencers
