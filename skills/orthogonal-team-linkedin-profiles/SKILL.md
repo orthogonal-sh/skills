@@ -33,30 +33,32 @@ orth run brand-dev /v1/brand/retrieve --query 'domain=mercury.com'
 
 ### 3. Search for Team Members
 
-Run both searches **in parallel** for maximum coverage:
-
 **Primary — Exa people search** (best precision, returns LinkedIn URLs + structured data):
 ```bash
 orth run exa /search --body '{
   "query": "{company context string} {team} team members",
   "category": "people",
-  "numResults": 20,
+  "numResults": 50,
   "includeDomains": ["linkedin.com"]
 }'
 ```
+
+Use `numResults: 50` as the default. If the user specifies a count, use that instead. If Exa returns exactly `numResults`, there are likely more — bump to 100 or run a follow-up with different query phrasing.
 
 Try multiple query variations if results are sparse:
 - `"{company} {team} team"`
 - `"{team} at {company} {industry}"`
 - `"{team} analyst OR engineer OR manager at {company}"`
 
-**Supplement — Fiber NL profile search** (broader coverage, different data source):
+**Fallback — Fiber NL profile search** (only if Exa is rate-limited or returns very few results):
 ```bash
 orth run fiber /v1/natural-language-search/profiles --body '{
   "query": "{team} team at {company} {industry context}",
-  "pageSize": 20
+  "pageSize": 25
 }'
 ```
+
+Note: Fiber NL search often returns generic role matches (e.g., fraud analysts globally) rather than company-specific results. It does not reliably filter by company. Use it only as a fallback, and always verify each Fiber result's current employer in Step 4.
 
 ### 4. Filter & Deduplicate
 
@@ -71,7 +73,7 @@ This step is critical for accuracy:
    - "Engineering" team → software engineer, SWE, developer, engineering manager
    - "Sales" team → account executive, SDR, BDR, sales manager, revenue
 
-3. **Deduplicate** — Merge results from Exa and Fiber by LinkedIn URL. Prefer Exa data when both sources have the same person (richer structured data).
+3. **Deduplicate** — If using both Exa and Fiber, merge by LinkedIn URL. Prefer Exa data (richer structured data).
 
 4. **Flag uncertain matches** — If a person's company match is ambiguous, include them in the results but flag with a note (e.g., "Could not confirm current employer — verify manually").
 
@@ -95,7 +97,7 @@ Found {N} members:
 | ... | ... | ... | ... |
 ```
 
-Include a note about coverage: "These are publicly discoverable profiles. Team members with private LinkedIn profiles or no LinkedIn presence won't appear."
+Include a note about coverage: "Some profiles may show abbreviated names (e.g., 'Oneida D.') — these are LinkedIn members with restricted visibility settings. Team members with no LinkedIn presence won't appear."
 
 ### 6. Optional Deep Enrichment
 
@@ -111,8 +113,9 @@ This returns full work history, education, skills, and recent activity. Run thes
 
 - **Add industry context** to all search queries — "Mercury fintech" finds the right Mercury much more reliably than just "Mercury"
 - **Expand title keywords** — Teams use varied titles. "Data team" could include data scientist, data engineer, analytics engineer, ML engineer, data analyst
-- **Handle pagination** — If Exa returns exactly `numResults`, there may be more. Increase `numResults` or run follow-up queries with different title keywords
-- **Rate limits** — If Exa rate-limits, lean on Fiber NL search as fallback. If both are limited, try Exa with `type: "keyword"` or different query phrasing
+- **Exa is the workhorse** — Fiber NL search doesn't reliably filter by company. Rely on Exa for primary results; only try Fiber if Exa is rate-limited or returns < 5 results
+- **Handle pagination** — If Exa returns exactly `numResults`, there are likely more. Bump to 100 or run follow-up queries with different title keywords
+- **Rate limits** — If Exa rate-limits, try again with `type: "keyword"` or different query phrasing before falling back to Fiber
 - **Small teams** — For niche teams (e.g., "fraud" at a 200-person startup), expect 3-8 results. This is normal
 - **Large teams** — For broad teams (e.g., "engineering" at a 5,000-person company), suggest the user narrow by sub-team or seniority
-- **Private profiles** won't surface in any search — mention this if results seem thin
+- **Abbreviated names** — Some results will show partial names like "Joey G." or "Oneida D." These are real profiles with restricted LinkedIn visibility, not errors. Include them in results with the name as-is
