@@ -15,7 +15,7 @@ Extract from the user's query:
 - **Company name or domain** (required) — the brand seeking influencers
 - **Niche/vertical** (optional) — e.g., "fintech Twitter", "AI/ML creators", "DTC beauty"
 - **Size preference** (optional) — mid-tier (10K-100K), macro (100K+), or mixed (default: 10K+ minimum)
-- **Max results** (optional, default 50)
+- **Max results** (optional, default 10 — scale up if user asks for more)
 
 ### 2. Resolve the Company
 
@@ -155,7 +155,7 @@ Run these in parallel for all candidates. Apply **hard filters** to narrow the p
 - Suspended or not-found accounts (API returns error)
 - Bio indicates they've left X (e.g., "find me on Mastodon/Bluesky", "abandoned this site")
 
-**Step 2 — Fetch tweets for top ~60-80 candidates** (after profile filtering):
+**Step 2 — Fetch tweets for top candidates** (after profile filtering — fetch ~2x the target result count to allow for filtering):
 
 ```bash
 orth run scrape-creators /v1/twitter/user-tweets --query 'handle=examplehandle'
@@ -194,7 +194,7 @@ Apply a composite scoring model:
 - Engagement rate benchmarks: >3% excellent, 1-3% good, <1% below average (varies by follower tier)
 - Content quality: Penalize accounts that are >50% retweets. Reward original threads, insights, and media-rich posts.
 
-Rank all candidates by composite score. Select the top N (default 50) for the final list.
+Rank all candidates by composite score. Select the top N (default 10) for the final list.
 
 ### 7. Enrich Contacts
 
@@ -312,7 +312,7 @@ orth run sixtyfour /enrich-lead --body '{
 - **Engagement rate varies by tier** — >5% is elite for any size. 2-3% is strong for 50K+ followers. <0.5% is a red flag regardless of follower count
 - **Content themes matter more than follower count** — An account with 8K followers tweeting daily about the exact niche beats a 200K account that occasionally mentions it
 - **Scrape Creators returns structured JSON** — No text parsing needed. Profile endpoint returns exact `followers_count`, `description`, `screen_name`, etc. Tweet endpoint returns `favorite_count`, `retweet_count`, `reply_count`, `views_count` as integers
-- **Two-step profile + tweets** — Fetch profiles first for all candidates (1 credit each), apply hard filters (followers, bio relevance), then fetch tweets only for the top ~25-30. This saves credits compared to fetching tweets for everyone
+- **Two-step profile + tweets** — Fetch profiles first for all candidates (1 credit each), apply hard filters (followers, bio relevance), then fetch tweets only for ~2x the target result count. This saves credits compared to fetching tweets for everyone
 - **Each tweet includes a direct URL** — The `url` field on each tweet object gives you `https://x.com/{handle}/status/{id}`. The profile URL is `https://x.com/{screen_name}`
 - **Check for newsletters/Substacks** — Many Twitter influencers run newsletters. These are high-signal for partnership potential and often listed in the bio
 - **Fiber catches LinkedIn-heavy people** — Some professionals (B2B especially) are more discoverable via LinkedIn but still have active Twitter accounts. Don't skip Strategy C for B2B niches
