@@ -1,5 +1,5 @@
 ---
-name: enrich
+name: comprehensive-enrichment
 description: Enrich any person or company from any identifier — email, name, LinkedIn URL, domain, company name, Twitter/X handle. Use when asked to enrich, look up, or research a lead, contact, person, or company.
 ---
 
