@@ -33,32 +33,31 @@ orth run brand-dev /v1/brand/retrieve --query 'domain=mercury.com'
 
 ### 3. Search for Team Members
 
+Run both searches **in parallel**:
+
 **Primary — Exa people search** (best precision, returns LinkedIn URLs + structured data):
 ```bash
 orth run exa /search --body '{
   "query": "{company context string} {team} team members",
   "category": "people",
-  "numResults": 50,
+  "numResults": 25,
   "includeDomains": ["linkedin.com"]
 }'
 ```
 
-Use `numResults: 50` as the default. If the user specifies a count, use that instead. If Exa returns exactly `numResults`, there are likely more — bump to 100 or run a follow-up with different query phrasing.
+Use `numResults: 25` by default (cheap tier: $0.005/request). If the user wants comprehensive results or Exa returns exactly 25 (likely more exist), bump to 50-100 (same $0.025/request cost tier for 26-100).
 
 Try multiple query variations if results are sparse:
 - `"{company} {team} team"`
 - `"{team} at {company} {industry}"`
 - `"{team} analyst OR engineer OR manager at {company}"`
 
-**Fallback — Fiber NL profile search** (only if Exa is rate-limited or returns very few results):
+**Supplement — Hunter domain search** (surfaces senior/executive people Exa misses):
 ```bash
-orth run fiber /v1/natural-language-search/profiles --body '{
-  "query": "{team} team at {company} {industry context}",
-  "pageSize": 25
-}'
+orth run hunter /v2/domain-search --query 'domain={domain from Step 2}' --query 'limit=100'
 ```
 
-Note: Fiber NL search often returns generic role matches (e.g., fraud analysts globally) rather than company-specific results. It does not reliably filter by company. Use it only as a fallback, and always verify each Fiber result's current employer in Step 4.
+Hunter returns employees with names, titles, emails, and LinkedIn URLs. It has no useful department filter for niche teams (fraud people end up scattered across "management", "executive", "unknown"), so pull all results and filter by title keywords in Step 4. Hunter is especially good at finding senior leadership that Exa may miss.
 
 ### 4. Filter & Deduplicate
 
@@ -73,7 +72,7 @@ This step is critical for accuracy:
    - "Engineering" team → software engineer, SWE, developer, engineering manager
    - "Sales" team → account executive, SDR, BDR, sales manager, revenue
 
-3. **Deduplicate** — If using both Exa and Fiber, merge by LinkedIn URL. Prefer Exa data (richer structured data).
+3. **Deduplicate** — Merge Exa and Hunter results by LinkedIn URL. Prefer Exa data when both have the same person (richer structured data). Hunter may provide email addresses that Exa doesn't.
 
 4. **Flag uncertain matches** — If a person's company match is ambiguous, include them in the results but flag with a note (e.g., "Could not confirm current employer — verify manually").
 
@@ -113,9 +112,9 @@ This returns full work history, education, skills, and recent activity. Run thes
 
 - **Add industry context** to all search queries — "Mercury fintech" finds the right Mercury much more reliably than just "Mercury"
 - **Expand title keywords** — Teams use varied titles. "Data team" could include data scientist, data engineer, analytics engineer, ML engineer, data analyst
-- **Exa is the workhorse** — Fiber NL search doesn't reliably filter by company. Rely on Exa for primary results; only try Fiber if Exa is rate-limited or returns < 5 results
-- **Handle pagination** — If Exa returns exactly `numResults`, there are likely more. Bump to 100 or run follow-up queries with different title keywords
-- **Rate limits** — If Exa rate-limits, try again with `type: "keyword"` or different query phrasing before falling back to Fiber
+- **Exa vs Hunter** — Exa finds the most team members with best structured data. Hunter surfaces senior/executive people and provides email addresses. Use both in parallel for best coverage
+- **Exa cost tiers** — 1-25 results: $0.005/request. 26-100 results: $0.025/request (5x jump). Stay at 25 unless the user needs comprehensive results
+- **Handle pagination** — If Exa returns exactly `numResults`, there are likely more. Bump to 50-100 (same cost tier once past 25) or run follow-up queries with different title keywords
 - **Small teams** — For niche teams (e.g., "fraud" at a 200-person startup), expect 3-8 results. This is normal
 - **Large teams** — For broad teams (e.g., "engineering" at a 5,000-person company), suggest the user narrow by sub-team or seniority
-- **Abbreviated names** — Some results will show partial names like "Joey G." or "Oneida D." These are real profiles with restricted LinkedIn visibility, not errors. Include them in results with the name as-is
+- **Abbreviated names** — Some Exa results show partial names like "Joey G." or "Oneida D." These are real profiles with restricted LinkedIn visibility, not errors. Include them in results with the name as-is
