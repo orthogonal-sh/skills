@@ -108,47 +108,45 @@ From Fiber results, extract any Twitter/X URLs from social profiles. Add new han
 
 Target: ~40-60 unique handles after dedup. Curated list pages typically mention 20-50 handles each, so 3-5 good listicle results yield plenty of candidates.
 
-### 5. Get Twitter Profiles
+### 5. Get Twitter Profiles + Engagement
 
-Fetch profiles for ALL candidates using Shofo. This is cheap (~200 tokens each) and provides the data needed for filtering.
+Fetch Twitter data for ALL candidates using Riveter web scraping. Each call returns the full profile AND recent tweets with engagement metrics in a single response ($0.05/call).
 
 ```bash
-orth run shofo /x/user-profile --query 'username=examplehandle'
+orth run riveter /v1/scrape --body '{
+  "url": "https://x.com/examplehandle"
+}'
 ```
 
-Run these in parallel for all candidates. From each profile, extract:
+Run these in parallel for all candidates. From each scraped profile page, extract:
+
+**Profile data:**
 - Display name, bio, location
-- Follower count, following count
-- Verified status
-- Profile URL, website link
-- Last tweet date (for activity check)
+- Follower count, following count, post count
+- Website link (from bio)
+- Joined date
+
+**Engagement data** (from the tweets visible on the page):
+- Per-tweet: likes, retweets, replies, views
+- **Average likes** per tweet
+- **Average retweets** per tweet
+- **Average replies** per tweet
+- **Engagement rate**: (avg likes + avg retweets + avg replies) / followers * 100
+- **Post frequency**: inferred from tweet dates
+- **Content themes**: what topics they tweet about most
 
 **Hard filters — discard profiles that meet any of these:**
 - Fewer than 1,000 followers
 - No tweets in the last 30 days (inactive)
 - Empty bio or bio completely unrelated to the niche
-- Protected/private accounts
+- Protected/private accounts (Riveter returns a login wall)
 - Suspended or not-found accounts
 
-### 6. Get Engagement Metrics
-
-For the top 25-30 candidates (by follower count + bio relevance after Step 5 filtering), fetch recent tweets:
-
-```bash
-orth run shofo /x/user-posts --query 'username=examplehandle' --query 'count=20'
-```
-
-The `count` parameter is required — use 20 for a good balance of data vs context size. Run these in parallel. From each user's recent posts, calculate:
-- **Average likes** per tweet
-- **Average retweets** per tweet
-- **Average replies** per tweet
-- **Engagement rate**: (avg likes + avg retweets + avg replies) / followers * 100
-- **Post frequency**: tweets per week
-- **Content themes**: what topics they tweet about most
+**Parsing tips:** Riveter returns the page as plain text. Tweet engagement numbers appear as `likes`, `retweets`, and `replies` counts next to each tweet. Follower count appears in the profile header. Parse these numbers to calculate metrics.
 
 Skip reply-only accounts (>80% of tweets are replies to others with minimal engagement).
 
-### 7. Score & Rank
+### 6. Score & Rank
 
 Apply a composite scoring model:
 
@@ -167,7 +165,7 @@ Apply a composite scoring model:
 
 Rank all candidates by composite score. Select the top N (default 15) for the final list.
 
-### 8. Enrich Contacts
+### 7. Enrich Contacts
 
 For the final list, run a contact enrichment waterfall to find email addresses. Try sources in order — stop per person once a verified email is found.
 
@@ -204,7 +202,7 @@ Also extract from enrichment results:
 - Personal website or newsletter link
 - Other social profiles
 
-### 9. Present Results
+### 8. Present Results
 
 Output a ranked markdown table with the final influencer list:
 
@@ -231,13 +229,21 @@ Found {N} influencers ranked by relevance and engagement:
 
 Include a brief summary of search coverage: how many candidates were found, how many passed filtering, and any gaps (e.g., "Few macro influencers found in this niche — consider broadening to adjacent topics").
 
-### 10. Optional Deep Dive
+### 9. Optional Deep Dive
 
 Only if the user requests more detail on specific influencers:
 
 **Full tweet analysis** (recent content, top tweets, audience reactions):
 ```bash
-orth run shofo /x/user-posts --query 'username=TARGET' --query 'count=50'
+orth run riveter /v1/scrape --body '{"url": "https://x.com/TARGET"}'
+```
+
+If deeper tweet history is needed, Nyne can fetch recent newsfeed data asynchronously:
+```bash
+# Step 1: POST to start async retrieval
+orth run -X POST nyne /person/newsfeed -d '{"social_media_url": "https://x.com/TARGET"}'
+# Step 2: Poll with GET using request_id
+orth run nyne /person/newsfeed --query 'request_id=REQUEST_ID'
 ```
 
 **LinkedIn profile** (full work history, credentials, other ventures):
@@ -263,9 +269,9 @@ orth run sixtyfour /enrich-lead --body '{
 - **Brand accounts vs personal** — Filter out corporate accounts (@stripe, @shopify). Look for individual creators even if they work at companies (e.g., @pmarca not @a16z)
 - **Engagement rate varies by tier** — >5% is elite for any size. 2-3% is strong for 50K+ followers. <0.5% is a red flag regardless of follower count
 - **Content themes matter more than follower count** — An account with 8K followers tweeting daily about the exact niche beats a 200K account that occasionally mentions it
-- **Shofo profiles are cheap** — ~200 tokens each. Fetch all candidates. Only fetch tweets (`/x/user-posts`) for the top 25-30 to manage context
-- **Shofo `/x/user-posts` requires `count`** — Always include `--query 'count=20'` (or desired number). Omitting it will cause an error
-- **Shofo may be temporarily unavailable** — If Shofo returns `"success": false"`, retry after a few seconds. This indicates a temporary service issue, not a syntax error
+- **Riveter returns profile + tweets in one call** — Each scrape of `x.com/username` returns the full profile header (name, bio, followers) AND recent tweets with engagement metrics (likes, retweets, replies, views). No need for separate profile and posts calls
+- **Riveter costs $0.05/call** — For 60 candidates that's $3 total. Fetch all candidates since you get both profile and engagement data at once
+- **Parse Riveter text output carefully** — Riveter returns the page as plain text. Follower counts appear near the top ("3M Followers"), engagement numbers appear next to each tweet. Views are the last number after likes/retweets/replies
 - **Check for newsletters/Substacks** — Many Twitter influencers run newsletters. These are high-signal for partnership potential and often listed in the bio
 - **Fiber catches LinkedIn-heavy people** — Some professionals (B2B especially) are more discoverable via LinkedIn but still have active Twitter accounts. Don't skip Strategy C for B2B niches
 - **Fiber kitchen-sink has no Twitter URL param** — Use `profileIdentifier` (LinkedIn URL) for best match rate. Fall back to `personName` + `companyName` if no LinkedIn URL is available
