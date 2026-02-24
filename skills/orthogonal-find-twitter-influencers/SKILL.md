@@ -34,50 +34,52 @@ From the result, build a **company context string**: company name, domain, indus
 
 ### 3. Discover Candidates
 
-Run three strategies **in parallel** to maximize coverage (~60 unique candidates after dedup):
+Run three strategies **in parallel** to maximize coverage:
 
-**Strategy A — Exa search** (primary, highest signal):
+**Strategy A — Exa search for curated influencer lists** (primary, highest signal):
 
-Run 2-3 query variations, each returning 30 results. Use `includeDomains` to restrict to Twitter profiles. Do NOT use `category: "people"` — it only works with LinkedIn domains, not x.com/twitter.com.
+IMPORTANT: x.com and twitter.com profiles are NOT in Exa's search index, so `includeDomains: ["x.com"]` will return zero Twitter results. Instead, search for curated list pages, blog posts, and articles about influencers in the niche. Use `contents.text` to get the page content so you can extract Twitter handles from it.
+
+Run 2-3 query variations, each returning 10 results with text content:
 
 ```bash
-# Query 1: Direct niche + influencer keywords
+# Query 1: Curated lists of influencers in the niche
 orth run exa /search --body '{
-  "query": "{niche} influencer thought leader must-follow",
-  "numResults": 30,
-  "includeDomains": ["x.com", "twitter.com"]
+  "query": "best {niche} Twitter accounts to follow",
+  "numResults": 10,
+  "contents": {"text": {"maxCharacters": 5000}}
 }'
 
-# Query 2: Company/product context
+# Query 2: Influencer roundup with different phrasing
 orth run exa /search --body '{
-  "query": "{industry} {product category} expert creator Twitter",
-  "numResults": 30,
-  "includeDomains": ["x.com", "twitter.com"]
+  "query": "top {industry} influencers on X Twitter must follow",
+  "numResults": 10,
+  "contents": {"text": {"maxCharacters": 5000}}
 }'
 
-# Query 3: Audience-aligned (optional, if niche is broad)
+# Query 3: Niche-specific creator lists
 orth run exa /search --body '{
-  "query": "{target audience keywords} tips advice Twitter account",
-  "numResults": 30,
-  "includeDomains": ["x.com", "twitter.com"]
+  "query": "{niche} thought leaders creators Twitter handles",
+  "numResults": 10,
+  "contents": {"text": {"maxCharacters": 5000}}
 }'
 ```
 
-Vary the query phrasing to reduce overlap. Use company context keywords (industry, target audience, product category) to stay relevant.
+These queries return listicle pages (e.g., "Top 60 Fintech Influencers", "FinTwit Accounts to Follow") whose text content contains Twitter handles, bios, and follower counts. Parse these in Step 4.
 
-**Strategy B — Exa findSimilar** (expand from strong initial finds):
+**Strategy B — Exa findSimilar** (expand from strong listicle finds):
 
-After Strategy A returns results, pick 1-2 of the strongest profile URLs and expand:
+After Strategy A returns results, pick 1-2 of the best curated list URLs and find similar pages:
 
 ```bash
 orth run exa /findSimilar --body '{
-  "url": "https://x.com/strong_candidate",
-  "numResults": 15,
-  "includeDomains": ["x.com", "twitter.com"]
+  "url": "https://example.com/top-fintech-twitter-influencers",
+  "numResults": 5,
+  "contents": {"text": {"maxCharacters": 5000}}
 }'
 ```
 
-This surfaces similar influencers that keyword search may miss.
+This surfaces additional curated lists that keyword search may miss. Do NOT use Twitter/X profile URLs for findSimilar — they are not in Exa's index and will return empty results.
 
 **Strategy C — Fiber natural-language-search** (catch LinkedIn-heavy professionals):
 
@@ -94,16 +96,17 @@ Cross-reference Fiber results with Twitter in Step 5 — only keep people with a
 
 ### 4. Extract & Deduplicate Usernames
 
-From all Exa results, parse Twitter handles:
-- Extract usernames from URLs: `x.com/username` or `twitter.com/username`
-- Strip trailing paths (e.g., `/status/123`, `/followers`) — only keep base profile URLs
-- Discard non-profile URLs (search pages, hashtag pages, moment URLs)
+From the **text content** of Exa listicle pages, parse Twitter handles using multiple patterns:
+- `@username` mentions in the article text
+- URLs matching `x.com/username` or `twitter.com/username`
+- Strip trailing URL paths (e.g., `/status/123`, `/followers`) — only keep base profile usernames
+- Discard non-profile patterns (search pages, hashtag pages, `x.com/home`, `x.com/search`)
 - Deduplicate by username (case-insensitive)
 - Flag and remove obvious brand/company accounts (e.g., `@stripe`, `@shopify`) — focus on individual creators
 
 From Fiber results, extract any Twitter/X URLs from social profiles. Add new handles to the candidate pool.
 
-Target: ~40-60 unique handles after dedup.
+Target: ~40-60 unique handles after dedup. Curated list pages typically mention 20-50 handles each, so 3-5 good listicle results yield plenty of candidates.
 
 ### 5. Get Twitter Profiles
 
@@ -132,10 +135,10 @@ Run these in parallel for all candidates. From each profile, extract:
 For the top 25-30 candidates (by follower count + bio relevance after Step 5 filtering), fetch recent tweets:
 
 ```bash
-orth run shofo /x/user-posts --query 'username=examplehandle'
+orth run shofo /x/user-posts --query 'username=examplehandle' --query 'count=20'
 ```
 
-Run these in parallel. From each user's recent posts, calculate:
+The `count` parameter is required — use 20 for a good balance of data vs context size. Run these in parallel. From each user's recent posts, calculate:
 - **Average likes** per tweet
 - **Average retweets** per tweet
 - **Average replies** per tweet
@@ -172,11 +175,19 @@ For the final list, run a contact enrichment waterfall to find email addresses. 
 
 **Step 2 — Fiber kitchen-sink** (best coverage for professionals):
 ```bash
+# With LinkedIn URL (best match rate):
+orth run fiber /v1/kitchen-sink/person --body '{
+  "profileIdentifier": "https://linkedin.com/in/janesmith"
+}'
+
+# Without LinkedIn — use name + company:
 orth run fiber /v1/kitchen-sink/person --body '{
   "personName": {"fullName": "Jane Smith"},
-  "twitterUrl": "https://x.com/janesmith"
+  "companyName": {"name": "Jane Smith Creative"}
 }'
 ```
+
+Note: Fiber kitchen-sink does NOT accept a Twitter URL parameter. Use `profileIdentifier` (LinkedIn URL) for best results, or fall back to `personName` + `companyName`/`companyDomain`.
 
 **Step 3 — Hunter email-finder** (if you have their name + domain from their website/LinkedIn):
 ```bash
@@ -226,7 +237,7 @@ Only if the user requests more detail on specific influencers:
 
 **Full tweet analysis** (recent content, top tweets, audience reactions):
 ```bash
-orth run shofo /x/user-posts --query 'username=TARGET'
+orth run shofo /x/user-posts --query 'username=TARGET' --query 'count=50'
 ```
 
 **LinkedIn profile** (full work history, credentials, other ventures):
@@ -244,16 +255,19 @@ orth run sixtyfour /enrich-lead --body '{
 
 ## Tips
 
-- **Query variation is key** — Exa deduplicates poorly across identical queries. Vary phrasing: "fintech influencer", "finance creator Twitter", "money Twitter thought leader" all surface different people
-- **Do NOT use `category: "people"` with Exa for Twitter** — this category only works with `includeDomains: ["linkedin.com"]`. For Twitter/X discovery, use standard search with `includeDomains: ["x.com", "twitter.com"]`
+- **Exa cannot search Twitter directly** — x.com/twitter.com profiles are NOT in Exa's search index. `includeDomains: ["x.com"]` returns zero Twitter results. Instead, search for curated list pages and listicles about influencers, then extract handles from the page text
+- **Request text content from Exa** — Always use `contents: { text: { maxCharacters: 5000 } }` when searching for influencer lists. The page text contains @handles, profile URLs, and bios that you need to parse
+- **Query variation is key** — Vary phrasing across queries: "best fintech Twitter accounts to follow", "top finance creators on X", "FinTwit must-follow" all surface different listicle pages
+- **findSimilar works on listicle pages, not Twitter URLs** — Use findSimilar on the best curated list URLs from Strategy A to find more lists. Do NOT pass x.com URLs — they return empty results
 - **Micro-influencers often outperform** — accounts with 5K-50K followers frequently have 3-5x the engagement rate of 500K+ accounts. Recommend a mix unless the user specifies otherwise
-- **Brand accounts vs personal** — Filter out corporate accounts (@stripe, @shopify). Look for individual creators even if they work at companies (e.g., @pmarca not @a]16z)
+- **Brand accounts vs personal** — Filter out corporate accounts (@stripe, @shopify). Look for individual creators even if they work at companies (e.g., @pmarca not @a16z)
 - **Engagement rate varies by tier** — >5% is elite for any size. 2-3% is strong for 50K+ followers. <0.5% is a red flag regardless of follower count
 - **Content themes matter more than follower count** — An account with 8K followers tweeting daily about the exact niche beats a 200K account that occasionally mentions it
-- **Exa returns ~800 tokens per result** — 30 results per query x 3 queries = ~72K tokens. This is manageable but be mindful of context limits if running many parallel strategies
 - **Shofo profiles are cheap** — ~200 tokens each. Fetch all candidates. Only fetch tweets (`/x/user-posts`) for the top 25-30 to manage context
-- **findSimilar snowballs well** — If one Exa search finds a strong influencer, `findSimilar` on their profile URL often surfaces an entire cluster of similar creators
+- **Shofo `/x/user-posts` requires `count`** — Always include `--query 'count=20'` (or desired number). Omitting it will cause an error
+- **Shofo may be temporarily unavailable** — If Shofo returns `"success": false"`, retry after a few seconds. This indicates a temporary service issue, not a syntax error
 - **Check for newsletters/Substacks** — Many Twitter influencers run newsletters. These are high-signal for partnership potential and often listed in the bio
 - **Fiber catches LinkedIn-heavy people** — Some professionals (B2B especially) are more discoverable via LinkedIn but still have active Twitter accounts. Don't skip Strategy C for B2B niches
+- **Fiber kitchen-sink has no Twitter URL param** — Use `profileIdentifier` (LinkedIn URL) for best match rate. Fall back to `personName` + `companyName` if no LinkedIn URL is available
 - **Contact enrichment is a waterfall** — Don't blast all four sources for every person. Check Twitter bio first (free), then Fiber (most coverage), then Hunter/Tomba only if needed
 - **DM culture** — Many influencers prefer Twitter DMs for collaboration inquiries. Note "DM for collabs" or "Open DMs" from bios as a contact method
