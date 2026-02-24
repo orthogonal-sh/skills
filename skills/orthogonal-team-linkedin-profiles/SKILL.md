@@ -40,12 +40,12 @@ Run both searches **in parallel**:
 orth run exa /search --body '{
   "query": "{company context string} {team} team members",
   "category": "people",
-  "numResults": 25,
+  "numResults": 50,
   "includeDomains": ["linkedin.com"]
 }'
 ```
 
-Use `numResults: 25` by default (cheap tier: $0.005/request). If the user wants comprehensive results or Exa returns exactly 25 (likely more exist), bump to 50-100 (same $0.025/request cost tier for 26-100).
+Use `numResults: 50` by default — best balance of coverage vs context window size (~53K tokens). Each Exa result includes full structured data (~1K tokens each), so 100 results would consume ~106K tokens and half tend to be noise (wrong companies). If the user explicitly wants exhaustive results, bump to 100 (max). Exa costs 1 cent per request on Orthogonal regardless of numResults.
 
 Try multiple query variations if results are sparse:
 - `"{company} {team} team"`
@@ -113,8 +113,8 @@ This returns full work history, education, skills, and recent activity. Run thes
 - **Add industry context** to all search queries — "Mercury fintech" finds the right Mercury much more reliably than just "Mercury"
 - **Expand title keywords** — Teams use varied titles. "Data team" could include data scientist, data engineer, analytics engineer, ML engineer, data analyst
 - **Exa vs Hunter** — Exa finds the most team members with best structured data. Hunter surfaces senior/executive people and provides email addresses. Use both in parallel for best coverage
-- **Exa cost tiers** — 1-25 results: $0.005/request. 26-100 results: $0.025/request (5x jump). Stay at 25 unless the user needs comprehensive results
-- **Handle pagination** — If Exa returns exactly `numResults`, there are likely more. Bump to 50-100 (same cost tier once past 25) or run follow-up queries with different title keywords
+- **Context window** — Each Exa result is ~1K tokens. 50 results ≈ 53K tokens, 100 results ≈ 106K tokens. Default to 50; only go to 100 if the user wants exhaustive results
+- **Handle pagination** — If Exa returns exactly `numResults`, there are likely more. Bump to 100 or run follow-up queries with different title keywords
 - **Small teams** — For niche teams (e.g., "fraud" at a 200-person startup), expect 3-8 results. This is normal
 - **Large teams** — For broad teams (e.g., "engineering" at a 5,000-person company), suggest the user narrow by sub-team or seniority
 - **Abbreviated names** — Some Exa results show partial names like "Joey G." or "Oneida D." These are real profiles with restricted LinkedIn visibility, not errors. Include them in results with the name as-is
