@@ -22,7 +22,7 @@ Find dentist and dental practice contact information — phone numbers, email ad
 Extract from the user's query:
 - **City/location** (required) — city name, zip code, neighborhood, or area (e.g., "San Francisco", "Austin TX", "90210")
 - **Specialty** (optional) — general dentist, orthodontist, pediatric dentist, cosmetic dentist, oral surgeon, endodontist, periodontist, etc.
-- **Max results** (optional, default 10) — scale up if user asks for more
+- **Max results** (optional, default 10) — scale up if user asks for more. If user says "all" or wants comprehensive coverage, see the Scaling Up section below
 - **Other filters** (optional) — insurance accepted, language spoken, open weekends, etc.
 
 ### 2. Search for Dentists
@@ -87,6 +87,48 @@ orth run exa /search --body '{
 
 Returns listing pages with multiple dentists per page. Use `contents.text` to extract names, phone numbers, addresses, and emails from the page text. Directory pages (Yelp, Healthgrades, local dental society listings) often contain 10-20 practices each.
 
+#### Scaling Up — When the User Wants More Than ~15 Results
+
+A single round of searches across all 3 strategies typically yields ~15-20 unique practices after dedup. To get more, **search by neighborhood/area** to multiply coverage:
+
+```bash
+# Break the city into neighborhoods and run separate searches for each
+# Example for San Francisco:
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "dentists in Mission District San Francisco with phone number, email, address, website",
+  "num_results": 10
+}'
+
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "dentists in Sunset District San Francisco with phone number, email, address, website",
+  "num_results": 10
+}'
+
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "dentists in Marina District San Francisco with phone number, email, address, website",
+  "num_results": 10
+}'
+
+# ... repeat for Richmond, SOMA, Financial District, Noe Valley, etc.
+```
+
+**How to determine neighborhoods:** Use your knowledge of the city, or run a quick search:
+```bash
+orth run tavily /search --body '{
+  "query": "{city} neighborhoods list",
+  "max_results": 3,
+  "include_answer": true
+}'
+```
+
+**Scaling guidelines:**
+- **10-20 results:** Default — single round of all 3 strategies
+- **20-50 results:** Search by 3-5 major neighborhoods/areas with Scrapegraph searchscraper
+- **50-100+ results:** Search every neighborhood + use Exa to find comprehensive directory pages (dental society listings, state dental board registries). Also search for "dentist directory {city}" and "dental society {city} member list"
+- **"All dentists":** Search every neighborhood (5-10+ searches), target bulk directories like state dental board license lookups and local dental society member lists. Note: true 100% coverage is not possible via web search alone — there will always be some practices missed. Set expectations with the user
+
+Run neighborhood searches **in parallel** to keep latency low.
+
 ### 3. Extract & Deduplicate
 
 From all search results across strategies A, B, and C, extract for each dentist/practice:
@@ -104,28 +146,51 @@ From all search results across strategies A, B, and C, extract for each dentist/
 - Keep the most complete record when merging duplicates (prefer the one with more fields filled)
 - Normalize phone numbers to a consistent format for comparison
 
-### 4. Enrich Missing Contact Info
+### 4. Enrich — Especially Email Addresses
 
-For dentists that have a website but are missing phone or email, scrape their website to fill gaps. Only scrape for missing data — skip practices where you already have phone + email + address.
+Email is the hardest contact field to find for dental practices. Most practices prefer phone calls and web forms over email, so emails are rarely on directory listings. You need to actively scrape for them.
 
-**Scrapegraph smartscraper** (AI-powered extraction from clinic websites):
+**Step 1 — Scrape the contact/about page of EVERY practice website** (not just ones missing data):
+
+Most dental websites have an email address somewhere — usually on the Contact page, footer, or About page — even if directories don't list it. Scrape all practice websites that have a URL, targeting the contact page specifically:
 
 ```bash
+# Try /contact, /contact-us, or /about pages first — emails are almost always there
+orth run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://smithfamilydental.com/contact",
+  "user_prompt": "Extract all email addresses, phone numbers, office address, hours of operation, dentist names, and specialties"
+}'
+
+# If contact page doesn't exist or returns nothing, scrape the homepage
 orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://smithfamilydental.com",
-  "user_prompt": "Extract phone number, email address, office address, hours of operation, dentist names, specialties offered, and insurance plans accepted"
+  "user_prompt": "Extract all email addresses, phone numbers, office address, hours of operation, dentist names, and specialties"
 }'
 ```
 
-Run in parallel for up to 5-10 clinic websites that need enrichment.
+Run these in parallel for ALL practices with websites. This is the single best way to find emails — dental practice websites almost always have an email somewhere on the site, even though directory listings don't show it.
 
-**Hunter domain search** (find email addresses by practice domain):
+**Step 2 — Hunter domain search** (find emails by domain for practices where scraping didn't find one):
 
 ```bash
 orth run hunter /v2/domain-search --query 'domain=smithfamilydental.com'
 ```
 
-Returns email addresses associated with the practice domain. Useful when the website doesn't prominently display an email.
+Returns email addresses associated with the practice domain. Works better for larger practices with multiple staff. Small single-dentist practices often return empty.
+
+**Step 3 — Hunter email-finder** (guess email by dentist name + practice domain):
+
+If you know the dentist's name and the practice domain, Hunter can predict the email:
+
+```bash
+orth run hunter /v2/email-finder --query 'domain=smithfamilydental.com&first_name=John&last_name=Smith'
+```
+
+**Step 4 — Common email pattern guessing**: Many dental practices use predictable patterns. If all else fails, note likely email patterns in the results:
+- `info@{domain}`, `office@{domain}`, `frontdesk@{domain}`
+- `dr{lastname}@{domain}`, `{firstname}@{domain}`
+
+Only include guessed emails if marked as unverified.
 
 ### 5. Verify Phone Numbers (Optional)
 
@@ -266,12 +331,14 @@ orth run hunter /v2/domain-search --query 'domain=brooklynpediatricdentistry.com
 
 - **Scrapegraph searchscraper is the primary source** — it combines search + structured extraction in one call, giving the cleanest data. Tavily and Exa provide supplemental coverage
 - **Request text content from Exa** — Always use `contents: { text: { maxCharacters: 5000 } }` so you can parse names, phones, and addresses from directory pages
-- **Default to 10 results** — Keeps costs low (~$0.50-1.00 per run). Scale up if the user asks for more
-- **Only scrape individual websites for missing data** — Don't scrape all clinic websites. Only fill gaps where phone or email is missing from search results. This keeps costs down and avoids unnecessary API calls
-- **Phone numbers are the most reliable** — Nearly every dental practice lists a phone number publicly. Emails are less commonly displayed. Addresses are almost always available
+- **Default to 10 results** — Keeps costs low (~$0.50-1.00 per run). Scale up if the user asks for more. For "all dentists" requests, search by neighborhood to multiply coverage
+- **Always scrape practice websites for emails** — Directory listings almost never include email addresses, but the practice's own website usually has one on the Contact or About page. Scrape every practice website, not just ones with missing data. Target `/contact` or `/contact-us` pages specifically — that's where emails live
+- **Email is the hardest field** — Expect ~30-40% email coverage from search results alone. Scraping individual websites can push this to 60-80%. The remaining practices genuinely don't publish email and prefer phone/form contact
+- **Phone numbers are the most reliable** — Nearly every dental practice lists a phone number publicly. Addresses are almost always available. Email requires the most effort to find
 - **Directory pages are gold mines** — A single Yelp or Healthgrades listing page often contains 10-20 practices with phone and address. Exa is best for finding these
 - **Normalize phone formats** — Dental practices list phones in various formats: (415) 555-1234, 415-555-1234, 415.555.1234. Normalize for dedup and presentation
 - **Specialty matters for search quality** — "orthodontist in Austin" returns much more targeted results than "dentist in Austin" when the user wants a specific specialty
 - **Insurance filters are search-query-level** — There's no API filter for insurance. Include it in the search query (e.g., "dentists in Brooklyn that accept Medicaid") and let search engines match relevant results
 - **Small towns may have few results** — If a city returns fewer than the requested count, note this in the results and suggest expanding to nearby areas
+- **Search by neighborhood to scale up** — A single search round caps out at ~15-20 unique practices. To get 50+, break the city into neighborhoods and run separate searches for each. Run these in parallel. For a city like San Francisco, 8-10 neighborhood searches can yield 80-100+ unique practices
 - **Verify addresses make sense** — Occasionally search results return outdated addresses. Cross-reference with the practice website when available
