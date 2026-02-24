@@ -1,74 +1,57 @@
 ---
 name: find-dentists
-description: Find dentist contact information (phone, email, address) in a given city for sales prospecting and outreach. Use when asked to find dentists, build a prospect list of dental practices, get dentist phone numbers for outreach, or generate leads in a specific area.
+description: Build a sales prospect list of dental practices in a city — finds practices, decision makers, contact info, and buying signals. Use when asked to find dentists for outreach, prospect dental practices, build a lead list of dentists, or generate dental practice leads in a specific area.
 ---
 
-# Find Dentists
+# Find Dentists — Sales Prospecting for Dental Practices
 
-Find dentist and dental practice contact information — phone numbers, email addresses, office addresses, and websites — for any city or area. Built for sales teams selling to dental practices (e.g., AI receptionist software, dental supplies, practice management tools) who need prospect lists with verified contact info for outreach.
+Build a prioritized prospect list of dental practices in any city. Goes beyond basic contact info — finds the decision maker (practice owner or office manager), what software and services the practice already uses, and intent signals like job postings that indicate they're actively hiring or growing.
 
 ## When to Use
 
 - User wants to prospect dental practices in a city for sales outreach
-- User needs dentist contact info (phone, email, address) to build a lead list
-- User asks "find me dentists in [city]" or "get dentist contacts in [area]"
-- User wants to target a specific specialty (orthodontist, pediatric dentist, oral surgeon, etc.)
-- Sales teams selling to dentists — AI receptionist, practice management software, dental supplies, marketing services, etc.
+- User asks "find me dentists in [city]" or "get dental practice leads in [area]"
+- User is selling a product/service to dental practices and needs a lead list
+- User wants to identify high-priority prospects (actively hiring, new practices, or missing a specific solution)
 
 ## Workflow
 
 ### 1. Parse the Request
 
 Extract from the user's query:
-- **City/location** (required) — city name, zip code, neighborhood, or area (e.g., "San Francisco", "Austin TX", "90210")
-- **Specialty** (optional) — general dentist, orthodontist, pediatric dentist, cosmetic dentist, oral surgeon, endodontist, periodontist, etc.
+- **City/location** (required) — city name, zip code, neighborhood, or area
+- **Specialty** (optional) — general dentist, orthodontist, pediatric dentist, cosmetic dentist, oral surgeon, etc.
 - **Max results** (optional, default 10) — scale up if user asks for more
-- **Other filters** (optional) — insurance accepted, language spoken, open weekends, etc.
+- **Company/product** (optional) — if the user mentions a company name, domain, or product (e.g., "for our dental scheduling software", "suitable for our practice management tool"), extract it. This triggers competitor research in Step 6 to check whether each practice already uses a competing product
 
-### 2. Search for Dentists
+### 2. Find Dental Practices
 
-Run 2-3 search strategies **in parallel** to maximize coverage:
+Run 2-3 search strategies **in parallel**:
 
-**Strategy A — Scrapegraph searchscraper** (primary — search + extract in one call):
-
-This is the highest-signal source. It searches the web and extracts structured data in a single API call.
+**Strategy A — Scrapegraph searchscraper** (primary — structured data in one call):
 
 ```bash
-# Core search — dentists with contact info
 orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "dentists in {city} with phone number, email address, office address, and website URL",
-  "num_results": 10
-}'
-
-# If specialty is specified
-orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "{specialty} dentists in {city} with phone number, email address, office address, and website",
+  "user_prompt": "dentists in {city} with practice name, phone number, email address, office address, and website URL",
   "num_results": 10
 }'
 ```
 
-Returns structured data extracted directly from search results — practice names, phone numbers, addresses, websites, and sometimes emails.
+This is the highest-signal source. In testing, it returned **57 practices** for San Francisco in a single call — far more than the requested 10. Returns structured JSON with practice names, phone numbers, addresses, websites, and sometimes emails.
 
-**Strategy B — Tavily web search** (supplemental — catches Google Maps/Yelp/Healthgrades results):
+**Strategy B — Tavily web search** (supplemental — Yelp/Healthgrades/Maps results):
 
 ```bash
 orth run tavily /search --body '{
-  "query": "best dentists in {city} phone number address",
-  "max_results": 10,
-  "include_answer": false
-}'
-
-# Second query targeting directories
-orth run tavily /search --body '{
-  "query": "{city} dentist office contact information email phone",
+  "query": "dentists in {city} phone number address",
   "max_results": 10,
   "include_answer": false
 }'
 ```
 
-Returns search result URLs + snippets. Parse dentist names, phone numbers, and addresses from the snippets. Results typically come from Google Maps listings, Yelp, Healthgrades, Zocdoc, and dental practice websites.
+Returns search result URLs + snippets. Parse dentist names, phone numbers, and addresses from the snippets.
 
-**Strategy C — Exa search** (find directory/listing pages with multiple dentists):
+**Strategy C — Exa search** (directory pages with full text):
 
 ```bash
 orth run exa /search --body '{
@@ -76,202 +59,375 @@ orth run exa /search --body '{
   "numResults": 10,
   "contents": {"text": {"maxCharacters": 5000}}
 }'
-
-# Target directory sites
-orth run exa /search --body '{
-  "query": "top rated dental practices {city} contact information",
-  "numResults": 10,
-  "contents": {"text": {"maxCharacters": 5000}}
-}'
 ```
 
-Returns listing pages with multiple dentists per page. Use `contents.text` to extract names, phone numbers, addresses, and emails from the page text. Directory pages (Yelp, Healthgrades, local dental society listings) often contain 10-20 practices each.
+Returns listing pages with full text content. Useful for parsing contact info from practice websites. Note: Exa sometimes returns irrelevant results — filter by relevance.
+
+#### Scaling Up — Getting More Results
+
+To get more than the initial batch, **search by neighborhood**:
+
+```bash
+# Run in parallel — one search per neighborhood
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "dentists in Mission District San Francisco with practice name, phone, email, address, website",
+  "num_results": 10
+}'
+
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "dentists in Sunset District San Francisco with practice name, phone, email, address, website",
+  "num_results": 10
+}'
+
+# ... repeat for each neighborhood
+```
+
+Guidelines: 10-20 results = default single round. 20-50 = search 3-5 neighborhoods. 50-100+ = search every neighborhood + dental society directories.
 
 ### 3. Extract & Deduplicate
 
-From all search results across strategies A, B, and C, extract for each dentist/practice:
+From all results, extract per practice:
 - **Practice name**
-- **Dentist name(s)** — individual dentist names if available
 - **Phone number**
-- **Address** — full street address with city, state, zip
+- **Address**
 - **Website URL**
-- **Email** — if found in snippets or page text
-- **Specialty** — if mentioned (general, orthodontics, pediatric, etc.)
+- **Email** (if found)
+- **Dentist name(s)** (if listed)
 
-**Deduplication rules:**
-- Match by practice name + address (same practice may appear on multiple listing sites)
-- Match by phone number (same practice listed under slightly different names)
-- Keep the most complete record when merging duplicates (prefer the one with more fields filled)
-- Normalize phone numbers to a consistent format for comparison
+Deduplicate by practice name + address, or by phone number.
 
-### 4. Enrich Missing Contact Info
+### 4. Find the Decision Maker
 
-For dentists that have a website but are missing phone or email, scrape their website to fill gaps. Only scrape for missing data — skip practices where you already have phone + email + address.
+This is the high-value step. For each practice, identify the **practice owner or office manager** — the person who actually buys software and services.
 
-**Scrapegraph smartscraper** (AI-powered extraction from clinic websites):
+**Primary method — Scrape the practice website's About/Team page:**
+
+```bash
+orth run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://smithfamilydental.com/about",
+  "user_prompt": "Extract the names and roles of all staff. Identify the practice owner, office manager, or managing dentist. Also extract any email addresses and phone numbers on this page."
+}'
+```
+
+Run in parallel for all practices with websites. This is the **most reliable method** for dental practices — in testing, it successfully identified decision makers on 5/5 websites (owners, office managers, managing dentists).
+
+**URL path handling:** Try the homepage URL first — most practice websites mention the owner/managing dentist on the homepage. If the homepage doesn't have staff info, try appending `/about`, `/about-us`, `/our-team`, or `/team`. Note: appending paths like `/about` to some websites returns a 422 error. If that happens, fall back to the base homepage URL which almost always works.
+
+**Fallback — Fiber kitchen-sink** (if you found a LinkedIn URL for someone at the practice):
+
+```bash
+orth run fiber /v1/kitchen-sink/person --body '{
+  "profileIdentifier": "https://linkedin.com/in/drmanali"
+}'
+```
+
+Returns full profile data with email, phone, and work history.
+
+**Important: Fiber people-search and job-search with searchParams filters are unreliable** — in testing, both returned 400 errors consistently even with documented parameter formats. Do NOT rely on these as primary methods. Use Scrapegraph smartscraper for decision maker discovery and Scrapegraph searchscraper for job posting signals instead.
+
+### 5. Get Decision Maker Contact Info
+
+For each decision maker identified in Step 4, find their direct email:
+
+**Scrape the practice contact page** (most reliable for dental practices):
+```bash
+orth run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://smithfamilydental.com/contact",
+  "user_prompt": "Extract all email addresses and phone numbers from this page"
+}'
+```
+
+In testing, this found practice emails (info@, office@) on most sites. For decision maker personal emails, try:
+
+**Hunter email-finder** (predict email by name + domain):
+```bash
+orth run hunter /v2/email-finder --query 'domain=smithfamilydental.com&first_name=Sarah&last_name=Johnson'
+```
+
+Note: Hunter often returns null for small dental practice domains. It works better for larger group practices.
+
+**Tomba LinkedIn-to-email** (if LinkedIn URL found):
+```bash
+orth run tomba /v1/linkedin --query 'url=https://linkedin.com/in/sarahjohnson'
+```
+
+**Exa LinkedIn discovery** (find LinkedIn URL for the decision maker):
+```bash
+orth run exa /search --body '{
+  "query": "Dr. Manali Rathod dentist San Francisco",
+  "numResults": 3,
+  "includeDomains": ["linkedin.com"]
+}'
+```
+
+Once you have a LinkedIn URL, use Fiber kitchen-sink or Tomba for email extraction.
+
+**Realistic expectations:** Decision maker personal emails are hard to find for dental practices. Most contact info you'll get is practice-level (info@, office@). This is still valuable — the key insight is knowing WHO to ask for when you call or email.
+
+### 6. Competitive Intel — Check for Competing Products
+
+If the user mentioned a company or product (e.g., "suitable for our dental scheduling software", "prospects for our practice management tool"), research that company's competitors first, then check each dental practice's website for those competitors. This tells the sales team which practices are greenfield vs. competitive displacement.
+
+**Step 1 — Research the user's company and its competitors:**
+
+```bash
+# Look up the company to understand what they do
+orth run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://{company_domain}",
+  "user_prompt": "What does this company do? What product or service do they offer to dental practices? Describe it in one sentence."
+}'
+
+# Find competitors
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "competitors and alternatives to {company} for dental practices",
+  "num_results": 5
+}'
+```
+
+From these results, build a list of competitor product names to check for.
+
+**Step 2 — Check each practice's website for competing products:**
 
 ```bash
 orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://smithfamilydental.com",
-  "user_prompt": "Extract phone number, email address, office address, hours of operation, dentist names, specialties offered, and insurance plans accepted"
+  "user_prompt": "Does this dental practice use or mention any of the following products or services: {competitor_1}, {competitor_2}, {competitor_3}? Also check for any similar {product_category} tools. Look in the page content, footer, embedded widgets, and any third-party integrations."
 }'
 ```
 
-Run in parallel for up to 5-10 clinic websites that need enrichment.
+Run in parallel for all practices.
 
-**Hunter domain search** (find email addresses by practice domain):
-
-```bash
-orth run hunter /v2/domain-search --query 'domain=smithfamilydental.com'
-```
-
-Returns email addresses associated with the practice domain. Useful when the website doesn't prominently display an email.
-
-### 5. Verify Phone Numbers (Optional)
-
-Only run this step if the user specifically requests verified/validated data:
+**If no company/product was mentioned**, use a broad tech stack scan instead:
 
 ```bash
-orth run tomba /v1/phone-validator --query 'phone=+14155551234'
+orth run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://smithfamilydental.com",
+  "user_prompt": "What software, tools, and third-party services does this dental practice use? Look for: online scheduling/booking systems, patient portals, practice management software, payment processors, chatbots, answering services, marketing tools, review platforms, or any other integrations mentioned in the page content, footer, or embedded widgets."
+}'
 ```
 
-Skip this step by default — phone numbers from Google Maps, Yelp, and dental practice websites are generally accurate. Only validate if data quality is critical.
+Flag practices based on findings:
+- **No competing solution detected** — top priority prospect (greenfield)
+- **Uses a competitor** — note which one. Lower priority, but may be open to switching. The sales team can tailor their pitch against the specific competitor
+- **Unknown** — couldn't determine from website
 
-### 6. Present Results
+### 7. Intent Signals — Identify Ready-to-Buy Prospects
 
-Output a markdown table with the final dentist list:
+These signals indicate a practice is actively growing or hiring, making them high-priority targets.
+
+**Signal A — Active job postings** (strongest buying signal):
+
+Use Scrapegraph searchscraper to find dental practices with open positions. Tailor the job title to what the user is selling — e.g., if selling staffing solutions, look for any open roles; if selling a specific product, look for roles that product would replace or support:
+
+```bash
+# Example: find practices hiring for front desk / receptionist roles
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "dental practices hiring receptionist or front desk in {city}, list the practice name, job title, and salary",
+  "num_results": 10
+}'
+
+# Example: find practices hiring dental assistants
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "dental practices hiring dental assistant in {city}, list the practice name, job title, and salary",
+  "num_results": 10
+}'
+```
+
+In testing, this returned **11 SF practices** actively hiring front desk staff in a single call, with practice names and salary ranges. This is the most efficient way to find this signal.
+
+For more comprehensive job listing coverage, also scrape job board listing pages:
+
+```bash
+orth run tavily /search --body '{
+  "query": "dental {role} job opening {city}",
+  "max_results": 5,
+  "include_answer": false
+}'
+
+# Then scrape the top job listing page for specific practice names
+orth run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://www.glassdoor.com/Job/{city}-dental-receptionist-jobs-SRCH_...",
+  "user_prompt": "Extract all dental practice names that are hiring, along with the job title, salary if listed, and location"
+}'
+```
+
+In testing, scraping Glassdoor returned **29 practices** hiring in the SF Bay Area with salary data. Cross-reference these with your practice list from Step 2 — matches are your highest-priority prospects.
+
+**Signal B — New practices** (recently opened, still building their operations):
+
+```bash
+orth run tavily /search --body '{
+  "query": "new dental practice opening {city} 2025 2026",
+  "max_results": 10,
+  "topic": "news",
+  "include_answer": false
+}'
+```
+
+New practices are more open to adopting new tools and services from day one.
+
+**Signal C — Practice size** (from the team page scrape in Step 4):
+
+Solo practices and small group practices (2-5 dentists) are typically the sweet spot for most dental products — large enough to have real operational needs, small enough that they don't have enterprise procurement processes.
+
+### 8. Present Results
+
+Output a prioritized prospect list:
 
 ```
-## Dentists in {City}
+## Dental Practice Prospects in {City}
 
-Found {N} dental practices with contact information:
+Found {N} practices, ranked by sales readiness:
 
-| # | Practice Name | Dentist(s) | Phone | Email | Address | Website | Specialty |
-|---|---------------|------------|-------|-------|---------|---------|-----------|
-| 1 | Smith Family Dental | Dr. John Smith | (415) 555-1234 | info@smithdental.com | 123 Main St, San Francisco, CA 94102 | [Website](https://smithdental.com) | General |
-| 2 | ... | ... | ... | ... | ... | ... | ... |
+### High Priority (strong buying signals)
+| # | Practice | Decision Maker | Title | Phone | Email | Signal |
+|---|----------|---------------|-------|-------|-------|--------|
+| 1 | Smith Dental | Sarah Johnson | Office Manager | (415) 555-1234 | info@smithdental.com | Actively hiring |
+| 2 | ... | ... | ... | ... | ... | New practice |
 
-### Data Completeness
-- Phone numbers found: {count}/{total}
-- Email addresses found: {count}/{total}
-- Full addresses found: {count}/{total}
+### Medium Priority (no competing solution detected)
+| # | Practice | Decision Maker | Title | Phone | Email | Notes |
+|---|----------|---------------|-------|-------|-------|-------|
+| 3 | ... | ... | ... | ... | ... | Solo practice, no competing solution found |
 
-### Notes
-- {Any caveats — e.g., "Some practices only list a main office number", "Emails were not publicly listed for 3 practices"}
-- {If specialty was filtered: "Showing only {specialty} practices"}
+### Lower Priority (competing solution detected)
+| # | Practice | Decision Maker | Title | Phone | Email | Current Solution |
+|---|----------|---------------|-------|-------|-------|-----------------|
+| 8 | ... | ... | ... | ... | ... | Uses {competing product} |
+
+### Summary
+- Total practices found: {N}
+- Decision makers identified: {count}/{N}
+- Practices actively hiring: {count} (high priority)
+- Practices with no competing solution: {count}
+- Practices with competing solution: {count}
 ```
 
-## Parameters
+## APIs Used
 
-### Scrapegraph searchscraper
-- **user_prompt** (required) — Natural language query describing what to search and extract
-- **num_results** (optional) — Number of search results to process
-
-### Scrapegraph smartscraper
-- **website_url** (required) — URL of the website to scrape
-- **user_prompt** (required) — What to extract from the page
-
-### Tavily
-- **query** (required) — Search query string
-- **max_results** (optional) — Number of results (default 5)
-- **include_answer** (optional) — Whether to include AI-generated answer
-
-### Exa
-- **query** (required) — Search query
-- **numResults** (optional) — Number of results
-- **contents** (optional) — Request page text with `{"text": {"maxCharacters": 5000}}`
-
-### Hunter
-- **domain** (required) — Domain to search for email addresses
-
-### Tomba
-- **phone** (required) — Phone number to validate (E.164 format)
+1. **Scrapegraph** `/v1/searchscraper` — find dental practices via web search, find hiring signals, and research competitors
+2. **Scrapegraph** `/v1/smartscraper` — scrape practice websites for decision maker names, emails, and check for competing products
+3. **Tavily** `/search` — supplemental web search, job board discovery, new practice detection
+4. **Exa** `/search` — find directory pages, LinkedIn URL discovery for decision makers
+5. **Fiber** `/v1/kitchen-sink/person` — enrich decision maker with LinkedIn URL (when available)
+6. **Hunter** `/v2/email-finder` — find decision maker email by name + domain
+7. **Tomba** `/v1/linkedin` — LinkedIn-to-email lookup
 
 ## Examples
 
-**User:** "Find dentists in San Francisco"
+**User:** "Find dentists in San Francisco for our sales team"
 ```bash
-# Run in parallel
+# Step 2: Find practices (run in parallel)
 orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "dentists in San Francisco with phone number, email address, office address, and website URL",
+  "user_prompt": "dentists in San Francisco with practice name, phone number, email address, office address, and website URL",
   "num_results": 10
 }'
 
 orth run tavily /search --body '{
-  "query": "best dentists in San Francisco phone number address",
-  "max_results": 10,
-  "include_answer": false
-}'
-
-orth run exa /search --body '{
   "query": "dentists in San Francisco phone number address",
-  "numResults": 10,
-  "contents": {"text": {"maxCharacters": 5000}}
-}'
-```
-
-**User:** "Find orthodontists in Austin TX, I need at least 20"
-```bash
-orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "orthodontists in Austin Texas with phone number, email, address, and website",
-  "num_results": 15
-}'
-
-orth run tavily /search --body '{
-  "query": "orthodontist Austin TX contact information phone email",
-  "max_results": 15,
-  "include_answer": false
-}'
-
-orth run exa /search --body '{
-  "query": "orthodontists in Austin Texas contact phone address",
-  "numResults": 15,
-  "contents": {"text": {"maxCharacters": 5000}}
-}'
-```
-
-**User:** "Find pediatric dentists in Brooklyn that accept Medicaid"
-```bash
-orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "pediatric dentists in Brooklyn New York that accept Medicaid with phone number, email, address",
-  "num_results": 10
-}'
-
-orth run tavily /search --body '{
-  "query": "pediatric dentist Brooklyn Medicaid accepted phone number address",
   "max_results": 10,
   "include_answer": false
 }'
-```
 
-**Enrichment example** — scraping a clinic website for missing info:
-```bash
+# Step 4: Find decision makers (run in parallel for each practice)
 orth run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://brooklynpediatricdentistry.com",
-  "user_prompt": "Extract phone number, email address, office address, hours of operation, dentist names, specialties, and insurance plans accepted"
+  "website_url": "https://www.thedentalpracticesf.com",
+  "user_prompt": "Extract the names and roles of all staff. Identify the practice owner, office manager, or managing dentist. Also extract any email addresses and phone numbers."
 }'
 
-orth run hunter /v2/domain-search --query 'domain=brooklynpediatricdentistry.com'
+# Step 6: Competitive intel (run in parallel — tailor prompt to what you're selling)
+orth run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://www.thedentalpracticesf.com",
+  "user_prompt": "What software, tools, and third-party services does this dental practice use? Look for online scheduling systems, patient portals, practice management software, payment processors, chatbots, answering services, or any integrations in the page content, footer, or widgets."
+}'
+
+# Step 7: Intent signals — who is actively hiring?
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "dental practices hiring receptionist or front desk in San Francisco, list the practice name, job title, and salary",
+  "num_results": 10
+}'
+```
+
+**User:** "Find me dentists in San Francisco suitable for our dental scheduling software" (user provides their company domain separately or it's known from context)
+```bash
+# Step 1: Research the user's company and find competitors
+orth run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://{user_company_domain}",
+  "user_prompt": "What does this company do? What product or service do they offer to dental practices?"
+}'
+
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "competitors and alternatives to {user_product_description} for dental practices",
+  "num_results": 5
+}'
+
+# Step 2: Find practices (parallel)
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "dentists in San Francisco with practice name, phone number, email address, office address, and website URL",
+  "num_results": 10
+}'
+
+# Step 6: Check each practice for competitors (parallel, for each practice)
+orth run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://www.thedentalpracticesf.com",
+  "user_prompt": "Does this dental practice use or mention any of the following: {competitor_1}, {competitor_2}, {competitor_3}? Also check for any similar scheduling tools in the page content, footer, or embedded widgets."
+}'
+```
+
+**User:** "Which dental practices in Denver are hiring receptionists?"
+```bash
+# Go straight to intent signals
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "dental practices hiring receptionist or front desk in Denver Colorado, list the practice name, job title, and salary",
+  "num_results": 10
+}'
+
+# Then enrich those specific practices
+orth run scrapegraph /v1/smartscraper --body '{
+  "website_url": "https://denverdental.com",
+  "user_prompt": "Extract the names and roles of all staff. Identify the practice owner or office manager. Extract email addresses and phone numbers."
+}'
+```
+
+**User:** "Build a prospect list of 50 dental practices in Austin TX"
+```bash
+# Scale up with neighborhood searches (run all in parallel)
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "dentists in Downtown Austin Texas with practice name, phone, email, address, website",
+  "num_results": 10
+}'
+
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "dentists in South Austin Texas with practice name, phone, email, address, website",
+  "num_results": 10
+}'
+
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "dentists in North Austin Texas with practice name, phone, email, address, website",
+  "num_results": 10
+}'
+
+# ... continue for Round Rock, Cedar Park, East Austin, West Austin, etc.
 ```
 
 ## Error Handling
 
-- **No results for a city** — Try broader search terms (e.g., county name instead of small town), or try neighboring cities
-- **Scrapegraph returns empty** — Fall back to Tavily + Exa results. Some queries may not match searchscraper's index well
-- **Website scraping fails** — Some dental sites block scrapers or use heavy JavaScript. Skip enrichment for those practices and note in the results
-- **Hunter returns no emails** — Many small dental practices don't have discoverable emails. Note "no public email found" in the table
-- **Rate limits (429)** — Wait and retry. Stagger enrichment calls if hitting limits
+- **Smartscraper 422 on /about path** — Some websites return 422 when you append paths like `/about`. Fall back to scraping the homepage URL (no path) which almost always works
+- **Website has no team/about page** — Scrape the homepage. Many solo practices list the dentist's name on the homepage
+- **Hunter returns null for decision maker** — Expected for small practice domains. Use the practice's general email (info@, office@) as fallback and note the decision maker's name so the sales rep can ask for them by name
+- **Fiber people-search returns 400** — Known issue. Do not rely on Fiber people-search or job-search with filter params. Use Scrapegraph smartscraper for decision makers and Scrapegraph searchscraper for job posting signals instead
+- **No hiring signal found** — Not every city will have dental practices actively posting receptionist jobs. This just means fewer high-priority signals, not that the prospects are bad
 
 ## Tips
 
-- **Scrapegraph searchscraper is the primary source** — it combines search + structured extraction in one call, giving the cleanest data. Tavily and Exa provide supplemental coverage
-- **Request text content from Exa** — Always use `contents: { text: { maxCharacters: 5000 } }` so you can parse names, phones, and addresses from directory pages
-- **Default to 10 results** — Keeps costs low (~$0.50-1.00 per run). Scale up if the user asks for more
-- **Only scrape individual websites for missing data** — Don't scrape all clinic websites. Only fill gaps where phone or email is missing from search results. This keeps costs down and avoids unnecessary API calls
-- **Phone numbers are the most reliable** — Nearly every dental practice lists a phone number publicly. Emails are less commonly displayed. Addresses are almost always available
-- **Directory pages are gold mines** — A single Yelp or Healthgrades listing page often contains 10-20 practices with phone and address. Exa is best for finding these
-- **Normalize phone formats** — Dental practices list phones in various formats: (415) 555-1234, 415-555-1234, 415.555.1234. Normalize for dedup and presentation
-- **Specialty matters for search quality** — "orthodontist in Austin" returns much more targeted results than "dentist in Austin" when the user wants a specific specialty
-- **Insurance filters are search-query-level** — There's no API filter for insurance. Include it in the search query (e.g., "dentists in Brooklyn that accept Medicaid") and let search engines match relevant results
-- **Small towns may have few results** — If a city returns fewer than the requested count, note this in the results and suggest expanding to nearby areas
-- **Verify addresses make sense** — Occasionally search results return outdated addresses. Cross-reference with the practice website when available
+- **Website team pages are the #1 source for decision makers** — In testing, scraping the About/Team page found the owner or office manager on 5/5 practice websites. This is far more reliable than LinkedIn-based people search for small dental practices
+- **Scrapegraph searchscraper is the workhorse** — Use it for finding practices AND for finding which practices are hiring receptionists. In testing it returned 57 practices and 11 hiring signals in separate single calls
+- **Combine decision maker name + practice phone** — Even if you can't find a personal email, knowing the decision maker's name + calling the practice phone is a strong outreach combo. "Hi, can I speak with Rosie Franco, your office manager?" beats a cold call to the front desk
+- **Job postings are the strongest intent signal** — A practice actively hiring indicates growth or staffing challenges — both make them receptive to new solutions. Cross-reference hiring practices with your prospect list for instant high-priority leads
+- **Competitive intel from websites is imperfect** — "No competing solution detected" means nothing was visible on the website — not that they definitely don't have one. Note this caveat in results
+- **Tailor competitive intel to what you're selling** — The smartscraper prompt should check for tools in your product category specifically. A broad prompt works as a default, but a targeted prompt yields more actionable results
+- **Practice size matters** — Solo practices and small groups (2-5 dentists) are the sweet spot. Very large dental chains (Western Dental, Pacific Dental Services) have enterprise procurement. Filter these out
+- **Scrape the homepage, not subpages** — When extracting decision maker info, scraping the homepage works more reliably than trying specific paths (/about, /team) which sometimes 422. The homepage usually mentions the lead dentist(s)
+- **Phone numbers have ~100% coverage** — Every practice has a phone. Decision maker personal emails are rare (~20-30%). Practice general emails (info@, office@) are findable ~50-60% of the time
+- **Search by neighborhood to scale up** — Break the city into neighborhoods and run parallel searches. For San Francisco, 8-10 neighborhoods can yield 100+ unique practices
+- **Filter out clinics and dental schools** — Scrapegraph sometimes returns community health centers, university dental clinics, and public health dentists. Filter these out — they're not buying commercial software
