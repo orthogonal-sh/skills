@@ -3,7 +3,7 @@ name: comprehensive-enrichment
 description: Enrich any person or company from any identifier — email, name, LinkedIn URL, domain, company name, Twitter/X handle. Use when asked to enrich, look up, or research a lead, contact, person, or company.
 ---
 
-# Enrich — Comprehensive Person & Company Enrichment
+# Comprehensive Enrichment — Person & Company
 
 Maximum data + correctness. Use ALL relevant APIs, cross-reference results, flag conflicts.
 
