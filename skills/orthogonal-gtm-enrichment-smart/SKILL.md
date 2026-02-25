@@ -13,7 +13,7 @@ Enrich a lead from an email address (+ optional name) using a waterfall strategy
 ## Input
 
 Required:
-- **email** — the lead's email address (e.g., `ari@ngrok.com`)
+- **email** — the lead's email address (e.g., `jane@acme.com`)
 
 Optional:
 - **name** — full name if known (improves match rate)
@@ -345,15 +345,15 @@ Sum all API call costs and report in `meta.total_cost`:
 
 ## Example
 
-**Input**: `ari@ngrok.com`
+**Input**: `jane@acme.com`
 
 **Expected flow**:
-1. Domain: `ngrok.com`, `is_free_email = false`
+1. Domain: `acme.com`, `is_free_email = false`
 2. **Phase 1** (parallel): Apollo people/match, Hunter combined, Brand.dev retrieve, Hunter email-verifier
 3. **Phase 1 merge**: Cross-reference person data, classify AI/B2B from descriptions+keywords
 4. **Phase 2**: Check if Apollo returned funding — if not, call Apollo org enrich. Check if person data conflicts — if so, call Tomba.
 5. **Phase 3**: Skip if person found and company data sufficient
-6. **Phase 4**: If ngrok is funded + B2B + >50 employees, run Brand.dev AI query + Apollo job postings
+6. **Phase 4**: If company is funded + B2B + >50 employees, run Brand.dev AI products + Apollo job postings
 7. **Phase 5**: If GitHub URL found, grab star counts. If Twitter handle found, grab follower count via Scrape Creators
 8. Compile and output JSON
 

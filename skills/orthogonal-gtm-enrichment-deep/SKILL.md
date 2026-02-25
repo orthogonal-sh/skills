@@ -13,7 +13,7 @@ Enrich a lead from an email address (+ optional name) using Sixtyfour's AI agent
 ## Input
 
 Required:
-- **email** — the lead's email address (e.g., `ari@ngrok.com`)
+- **email** — the lead's email address (e.g., `jane@acme.com`)
 
 Optional:
 - **name** — full name if known (improves match rate)
@@ -22,7 +22,7 @@ Optional:
 
 ### Step 1: Extract Domain
 
-Extract the domain from the email address. Example: `ari@ngrok.com` -> domain: `ngrok.com`
+Extract the domain from the email address. Example: `jane@acme.com` -> domain: `acme.com`
 
 ### Step 2: Run Sixtyfour Enrichment (parallel)
 
@@ -202,10 +202,10 @@ Sum all API call costs and report in `meta.total_cost`:
 
 ## Example
 
-**Input**: `ari@ngrok.com`
+**Input**: `jane@acme.com`
 
 **Expected flow**:
-1. Extract domain: `ngrok.com`
+1. Extract domain: `acme.com`
 2. Fire Sixtyfour /enrich-lead and /enrich-company in parallel
 3. Check if LinkedIn URL returned — if not, call Apollo /people/match
 4. Check if funding data returned — if not, call Apollo /organizations/enrich
