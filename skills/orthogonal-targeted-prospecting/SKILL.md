@@ -22,31 +22,9 @@ Extract from the user's query:
 
 ### 2. Find Target Companies
 
-Run 3 search strategies **in parallel**:
+Run 2-3 search strategies **in parallel**:
 
-**Strategy A — Fiber NL company search** (primary — best structured data):
-
-```bash
-orth run fiber /v1/natural-language-search/companies --body '{
-  "query": "{industry} companies in {location} with {employee_min}+ employees",
-  "pageSize": 20
-}'
-```
-
-Returns structured company data with employee counts, domains, LinkedIn URLs, and descriptions. The NL endpoint handles complex queries well — include revenue/size qualifiers directly in the query string.
-
-**Strategy B — Nyne company search** (supplemental — async, deep results):
-
-```bash
-# Step 1: POST to start search
-orth run nyne /company/search -d '{"query": "{industry} companies {location} {size_qualifier}"}'
-# Step 2: Poll with GET using request_id
-orth run nyne /company/search -q request_id=REQUEST_ID
-```
-
-Nyne is async — POST returns a `request_id`, poll with GET until complete (5-20s). Often returns companies Fiber misses.
-
-**Strategy C — Scrapegraph searchscraper** (supplemental — web directories and rankings):
+**Strategy A — Scrapegraph searchscraper** (primary — most targeted results):
 
 ```bash
 orth run scrapegraph /v1/searchscraper --body '{
@@ -55,7 +33,29 @@ orth run scrapegraph /v1/searchscraper --body '{
 }'
 ```
 
-Good for finding companies from industry directories, Inc 5000 lists, and trade publications.
+Best source for industry-specific company lists. Returns targeted results from industry directories, Inc 5000 lists, and trade publications. In testing, returned 28 staffing companies in a single call vs Fiber's noisy mix of tech giants and staffing firms.
+
+**Strategy B — Fiber NL company search** (co-primary — best structured data):
+
+```bash
+orth run fiber /v1/natural-language-search/companies --body '{
+  "query": "{industry} companies in {location} with {employee_min}+ employees",
+  "pageSize": 20
+}'
+```
+
+Returns structured company data with employee counts, domains, LinkedIn URLs, and descriptions. **Caveat:** For niche industries (staffing, construction, etc.), Fiber NL search often returns broad/noisy results mixed with unrelated companies. Filter results by industry keywords from the description, `li_industries`, and `crunchbase_categories` fields. Use company `names` field (not `name_consensus`) for the company name.
+
+**Strategy C — Nyne company search** (supplemental — attempt, may return errors):
+
+```bash
+# Step 1: POST to start search
+orth run nyne /company/search -d '{"query": "{industry} companies {location} {size_qualifier}"}'
+# Step 2: Poll with GET using request_id
+orth run nyne /company/search -q request_id=REQUEST_ID
+```
+
+Nyne is async — POST returns a `request_id`, poll with GET until complete (5-20s). **Note:** Nyne company search can return 400 errors depending on query format. If it fails, proceed with Scrapegraph + Fiber results — don't block on Nyne.
 
 #### Scaling Up
 
@@ -94,9 +94,22 @@ orth run brand-dev /v1/brand/retrieve --query 'domain={company_domain}'
 
 ### 4. Find Decision Makers
 
-For each company, run in parallel:
+**Best approach: one broad industry-wide search, then per-company fallbacks.**
 
-**Primary — Fiber NL profile search** (best for title-based search):
+In testing, a single broad query like "COO at staffing companies in the US" returned 15 relevant profiles, while per-company queries (e.g., "COO at Robert Half") often returned 0 results. Start broad, then fill gaps.
+
+**Primary — Fiber NL profile search (broad industry query):**
+
+```bash
+orth run fiber /v1/natural-language-search/profiles --body '{
+  "query": "{title_1} or {title_2} at a {industry} company in {location}",
+  "pageSize": 15
+}'
+```
+
+This is the highest-yield approach. Returns decision makers across the industry with LinkedIn URLs, current titles, and company names.
+
+**Per-company fallback — Fiber NL profile search** (for companies not covered by the broad search):
 
 ```bash
 orth run fiber /v1/natural-language-search/profiles --body '{
@@ -105,25 +118,16 @@ orth run fiber /v1/natural-language-search/profiles --body '{
 }'
 ```
 
-**Supplemental — Nyne person search** (async, finds people Fiber misses):
+Per-company queries often return empty results, especially for large enterprises where C-suite profiles may not be indexed. Use this only for high-priority companies missing from the broad search.
+
+**Supplemental — Nyne person search** (async, may return errors):
 
 ```bash
 orth run nyne /person/search -d '{"query": "{title} at {company_name} {location}"}'
 # Poll: orth run nyne /person/search -q request_id=REQUEST_ID
 ```
 
-**Fallback — Fiber kitchen-sink** (if NL search returns no results for a company):
-
-```bash
-orth run fiber /v1/kitchen-sink/person --body '{
-  "companyDomain": {"domain": "{company_domain}"},
-  "jobTitle": {"title": "{target_title}"},
-  "fuzzySearch": true,
-  "numProfiles": 3
-}'
-```
-
-**Last resort — Scrapegraph website scrape** (scrape the company's leadership page):
+**Fallback — Scrapegraph website scrape** (scrape the company's leadership page):
 
 ```bash
 orth run scrapegraph /v1/smartscraper --body '{
@@ -138,23 +142,25 @@ If `/about` returns 422, fall back to the homepage URL.
 
 For each decision maker found, run **all** of these in parallel:
 
-**Email discovery** (run all sources simultaneously):
+**Email discovery — Sixtyfour first** (highest hit rate for small/mid-market domains):
 
 ```bash
-# Hunter email-finder (name + domain)
-orth run hunter /v2/email-finder --query 'domain={company_domain}&first_name={first}&last_name={last}'
-
-# Tomba email-finder (name + domain)
-orth run tomba /v1/email-finder --query 'domain={company_domain}&company={company_name}&first_name={first}&last_name={last}'
-
-# Sixtyfour AI email finder
+# Sixtyfour AI email finder (PRIMARY — found 9/12 emails in testing)
 orth run sixtyfour /find-email --body '{
   "lead": {"first_name": "{first}", "last_name": "{last}", "domain": "{company_domain}"}
 }'
 
+# Hunter email-finder (supplemental — often returns null for small company domains)
+orth run hunter /v2/email-finder --query 'domain={company_domain}&first_name={first}&last_name={last}'
+
+# Tomba email-finder (supplemental — similar limitations to Hunter on small domains)
+orth run tomba /v1/email-finder --query 'domain={company_domain}&company={company_name}&first_name={first}&last_name={last}'
+
 # Tomba LinkedIn-to-email (if LinkedIn URL found in Step 4)
 orth run tomba /v1/linkedin --query 'url={linkedin_url}'
 ```
+
+In testing, Sixtyfour found emails for 9 out of 12 prospects where Hunter and Tomba returned null. Sixtyfour is the most reliable source for small/mid-market company domains. Still run all sources in parallel — each occasionally finds emails the others miss.
 
 **Phone discovery:**
 
@@ -163,6 +169,8 @@ orth run sixtyfour /find-phone --body '{
   "lead": {"first_name": "{first}", "last_name": "{last}", "company": "{company_name}"}
 }'
 ```
+
+Sixtyfour find-phone had a 100% hit rate in testing (10/10 prospects).
 
 **Deep enrichment** (fire early, don't block — takes 30-60s):
 
@@ -182,13 +190,15 @@ orth run sixtyfour /enrich-lead --body '{
 }'
 ```
 
-**Fiber kitchen-sink enrichment** (if LinkedIn URL available):
+**Fiber kitchen-sink enrichment** (if LinkedIn URL available — may return 400):
 
 ```bash
 orth run fiber /v1/kitchen-sink/person --body '{
   "profileIdentifier": "{linkedin_url}"
 }'
 ```
+
+Kitchen-sink can intermittently return 400 errors regardless of parameter format. If it fails, proceed with Sixtyfour + Hunter + Tomba results — don't block on kitchen-sink.
 
 **Triple email verification** — verify ALL found emails with 3 services:
 
@@ -435,23 +445,26 @@ orth run fiber /v1/natural-language-search/profiles --body '{
 
 ## Error Handling
 
-- **Fiber NL search returns few results** — Broaden the query (remove size qualifiers) or try Scrapegraph searchscraper as primary instead. Industry terms vary — try synonyms (e.g., "staffing" vs "recruiting" vs "temp agency")
-- **Nyne still pending after 30s** — Continue with Fiber/Scrapegraph results. Merge Nyne data when it arrives
-- **Fiber kitchen-sink returns 400** — Usually a parameter format issue. Ensure `companyDomain` uses `{"domain": "x.com"}` format, not a bare string
+- **Fiber NL company search returns noisy results** — For niche industries, Fiber often returns unrelated companies mixed in (e.g., tech giants alongside staffing firms). Filter results by `li_industries`, `crunchbase_categories`, or keywords in `short_description`. If too noisy, use Scrapegraph searchscraper as primary source instead
+- **Fiber NL profile search returns empty per-company** — Per-company queries often return 0 results, especially for large enterprises. Use a broad industry-wide query instead (e.g., "COO at a staffing company in the US") which yields 10-15x more results
+- **Fiber kitchen-sink returns 400** — Can fail intermittently regardless of parameter format (`profileIdentifier`, slug, or full URL all tested). This appears to be an API reliability issue, not a format issue. Proceed with Sixtyfour + Hunter + Tomba for enrichment
+- **Nyne returns 400** — Nyne company and person search can return 400 errors. Query format sensitivity is unclear. Don't block on Nyne — proceed with Scrapegraph + Fiber results
 - **Fiber job-search returns 400** — Known issue with searchParams filters. Use Scrapegraph searchscraper for hiring signals instead
 - **Smartscraper 422 on /about path** — Fall back to scraping the homepage URL (no path appended)
-- **Hunter/Tomba return null for email** — Expected for smaller companies. Sixtyfour AI finder catches some that pattern-based tools miss. Use all sources in parallel
+- **Hunter/Tomba return null for email** — Expected for small/mid-market company domains. In testing, Hunter and Tomba returned null for most staffing firms while Sixtyfour found 9/12. Always run Sixtyfour as primary email source
 - **No hiring signal found** — Not every industry/location has active job postings for specific roles. Mark as "No signal detected" — these are still valid medium-priority prospects
 
 ## Tips
 
-- **Fiber NL search is the workhorse** — Use it as primary for both companies and profiles. The natural language interface handles complex queries ("fintech companies in Texas with 200+ employees") better than structured filters
-- **Run all email sources in parallel** — Hunter, Tomba, Sixtyfour, and Tomba-LinkedIn each find emails the others miss. Coverage improves from ~40% (single source) to ~70%+ (all sources)
+- **Scrapegraph is the best company finder for niche industries** — In testing, Scrapegraph returned 28 targeted staffing companies vs Fiber's noisy mix. Use Scrapegraph as primary for industry-specific lists, Fiber as co-primary for structured data (employee counts, domains)
+- **Broad profile search beats per-company search** — One query for "COO at staffing companies in the US" returned 15 profiles. The same search run per-company (8 companies) returned only 2 profiles total. Always start with a broad industry-wide NL profile search
+- **Sixtyfour is the #1 email finder** — Found 9/12 emails in testing where Hunter and Tomba returned null. For small/mid-market company domains, Sixtyfour's AI approach dramatically outperforms pattern-based tools. Still run all sources in parallel for maximum coverage
+- **Sixtyfour find-phone is highly reliable** — 100% hit rate in testing (10/10 prospects). Always include phone discovery
+- **Hiring signals are the #1 prioritization tool** — A company actively hiring for a role your product replaces/supports is 3-5x more likely to buy. Scrapegraph searchscraper is the best source — found Randstad and Robert Half hiring for Scheduling Coordinators in a single call
 - **Employee count is the best size proxy** — Revenue data is rarely available from APIs. Use employee count: 50+ ≈ established, 100+ ≈ mid-market, 500+ ≈ enterprise
-- **Hiring signals are the #1 prioritization tool** — A company actively hiring for a role your product replaces/supports is 3-5x more likely to buy. Always cross-reference hiring data with your company list
-- **Nyne is slow but thorough** — Fire Nyne searches early (they're async), process Fiber/Scrapegraph results first, merge Nyne data when it arrives
-- **Sixtyfour enrich-lead is slow but rich** — Takes 30-60s (AI web research). Fire it early for each person, don't block on it
-- **LinkedIn URLs dramatically improve enrichment** — When Fiber NL profile search returns LinkedIn URLs, feed them into kitchen-sink and Tomba-LinkedIn for best email/phone hit rates
+- **Fiber kitchen-sink may be unreliable** — Can return 400 errors intermittently. Don't depend on it as the sole enrichment source — always have Sixtyfour running in parallel as fallback
+- **LinkedIn URLs dramatically improve enrichment** — When Fiber NL profile search returns LinkedIn URLs, feed them into Tomba-LinkedIn for email and Sixtyfour enrich-lead for deep context
 - **Deduplicate aggressively** — Multiple search strategies will return overlapping results. Dedup by domain first (most reliable), then by normalized company name
-- **Triple-verify emails** — Run all three verifiers (Hunter, Tomba, Fiber) on every email found. Mark as "Verified" only on 2/3+ consensus
+- **Hunter email-verifier is fast and reliable** — Even when Hunter email-finder returns null, Hunter email-verifier is excellent for verifying emails found by Sixtyfour. Every email verified came back with score 89-100
 - **Include title variations** — Search for "COO OR Chief Operating Officer OR Head of Operations" to catch different title formats at the same level
+- **Filter Fiber company results by industry** — Use `li_industries`, `crunchbase_categories`, or keywords in `short_description` to filter out irrelevant companies from Fiber NL results
