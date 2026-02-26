@@ -16,14 +16,14 @@ Search TikTok for profiles, videos, and hashtag content.
 
 ## How It Works
 
-Uses the Shofo API to scrape TikTok data including profiles, hashtags, and trending content.
+Uses the Scrape Creators API via Orthogonal to scrape TikTok data including profiles, hashtags, and trending content.
 
 ## Usage
 
-### Get TikTok Profile Videos
+### Get TikTok Profile
 
 ```bash
-orth run shofo /tiktok/profile -q 'username=charlidamelio&count=10'
+orth run scrapecreators /v1/tiktok/profile -q 'handle=charlidamelio'
 ```
 
 <details>
@@ -33,34 +33,36 @@ orth run shofo /tiktok/profile -q 'username=charlidamelio&count=10'
 curl -X POST "https://api.orth.sh/v1/run" \
   -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"api":"shofo","path":"/tiktok/profile","query":{"username":"charlidamelio","count":"10"}}'
+  -d '{"api":"scrapecreators","path":"/v1/tiktok/profile","query":{"handle":"charlidamelio"}}'
 ```
 </details>
 
 ### Search Hashtag Videos
 
 ```bash
-orth run shofo /tiktok/hashtag -q 'hashtag=tech&count=10'
+orth run scrapecreators /v1/tiktok/search/hashtag -q 'hashtag=tech'
 ```
 
 ### Get Trending Feed
 
 ```bash
-orth run shofo /tiktok/feed -q 'count=10'
+orth run scrapecreators /v1/tiktok/get-trending-feed -q 'region=US'
 ```
 
 ## Parameters
 
-### Profile Videos
-- **username** (required) - TikTok username (without @)
-- **count** (required) - Number of videos to retrieve
+### Profile
+- **handle** (required) - TikTok handle (without @)
 
-### Hashtag Videos
+### Hashtag Search
 - **hashtag** (required) - Hashtag to search (without #)
-- **count** (required) - Number of videos to retrieve
+- **region** (optional) - Region for the proxy
+- **cursor** (optional) - Cursor for pagination
+- **trim** (optional) - Set to "true" for a trimmed response
 
 ### Trending Feed
-- **count** (required) - Number of videos to retrieve (1-100)
+- **region** (required) - Region for the proxy (e.g., "US")
+- **trim** (optional) - Set to true for a trimmed response
 
 ## Response
 
@@ -83,28 +85,32 @@ orth run shofo /tiktok/feed -q 'count=10'
 
 **User:** "Look up charlidamelio on TikTok"
 ```bash
-orth run shofo /tiktok/profile -q 'username=charlidamelio&count=10'
+orth run scrapecreators /v1/tiktok/profile -q 'handle=charlidamelio'
 ```
 
 **User:** "What's trending on TikTok?"
 ```bash
-orth run shofo /tiktok/feed -q 'count=10'
+orth run scrapecreators /v1/tiktok/get-trending-feed -q 'region=US'
 ```
 
 **User:** "What's trending with #tech on TikTok?"
 ```bash
-orth run shofo /tiktok/hashtag -q 'hashtag=tech&count=10'
+orth run scrapecreators /v1/tiktok/search/hashtag -q 'hashtag=tech'
 ```
 
 ## Error Handling
 
-- **success: false** — Shofo may temporarily fail; retry after a few seconds
+- **success: false** — the API may temporarily fail; retry after a few seconds
 - Private accounts cannot be accessed
-- Missing `count` parameter causes errors — always include it
 - Rate limiting may apply on rapid sequential requests
+
+### No Longer Available
+
+The following was previously available via Shofo but has no direct equivalent in Scrape Creators:
+- **TikTok Video Comments** — no direct equivalent endpoint
 
 ## Tips
 
-- Remove @ from usernames
+- Remove @ from handles
 - Remove # from hashtags
 - Private accounts cannot be accessed
