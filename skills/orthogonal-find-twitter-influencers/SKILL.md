@@ -144,7 +144,7 @@ Use Scrape Creators to fetch structured Twitter data. This is a two-step process
 **Step 1 — Fetch profiles for all candidates:**
 
 ```bash
-orth run scrape-creators /v1/twitter/profile --query 'handle=examplehandle'
+orth run scrapecreators /v1/twitter/profile --query 'handle=examplehandle'
 ```
 
 Returns nested JSON. Key fields are inside `core` and `legacy` objects:
@@ -168,7 +168,7 @@ Apply **hard filters** to narrow the pool:
 **Step 2 — Fetch tweets for top candidates** (after profile filtering — fetch ~2x the target result count to allow for filtering, e.g., ~40 if targeting 20 results):
 
 ```bash
-orth run scrape-creators /v1/twitter/user-tweets --query 'handle=examplehandle'
+orth run scrapecreators /v1/twitter/user-tweets --query 'handle=examplehandle'
 ```
 
 Returns an array of tweet objects. **IMPORTANT — The data is nested inside each tweet object:**
@@ -303,8 +303,8 @@ Only if the user requests more detail on specific influencers:
 
 **Full tweet analysis** (recent content, top tweets, audience reactions):
 ```bash
-orth run scrape-creators /v1/twitter/profile --query 'handle=TARGET'
-orth run scrape-creators /v1/twitter/user-tweets --query 'handle=TARGET'
+orth run scrapecreators /v1/twitter/profile --query 'handle=TARGET'
+orth run scrapecreators /v1/twitter/user-tweets --query 'handle=TARGET'
 ```
 
 If deeper tweet history is needed, Nyne can fetch recent newsfeed data asynchronously:
