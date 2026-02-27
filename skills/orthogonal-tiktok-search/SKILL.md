@@ -104,10 +104,6 @@ orth run scrapecreators /v1/tiktok/search/hashtag -q 'hashtag=tech'
 - Private accounts cannot be accessed
 - Rate limiting may apply on rapid sequential requests
 
-### No Longer Available
-
-The following was previously available via Shofo but has no direct equivalent in Scrape Creators:
-- **TikTok Video Comments** — no direct equivalent endpoint
 
 ## Tips
 

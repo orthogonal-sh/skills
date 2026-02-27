@@ -97,12 +97,6 @@ orth run scrapecreators /v1/linkedin/company -q 'url=https://linkedin.com/compan
 - Private/restricted profiles return limited or no data
 - Rate limiting may apply — add short delays between sequential requests
 
-### No Longer Available
-
-The following were previously available via Shofo but have no direct equivalent in Scrape Creators:
-- **LinkedIn Company Posts** — no direct equivalent endpoint
-- **LinkedIn Search Employees** — no direct equivalent endpoint
-- **LinkedIn User Posts (by username)** — use `/v1/linkedin/post` with a specific post URL instead
 
 ## Tips
 

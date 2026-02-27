@@ -22,16 +22,6 @@ Scrape profiles, posts, and content from Instagram, TikTok, LinkedIn, and X/Twit
 - **TikTok Hashtag Search**: Search TikTok videos by hashtag
 - **TikTok Trending Feed**: Get videos from TikTok's trending feed
 
-### No Longer Available (previously via Shofo)
-
-The following endpoints from Shofo do not have direct equivalents in Scrape Creators:
-- **X/Twitter Comments** — use alternative methods to get tweet replies
-- **LinkedIn User Posts** (by username) — use `/v1/linkedin/post` with a specific post URL instead
-- **LinkedIn Company Posts** — no direct equivalent
-- **LinkedIn Search Employees** — no direct equivalent
-- **Instagram Hashtag** — no direct equivalent
-- **Instagram Post Comments** — no direct equivalent
-- **TikTok Video Comments** — no direct equivalent
 
 ## Usage
 

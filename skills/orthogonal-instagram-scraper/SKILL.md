@@ -94,11 +94,6 @@ orth run scrapecreators /v1/instagram/post -q 'url=https://instagram.com/p/abc12
 - Private accounts cannot be accessed — no workaround
 - Rate limiting may cause failures on rapid requests — add delays between calls
 
-### No Longer Available
-
-The following were previously available via Shofo but have no direct equivalent in Scrape Creators:
-- **Instagram Hashtag Search** — no direct equivalent endpoint
-- **Instagram Post Comments** — no direct equivalent endpoint
 
 ## Tips
 
