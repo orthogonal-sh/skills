@@ -133,12 +133,12 @@ Parameters:
 
 ```bash
 orth api run fiber /v1/investor-search --body '{
-  "searchParams": {
-    "investment_stages": ["Seed", "Series A"],
-    "industries": ["AI", "SaaS"]
-  }
+  "searchParams": {},
+  "pageSize": 25
 }'
 ```
+
+Note: Investor search uses structured filters. Use `orth api show fiber /v1/investor-search` for exact parameter names.
 
 ### Fetch LinkedIn profile posts
 Fetches recent posts from a LinkedIn profile. Returns a paginated feed of posts with optional cursor for pagination. Each page returns up to 50 posts.
@@ -166,7 +166,7 @@ orth api run fiber /v1/linkedin-live-fetch/company/single --body '{"identifier":
 Search for people using filters
 
 Parameters:
-- searchParams (object) - Search parameters for people search.
+- searchParams (object) - Search parameters for people search. Uses structured filters (see Fiber OpenAPI docs for full schema).
 - pageSize (integer) - The number of profiles to return, if you need to get more results, you can paginate.
 - cursor (['string', 'null']) - A pagination cursor returned from a previous search response. Use this to fetch the next page of results.
 - currentCompanies (['array', 'null']) - Filter people by the companies they are currently working for. If you want to search over many companies, we suggest using the Combined Search API, which is optimized for this use case.
@@ -176,9 +176,22 @@ Parameters:
 ```bash
 orth api run fiber /v1/people-search --body '{
   "searchParams": {
-    "job_titles": ["CTO", "VP Engineering"],
-    "locations": ["San Francisco", "New York"]
-  }
+    "jobTitleV3": {
+      "anyOf": [
+        {"type": "plain", "term": "CTO"},
+        {"type": "plain", "term": "VP Engineering"}
+      ]
+    },
+    "country3LetterCode": {"anyOf": ["USA"]},
+    "location": {
+      "unionAll": [{
+        "strategy": "radial-distance",
+        "center": {"latitude": 37.7749, "longitude": -122.4194},
+        "radius": {"unit": "miles", "quantity": 50}
+      }]
+    }
+  },
+  "pageSize": 25
 }'
 ```
 
@@ -197,18 +210,29 @@ orth api run fiber /v1/linkedin-live-fetch/post-comments --body '{"identifier": 
 Search for companies using filters
 
 Parameters:
-- searchParams* (object) - Search parameters for company search API.
+- searchParams* (object) - Search parameters for company search API. Uses structured filters with specific field names (see examples below).
 - pageSize (integer) - The number of companies to return, if you need to get more results, you can paginate.
 - cursor (['string', 'null']) - A pagination cursor returned from a previous search response. Use this to fetch the next page of results.
 - companyExclusionListIDs (['array', 'null']) - Filter out companies which belong to the given company exclusion lists. You can create company exclusion lists via /v1/exclusions/companies/create-list
 
+Key searchParams fields:
+- `headquartersCountryCode`: `{"anyOf": ["USA"]}` or `{"noneOf": [...]}`
+- `employeeCountV2`: `{"lowerBoundExclusive": 50}` (values: 0, 1, 10, 50, 200, 500, 1000, 5000, 10000)
+- `industriesV2`: `{"anyOf": ["Software", "Artificial Intelligence"]}` or `{"allOf": [...]}`
+- `revenueUSD`: `{"min": {"quantity": 10, "suffix": "M"}}` and/or `{"max": {...}}`
+- `stage`: `{"anyOf": ["seed", "series_a", "series_b"]}`
+- `jobPostingsV2`: `{"allOf": [{"jobTitle": [...], "jobPostingStatus": "active", "countryOrRegionCode": ["USA"]}]}`
+- `headquartersLocation`: `{"unionAll": [{"strategy": "radial-distance", "center": {"latitude": N, "longitude": N}, "radius": {"unit": "miles", "quantity": N}}]}`
+- `keywords`: `{"containsAll": [...]}` or `{"containsAny": [...]}`
+
 ```bash
 orth api run fiber /v1/company-search --body '{
   "searchParams": {
-    "industries": ["Software", "AI"],
-    "employee_count_min": 50,
-    "employee_count_max": 500
-  }
+    "industriesV2": {"anyOf": ["Software", "Artificial Intelligence"]},
+    "employeeCountV2": {"lowerBoundExclusive": 50, "upperBoundInclusive": 500},
+    "headquartersCountryCode": {"anyOf": ["USA"]}
+  },
+  "pageSize": 25
 }'
 ```
 
@@ -233,19 +257,28 @@ orth api run fiber /v1/text-to-search-params/profiles --body '{"query": "Senior 
 ```
 
 ### Job postings search
-Search for job postings with flexible filtering capabilities
-
-Parameters:
-- searchParams* (object) - Job search filter parameters
-- pageSize (integer) - Number of jobs to return per page (max 1000)
-- cursor (['string', 'null']) - Pagination cursor for fetching next page of results
+Find companies with active job postings using company-search with `jobPostingsV2` filters. Note: The `/v1/job-search` endpoint exists but has an undocumented schema. Use `/v1/company-search` with `jobPostingsV2` for reliable results.
 
 ```bash
-orth api run fiber /v1/job-search --body '{
+orth api run fiber /v1/company-search --body '{
   "searchParams": {
-    "job_titles": ["Software Engineer"],
-    "locations": ["Remote"]
-  }
+    "jobPostingsV2": {
+      "allOf": [{
+        "jobTitle": ["Software Engineer"],
+        "jobPostingStatus": "active",
+        "jobLocationType": ["Remote"]
+      }]
+    }
+  },
+  "pageSize": 25
+}'
+```
+
+Or use natural language for quick searches:
+
+```bash
+orth api run fiber /v1/natural-language-search/companies --body '{
+  "query": "Companies hiring Remote Software Engineers"
 }'
 ```
 
