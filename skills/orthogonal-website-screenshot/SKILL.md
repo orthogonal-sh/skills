@@ -1,108 +1,80 @@
 ---
 name: website-screenshot
-description: Take screenshots of websites and web pages
+description: Take screenshots of any website using Notte browser automation. Use when asked to screenshot, capture, or snap a webpage.
 ---
 
 # Website Screenshot
 
-Capture screenshots of any website or web page. Useful for documentation, monitoring, and visual records.
+Take screenshots of any website URL and save them as image files.
 
-## When to Use
+## Requirements
 
-- User asks for a screenshot of a website
-- User wants to see what a site looks like
-- Documenting web pages
-- Monitoring website changes
-- Creating visual records
+- Orthogonal CLI: `npm install -g @orth/cli`
 
-## How It Works
+## Workflow
 
-Uses Notte or Brand.dev APIs to capture website screenshots.
+Take a screenshot of a URL in 4 steps:
 
-## Usage
-
-### Screenshot with Notte
+### Step 1: Start a browser session
 
 ```bash
-# First start a session, then screenshot
-orth run notte /sessions/start -d '{"url":"https://stripe.com"}'
-# Then take screenshot with the session_id
-orth run notte /sessions/{session_id}/page/screenshot
+orth api run notte /sessions/start --body '{"headless": true}'
 ```
 
-### Screenshot with Brand.dev (simpler)
+Save the `session_id` from the response.
+
+### Step 2: Navigate to the URL
 
 ```bash
-orth run brand-dev /v1/brand/screenshot --query 'domain=stripe.com'
+orth api run notte /sessions/{session_id}/page/execute --body '{"type": "goto", "url": "https://example.com"}'
 ```
 
-### Scrape and Screenshot with Notte
+### Step 3: Take the screenshot
 
 ```bash
-orth run notte /scrape -d '{"url":"https://example.com"}'
+orth api run notte /sessions/{session_id}/page/screenshot --body '{}' -o screenshot.jpg
 ```
 
-## Parameters
+For a full-page screenshot:
 
-### Notte Session
-- **url** (required) - Full URL to navigate to
-
-### Brand.dev
-- **domain** (required) - Website domain
-
-## Response
-
-### Brand.dev Response
-Returns screenshot URL:
-- **status** (string) - `ok` on success
-- **domain** (string) - Domain that was screenshotted
-- **screenshot** (string) - Public URL to the screenshot image (PNG)
-- **screenshotType** (string) - `viewport` (above-the-fold) or `full_page`
-- **code** (integer) - HTTP status code
-
-### Notte Response
-Returns page content + session:
-- **markdown** (string) - Page content as markdown text
-- **images** (array|null) - Extracted images (if any)
-- **structured** (object|null) - Structured data (if extraction was requested)
-- **session.session_id** (string) - Session ID for follow-up actions
-- **session.status** (string) - `active` while session is open
-- **session.credit_usage** (integer) - Credits consumed
-
-To take an explicit screenshot via Notte session:
 ```bash
-orth run notte /sessions/{session_id}/page/screenshot
+orth api run notte /sessions/{session_id}/page/screenshot --body '{"full_page": true}' -o screenshot.jpg
 ```
 
-## Examples
+### Step 4: Stop the session
 
-**User:** "Take a screenshot of Notion's homepage"
 ```bash
-orth run brand-dev /v1/brand/screenshot --query 'domain=notion.so'
+orth api run notte /sessions/{session_id}/stop
 ```
 
-**User:** "Capture what vercel.com looks like"
+## Full Example
+
 ```bash
-orth run brand-dev /v1/brand/screenshot --query 'domain=vercel.com'
+# 1. Start session
+SESSION=$(orth api run notte /sessions/start --body '{"headless": true}' --raw | python3 -c "import sys,json; print(json.load(sys.stdin)['session_id'])")
+
+# 2. Navigate
+orth api run notte /sessions/$SESSION/page/execute --body '{"type": "goto", "url": "https://example.com"}'
+
+# 3. Screenshot
+orth api run notte /sessions/$SESSION/page/screenshot --body '{}' -o screenshot.jpg
+
+# 4. Cleanup
+orth api run notte /sessions/$SESSION/stop
 ```
 
-**User:** "Screenshot and scrape the content from this article"
-```bash
-orth run notte /scrape -d '{"url":"https://example.com/article"}'
-```
+## Options
 
-## Error Handling
-
-- **400** - Missing required parameter (`domain` for Brand.dev, `url` for Notte)
-- **404** - Domain not found or page doesn't exist
-- **504** - Page took too long to load — retry or try simpler URL
-- Brand.dev only screenshots the homepage (pass domain, not full URL)
-- Notte sessions auto-expire after `idle_timeout_minutes` (default 3) — take screenshots promptly
+| Parameter | Description |
+|-----------|-------------|
+| `full_page` | Set to `true` to capture the entire scrollable page |
+| `headless` | Set to `false` to see the browser window (default: true) |
+| `viewport_width` | Custom viewport width in pixels |
+| `viewport_height` | Custom viewport height in pixels |
 
 ## Tips
 
-- Brand.dev is simpler for quick homepage screenshots
-- Notte is more powerful for full page control
-- For pages requiring login, use Notte sessions with authentication
-- Screenshots are typically full-page or viewport-sized
-- Some sites may block automated screenshots
+- Always stop the session when done to free resources
+- Sessions auto-expire after 3 minutes of idle time
+- Use `-o` flag to save the screenshot to a file (required for binary data)
+- The output file must not already exist (use a unique name or delete first)
