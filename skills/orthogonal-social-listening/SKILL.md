@@ -29,19 +29,21 @@ orth run exa /search -d '{
 }'
 ```
 
-### Step 2: Monitor Social Media with Shofo
+### Step 2: Monitor Social Media with Scrape Creators
 
 Check what's being posted on X/Twitter:
 
 ```bash
-orth run shofo /x/user-posts -q 'username=NotionHQ&count=10'
+orth run scrapecreators /v1/twitter/user-tweets -q 'handle=NotionHQ'
 ```
 
 Check LinkedIn company activity:
 
 ```bash
-orth run shofo /linkedin/company-posts -q 'company=notion'
+orth run scrapecreators /v1/linkedin/company -q 'url=https://linkedin.com/company/notion'
 ```
+
+> **Note:** Scrape Creators does not have a dedicated "company posts" endpoint. Use `/v1/linkedin/company` to get company page data, or `/v1/linkedin/post` with a specific post URL.
 
 ### Step 3: Deep Scrape Key Pages with Scrapegraph
 
@@ -62,7 +64,7 @@ orth run scrapegraph /v1/smartscraper -d '{
 orth run exa /search -d '{"query": "Slack reviews complaints praise 2025 2026", "numResults": 20, "contents": {"text": true}}'
 
 # Step 2: Their social presence
-orth run shofo /x/user-posts -q 'username=SlackHQ&count=10'
+orth run scrapecreators /v1/twitter/user-tweets -q 'handle=SlackHQ'
 ```
 
 **User:** "Monitor competitor launches in the AI space"
@@ -73,7 +75,7 @@ orth run exa /search -d '{"query": "AI startup launch announcement new product 2
 ## Tips
 
 - Use Exa for broad web monitoring (blogs, forums, news)
-- Use Shofo for social media (X/Twitter, LinkedIn, Instagram)
+- Use Scrape Creators for social media (X/Twitter, LinkedIn, Instagram, TikTok)
 - Use Scrapegraph for extracting structured data from specific URLs
 - Include date ranges in Exa queries for recent results
 - Track both your brand and competitors for comparative insights

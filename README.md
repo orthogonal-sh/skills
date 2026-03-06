@@ -98,7 +98,7 @@ A skill is a `SKILL.md` file that tells an AI agent how to do something. When yo
 
 | Skill | Description |
 |-------|-------------|
-| [shofo](skills/orthogonal-shofo) | Instagram, TikTok, LinkedIn, and X/Twitter scraping |
+| [scrapecreators](skills/orthogonal-scrapecreators) | Instagram, TikTok, LinkedIn, and X/Twitter scraping |
 | [instagram-scraper](skills/orthogonal-instagram-scraper) | Profiles, posts, reels, and comments |
 | [linkedin-scraper](skills/orthogonal-linkedin-scraper) | Profiles, company pages, posts, employee data |
 | [twitter-profile-lookup](skills/orthogonal-twitter-profile-lookup) | Bios, followers, tweets, engagement |

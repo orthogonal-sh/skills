@@ -1,30 +1,30 @@
 ---
 name: linkedin-scraper
-description: Get LinkedIn profiles, company pages, posts, and employee data
+description: Get LinkedIn profiles, company pages, and posts
 ---
 
 # LinkedIn Scraper
 
-Scrape public LinkedIn data including profiles, company pages, posts, and employee searches.
+Scrape public LinkedIn data including profiles, company pages, and posts.
 
 ## When to Use
 
 - User asks about someone's LinkedIn profile
 - User wants company information from LinkedIn
-- User asks "who works at [company]?"
 - Research on a professional or company
-- Finding employee lists
 
 ## How It Works
 
-Uses the Shofo API to scrape LinkedIn data.
+Uses the Scrape Creators API via Orthogonal to scrape LinkedIn data.
+
+**Note:** Scrape Creators LinkedIn endpoints use full LinkedIn URLs as the query parameter (not usernames).
 
 ## Usage
 
 ### Get User Profile
 
 ```bash
-orth run shofo /linkedin/user-profile -q 'username=satyanadella'
+orth run scrapecreators /v1/linkedin/profile -q 'url=https://linkedin.com/in/satyanadella'
 ```
 
 <details>
@@ -34,43 +34,32 @@ orth run shofo /linkedin/user-profile -q 'username=satyanadella'
 curl -X POST "https://api.orth.sh/v1/run" \
   -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"api":"shofo","path":"/linkedin/user-profile","query":{"username":"satyanadella"}}'
+  -d '{"api":"scrapecreators","path":"/v1/linkedin/profile","query":{"url":"https://linkedin.com/in/satyanadella"}}'
 ```
 </details>
 
-### Get Company Profile
+### Get Company Page
 
 ```bash
-orth run shofo /linkedin/company-profile -q 'company=anthropic'
+orth run scrapecreators /v1/linkedin/company -q 'url=https://linkedin.com/company/anthropic'
 ```
 
-### Get User's Posts
+### Get Specific Post
 
 ```bash
-orth run shofo /linkedin/user-posts -q 'username=satyanadella&count=5'
-```
-
-### Get Company Posts
-
-```bash
-orth run shofo /linkedin/company-posts -q 'company=openai&count=5'
-```
-
-### Search Company Employees
-
-```bash
-orth run shofo /linkedin/search-employees -q 'company=anthropic&count=10'
+orth run scrapecreators /v1/linkedin/post -q 'url=https://linkedin.com/posts/somepost'
 ```
 
 ## Parameters
 
-### User Operations
-- **username** (required) - LinkedIn username (from profile URL)
-- **count** (required for posts) - Number of posts to retrieve
+### User Profile
+- **url** (required) - LinkedIn profile URL (e.g., `https://linkedin.com/in/username`)
 
-### Company Operations
-- **company** (required) - Company name or LinkedIn company slug
-- **count** (required for posts/search) - Number of results to retrieve
+### Company Page
+- **url** (required) - LinkedIn company page URL (e.g., `https://linkedin.com/company/name`)
+
+### Post
+- **url** (required) - LinkedIn post URL
 
 ## Response
 
@@ -82,7 +71,7 @@ orth run shofo /linkedin/search-employees -q 'company=anthropic&count=10'
 - Connection count
 - Profile URL
 
-### Company Profile includes:
+### Company Page includes:
 - Company name and description
 - Industry and size
 - Headquarters location
@@ -94,29 +83,23 @@ orth run shofo /linkedin/search-employees -q 'company=anthropic&count=10'
 
 **User:** "Look up Satya Nadella on LinkedIn"
 ```bash
-orth run shofo /linkedin/user-profile -q 'username=satyanadella'
+orth run scrapecreators /v1/linkedin/profile -q 'url=https://linkedin.com/in/satyanadella'
 ```
 
 **User:** "Tell me about Anthropic's LinkedIn page"
 ```bash
-orth run shofo /linkedin/company-profile -q 'company=anthropic'
-```
-
-**User:** "Who works at OpenAI?"
-```bash
-orth run shofo /linkedin/search-employees -q 'company=openai&count=10'
+orth run scrapecreators /v1/linkedin/company -q 'url=https://linkedin.com/company/anthropic'
 ```
 
 ## Error Handling
 
-- **success: false** — Shofo may temporarily fail to access LinkedIn; retry after a few seconds
-- Missing `count` parameter may return default or error — always include it
+- **success: false** — the API may temporarily fail to access LinkedIn; retry after a few seconds
 - Private/restricted profiles return limited or no data
 - Rate limiting may apply — add short delays between sequential requests
 
+
 ## Tips
 
-- Use LinkedIn username from the profile URL (linkedin.com/in/USERNAME)
-- For companies, use the company name or slug
+- Use full LinkedIn URLs (e.g., `https://linkedin.com/in/USERNAME`)
+- For companies, use the full company page URL
 - Some profiles may have restricted visibility
-- For paginated results, check if response includes a cursor or next page token

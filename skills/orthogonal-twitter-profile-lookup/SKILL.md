@@ -17,20 +17,20 @@ Get profile information, tweets, and engagement data for any Twitter/X account.
 
 ## How It Works
 
-Uses the Shofo API to scrape Twitter/X profile data and tweets.
+Uses the Scrape Creators API via Orthogonal to scrape Twitter/X profile data and tweets.
 
 ## Usage
 
 ### Get User Profile
 
 ```bash
-orth run shofo /x/user-profile -q 'username=openai'
+orth run scrapecreators /v1/twitter/profile -q 'handle=openai'
 ```
 
-### Get User's Posts
+### Get User's Tweets
 
 ```bash
-orth run shofo /x/user-posts -q 'username=openai&count=10'
+orth run scrapecreators /v1/twitter/user-tweets -q 'handle=openai'
 ```
 
 <details>
@@ -40,18 +40,18 @@ orth run shofo /x/user-posts -q 'username=openai&count=10'
 curl -X POST "https://api.orth.sh/v1/run" \
   -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"api":"shofo","path":"/x/user-posts","query":{"username":"openai"}}'
+  -d '{"api":"scrapecreators","path":"/v1/twitter/user-tweets","query":{"handle":"openai"}}'
 ```
 </details>
 
 ## Parameters
 
 ### Profile
-- **username** (required) - Twitter handle (without @)
+- **handle** (required) - Twitter handle (without @)
 
-### Posts
-- **username** (required) - Twitter handle (without @)
-- **count** (required) - Number of posts to retrieve
+### Tweets
+- **handle** (required) - Twitter handle (without @)
+- **trim** (optional) - Set to "true" for a trimmed response
 
 ## Response
 
@@ -65,7 +65,7 @@ curl -X POST "https://api.orth.sh/v1/run" \
 - Account creation date
 - Location and website (if set)
 
-### Posts Response
+### Tweets Response
 - Tweet text content
 - Like, retweet, reply counts
 - Media attachments (images, videos)
@@ -76,28 +76,28 @@ curl -X POST "https://api.orth.sh/v1/run" \
 
 **User:** "What has OpenAI been posting on X?"
 ```bash
-orth run shofo /x/user-posts -q 'username=openai&count=10'
+orth run scrapecreators /v1/twitter/user-tweets -q 'handle=openai'
 ```
 
 **User:** "Show me Sam Altman's recent tweets"
 ```bash
-orth run shofo /x/user-posts -q 'username=sama&count=10'
+orth run scrapecreators /v1/twitter/user-tweets -q 'handle=sama'
 ```
 
 **User:** "What's Anthropic sharing on Twitter?"
 ```bash
-orth run shofo /x/user-posts -q 'username=AnthropicAI&count=10'
+orth run scrapecreators /v1/twitter/user-tweets -q 'handle=AnthropicAI'
 ```
 
 ## Error Handling
 
-- **success: false** with `error: "Request failed. Please try again."` — Shofo may be temporarily unable to access the profile; retry after a few seconds
+- **success: false** — the API may temporarily be unable to access the profile; retry after a few seconds
 - Protected/private accounts return errors — no workaround
 - Rate limiting may cause failures on rapid sequential requests — add short delays between calls
 
 ## Tips
 
-- Remove @ from usernames
+- Remove @ from handles
 - Protected/private accounts cannot be accessed
-- Returns recent posts (not full history)
+- Returns recent tweets (not full history)
 - Rate limiting may apply for very frequent requests
