@@ -1,21 +1,20 @@
 ---
 name: contactout
-description: Find emails, phone numbers, and enrich profiles using ContactOut. LinkedIn enrichment, people search, decision maker discovery, company search, and email verification.
+description: Find emails, phone numbers, and enrich profiles using ContactOut. LinkedIn enrichment, people search, company enrichment, and batch operations.
 ---
 
 # ContactOut
 
-Sales and recruitment intelligence platform. Find anyone's email and phone number, enrich LinkedIn profiles, discover decision makers at companies, and verify email addresses.
+Sales and recruitment intelligence platform. Find anyone's email and phone number, enrich LinkedIn profiles, look up people from email or multiple signals, and get company info from domains.
 
 ## When to Use
 
 - Find someone's email or phone from their LinkedIn profile
-- Discover decision makers at a company
-- Search for people by title, company, seniority, location
 - Enrich a person from name + company or email
-- Verify if an email address is valid
+- Look up a profile from an email address
 - Get company information from a domain
 - Batch enrich multiple LinkedIn profiles
+- Estimate how many people match a search (free count)
 
 ## Endpoints
 
@@ -44,8 +43,6 @@ curl -X POST "https://api.orth.sh/v1/run" \
 
 **Returns:** Full profile with emails, phones, work history, education, skills, company info, seniority, job function.
 
-**Cost:** 1 email credit if email found + 1 phone credit if phone found. 1 search credit if profile_only=true.
-
 ---
 
 ### 2. Contact Details from LinkedIn
@@ -69,12 +66,12 @@ curl -X POST "https://api.orth.sh/v1/run" \
 
 **Parameters:**
 - **profile** (required) - LinkedIn profile URL
-- **include_phone** (optional, boolean, default: false) - Include phone numbers (costs phone credits)
+- **include_phone** (optional, boolean, default: false) - Include phone numbers
 - **email_type** (optional) - Filter emails: `personal`, `work`, `personal,work`, or `none`
 
 ---
 
-### 3. Batch LinkedIn Enrichment (v1 - sync, up to 30)
+### 3. Batch LinkedIn Enrichment (sync, up to 30)
 
 ```bash
 orth run contactout /v1/people/linkedin/batch -d '{"profiles":["https://linkedin.com/in/person1","https://linkedin.com/in/person2"]}'
@@ -85,44 +82,7 @@ orth run contactout /v1/people/linkedin/batch -d '{"profiles":["https://linkedin
 
 ---
 
-### 4. Batch LinkedIn Enrichment (v2 - async, up to 1000)
-
-For large batches. Returns a job ID, then poll for results.
-
-```bash
-# Start batch job
-orth run contactout /v2/people/linkedin/batch -d '{"profiles":["https://linkedin.com/in/person1","https://linkedin.com/in/person2"],"include_phone":true}'
-
-# Poll for results (replace JOB_UUID)
-orth run contactout /v2/people/linkedin/batch/JOB_UUID
-```
-
-<details>
-<summary>curl equivalent</summary>
-
-```bash
-# Start job
-curl -X POST "https://api.orth.sh/v1/run" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"api":"contactout","path":"/v2/people/linkedin/batch","body":{"profiles":["https://linkedin.com/in/person1"],"include_phone":true}}'
-
-# Poll results
-curl -X POST "https://api.orth.sh/v1/run" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"api":"contactout","path":"/v2/people/linkedin/batch/JOB_UUID"}'
-```
-</details>
-
-**Parameters:**
-- **profiles** (required, array, max 1000) - LinkedIn profile URLs
-- **include_phone** (optional, boolean) - Include phone numbers
-- **callback_url** (optional) - URL to POST results when complete
-
----
-
-### 5. Enrich from Email
+### 4. Enrich from Email
 
 Get profile details from an email address. Personal emails have higher match rates.
 
@@ -136,7 +96,7 @@ orth run contactout /v1/email/enrich -q 'email=john@example.com&include=work_ema
 
 ---
 
-### 6. People Enrich (multi-signal)
+### 5. People Enrich (multi-signal)
 
 Enrich a person using multiple data points. Needs at least one primary identifier (linkedin_url, email, or phone) or name + company.
 
@@ -166,100 +126,7 @@ orth run contactout /v1/people/enrich -d '{
 
 ---
 
-### 7. People Search
-
-Search for people matching criteria. Returns 25 profiles per page.
-
-```bash
-orth run contactout /v1/people/search -d '{
-  "domain": ["stripe.com"],
-  "seniority": ["VP", "CXO", "Director"],
-  "page": 1,
-  "reveal_info": true,
-  "data_types": ["personal_email", "work_email", "phone"]
-}'
-```
-
-<details>
-<summary>curl equivalent</summary>
-
-```bash
-curl -X POST "https://api.orth.sh/v1/run" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"api":"contactout","path":"/v1/people/search","body":{"domain":["stripe.com"],"seniority":["VP","CXO"],"page":1,"reveal_info":true}}'
-```
-</details>
-
-**Parameters:**
-- **name** (optional) - Name to search
-- **job_title** (optional, array, max 50) - Job titles
-- **company** (optional, array, max 50) - Company names
-- **domain** (optional, array, max 50) - Company domains
-- **location** (optional, array, max 50) - Locations
-- **industry** (optional, array, max 50) - Industries (see accepted values below)
-- **seniority** (optional, array, max 50) - Seniority levels (see accepted values below)
-- **job_function** (optional, array, max 50) - Job functions (see accepted values below)
-- **skills** (optional, array, max 50) - Skills
-- **keyword** (optional) - Keyword match anywhere in profile
-- **company_size** (optional, array) - Size ranges (see accepted values below)
-- **education** (optional, array, max 50) - Schools/degrees
-- **page** (optional, integer) - Page number (default 1)
-- **reveal_info** (optional, boolean) - Include contact info (costs credits)
-- **data_types** (optional, array) - Contact types: `personal_email`, `work_email`, `phone`
-- **current_titles_only** (optional, boolean, default true) - Match current title only
-- **match_experience** (optional) - `current`, `past`, or `both`
-
-**Returns:** `metadata.total_results` (total matches), `metadata.page_size` (25), and `profiles` object keyed by LinkedIn URL.
-
----
-
-### 8. Decision Makers
-
-Find decision makers at a company by domain. Returns 25 per page.
-
-```bash
-orth run contactout /v1/people/decision-makers -q 'domain=stripe.com&reveal_info=true'
-```
-
-**Parameters:**
-- **domain** (required) - Company domain
-- **department** (optional) - Filter by department
-- **seniority** (optional) - Filter by seniority level
-- **reveal_info** (optional, boolean) - Include contact details
-- **page** (optional, integer) - Page number
-- **per_page** (optional, integer) - Results per page (max 25)
-
----
-
-### 9. People Count (free)
-
-Count matching profiles without returning data. Use to estimate results before searching.
-
-```bash
-orth run contactout /v1/people/count -d '{"domain":["stripe.com"],"seniority":["VP","CXO","Director"]}'
-```
-
-**Parameters:** Same search filters as People Search. Returns only `total_results`.
-
-**Cost:** Free, no credits consumed.
-
----
-
-### 10. Company Search
-
-Search for companies by name.
-
-```bash
-orth run contactout /v1/company/search -d '{"name":["Stripe","Google"]}'
-```
-
-**Parameters:**
-- **name** (required, array) - Company names to search
-
----
-
-### 11. Domain Enrichment
+### 6. Domain Enrichment
 
 Get company information from domain names.
 
@@ -274,30 +141,19 @@ orth run contactout /v1/domain/enrich -d '{"domains":["stripe.com","google.com"]
 
 ---
 
-### 12. Email Verification
+### 7. People Count (free)
 
-Verify if an email address is valid and deliverable.
-
-```bash
-orth run contactout /v1/email/verify -q 'email=test@stripe.com'
-```
-
-**Parameters:**
-- **email** (required) - Email address to verify
-
----
-
-### 13. Batch Email Verification (async)
+Count matching profiles without returning data. Use to estimate results before searching.
 
 ```bash
-# Start verification
-orth run contactout /v1/email/verify/batch -d '{"emails":["test@stripe.com","test@google.com"]}'
-
-# Poll results
-orth run contactout /v1/email/verify/batch/JOB_UUID
+orth run contactout /v1/people/count -d '{"domain":["stripe.com"],"seniority":["VP","CXO","Director"]}'
 ```
 
-## Accepted Values
+**Parameters:** Same search filters as People Search (name, job_title, company, domain, location, industry, seniority). Returns only `total_results`.
+
+**Cost:** Free, no credits consumed.
+
+## Accepted Values (for People Count)
 
 ### Seniority Levels
 `Owner / Founder`, `CXO`, `Partner`, `VP`, `Head`, `Director`, `Manager`, `Senior`, `Entry`, `Intern`
@@ -313,34 +169,34 @@ orth run contactout /v1/email/verify/batch/JOB_UUID
 
 ## Examples
 
-**"Find the VP of Engineering at Stripe"**
-```bash
-orth run contactout /v1/people/search -d '{"domain":["stripe.com"],"job_title":["VP of Engineering"],"seniority":["VP"],"reveal_info":true}'
-```
-
-**"Who are the decision makers at Google?"**
-```bash
-orth run contactout /v1/people/decision-makers -q 'domain=google.com&reveal_info=true'
-```
-
 **"Get Bill Gates' email"**
 ```bash
 orth run contactout /v1/linkedin/enrich -q 'profile=https://www.linkedin.com/in/williamhgates'
 ```
 
-**"Verify this email is real"**
+**"Look up who this email belongs to"**
 ```bash
-orth run contactout /v1/email/verify -q 'email=john@company.com'
+orth run contactout /v1/email/enrich -q 'email=john@company.com'
 ```
 
-**"How many CTOs are there at fintech companies in San Francisco?"**
+**"Find Patrick Collison's contact info"**
+```bash
+orth run contactout /v1/people/enrich -d '{"full_name":"Patrick Collison","company":["Stripe"],"include":["work_email","personal_email","phone"]}'
+```
+
+**"Get company info for stripe.com"**
+```bash
+orth run contactout /v1/domain/enrich -d '{"domains":["stripe.com"]}'
+```
+
+**"How many CTOs are there at fintech companies in SF?"**
 ```bash
 orth run contactout /v1/people/count -d '{"job_title":["CTO"],"industry":["Financial Services"],"location":["San Francisco"]}'
 ```
 
-**"Find me sales directors at SaaS companies with 50-200 employees"**
+**"Get contact details for these 3 LinkedIn profiles"**
 ```bash
-orth run contactout /v1/people/search -d '{"job_title":["Sales Director"],"seniority":["Director"],"industry":["Computer Software"],"company_size":["51_200"],"reveal_info":true}'
+orth run contactout /v1/people/linkedin/batch -d '{"profiles":["https://linkedin.com/in/person1","https://linkedin.com/in/person2","https://linkedin.com/in/person3"]}'
 ```
 
 ## Error Handling
@@ -351,8 +207,7 @@ orth run contactout /v1/people/search -d '{"job_title":["Sales Director"],"senio
 
 ## Tips
 
-- Use `/v1/people/count` first (free) to estimate results before running a paid search
+- Use `/v1/people/count` first (free) to estimate results before committing to paid calls
 - Personal emails have higher match rates than work emails for email enrichment
-- `reveal_info: true` on search/decision-makers costs extra credits but returns actual contact info
-- For large batch operations, use v2 async batch (up to 1000 profiles) instead of v1 sync (30 max)
-- The `match_experience` param is powerful: set to `past` to find people who previously worked at a company
+- For batch operations, v1 batch supports up to 30 profiles synchronously
+- People enrich works best with a LinkedIn URL as the primary identifier
