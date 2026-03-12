@@ -73,10 +73,10 @@ curl -X POST "https://api.orth.sh/v1/run" \
 
 ### Visualize Your Own Data
 
-Turn your datasets into charts. Provide data and a natural language description, and Tako picks the best visualization.
+Turn your datasets into charts. Provide data as CSV strings with a natural language query, and Tako picks the best visualization.
 
 ```bash
-orth run tako /v1/beta/visualize -b '{"inputs": {"text": "Show quarterly revenue as a bar chart", "datasets": [{"name": "Revenue", "data": [{"quarter": "Q1 2024", "revenue_millions": 100}, {"quarter": "Q2 2024", "revenue_millions": 150}, {"quarter": "Q3 2024", "revenue_millions": 220}, {"quarter": "Q4 2024", "revenue_millions": 310}]}]}}'
+orth run tako /v1/beta/visualize -b '{"csv": ["quarter,revenue_millions\nQ1 2024,100\nQ2 2024,150\nQ3 2024,220\nQ4 2024,310"], "query": "Show quarterly revenue as a bar chart"}'
 ```
 
 <details>
@@ -86,7 +86,7 @@ orth run tako /v1/beta/visualize -b '{"inputs": {"text": "Show quarterly revenue
 curl -X POST "https://api.orth.sh/v1/run" \
   -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"api":"tako","path":"/v1/beta/visualize","body":{"inputs":{"text":"Show quarterly revenue as a bar chart","datasets":[{"name":"Revenue","data":[{"quarter":"Q1 2024","revenue_millions":100},{"quarter":"Q2 2024","revenue_millions":150},{"quarter":"Q3 2024","revenue_millions":220},{"quarter":"Q4 2024","revenue_millions":310}]}]}}}'
+  -d '{"api":"tako","path":"/v1/beta/visualize","body":{"csv":["quarter,revenue_millions\nQ1 2024,100\nQ2 2024,150\nQ3 2024,220\nQ4 2024,310"],"query":"Show quarterly revenue as a bar chart"}}'
 ```
 </details>
 
@@ -145,9 +145,9 @@ Body parameters:
 ### Visualize Datasets (POST /v1/beta/visualize)
 
 Body parameters:
-- **inputs** (object, required) - Contains:
-  - **text** (string, required) - Natural language instruction for visualization (e.g. "Show revenue by quarter as a bar chart")
-  - **datasets** (array, required) - Array of dataset objects, each with "name" (string) and "data" (array of row objects with consistent keys)
+- **csv** (array of strings, required) - Array of CSV strings to visualize. Each string should have headers in the first row. Example: `["name,value\nApple,3.7\nNVIDIA,3.4"]`. Pass multiple CSV strings for multi-dataset visualizations.
+- **query** (string, optional) - Natural language instructions for how to visualize (e.g. "Show as a bar chart", "Compare trends over time")
+- **viz_component_type** (string, optional) - Explicitly request a chart type: bar, grouped_bar, stacked_bar, timeseries, area_timeseries, stacked_area_timeseries, pie, choropleth, map, scatter, boxplot, heatmap, timeline, waterfall, histogram, table, treemap
 
 ### Create Card / Thin-Viz (POST /v1/thin_viz/create/)
 
@@ -213,6 +213,11 @@ orth run tako /v1/knowledge_search -b '{"inputs": {"text": "Apple vs Microsoft v
 **User:** "Give me insights on this chart" (after getting a card_id)
 ```bash
 orth run tako /v1/beta/chart_insights -q 'card_id=sXQPVnixcDUf2Iw35Via'
+```
+
+**User:** "Visualize this sales data" (with your own CSV data)
+```bash
+orth run tako /v1/beta/visualize -b '{"csv": ["region,sales_millions\nNorth America,500\nEurope,300\nAsia,250\nLatAm,100"], "query": "Show sales by region as a bar chart"}'
 ```
 
 **User:** "Make a pie chart of market share" (with your own data)
