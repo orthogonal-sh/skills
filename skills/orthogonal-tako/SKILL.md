@@ -15,38 +15,21 @@ Search for data with natural language and get interactive charts, AI-generated i
 - User wants to turn their own data into a chart
 - User asks for insights or analysis on a data trend
 
-## How It Works
-
-Uses the Tako API to search curated data sources, generate knowledge cards with interactive charts, and extract AI-powered insights.
-
 ## Usage
 
-### Search for Data (Knowledge Search)
-
-Ask any data question in natural language. Returns knowledge cards with charts, images, and source attribution.
+### Search for Data
 
 ```bash
 orth run tako /v1/knowledge_search -b '{"inputs": {"text": "NVIDIA vs AMD revenue since 2018"}}'
 ```
 
-<details>
-<summary>curl equivalent</summary>
-
-```bash
-curl -X POST "https://api.orth.sh/v1/run" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"api":"tako","path":"/v1/knowledge_search","body":{"inputs":{"text":"NVIDIA vs AMD revenue since 2018"}}}'
-```
-</details>
-
-#### With search effort and source options
+With search effort and source options:
 
 ```bash
 orth run tako /v1/knowledge_search -b '{"inputs": {"text": "US inflation rate 2020-2025", "search_effort": "deep"}, "source_indexes": ["tako", "web"]}'
 ```
 
-#### With dark mode images
+With dark mode chart images:
 
 ```bash
 orth run tako /v1/knowledge_search -b '{"inputs": {"text": "Bitcoin price history"}, "output_settings": {"knowledge_card_settings": {"image_dark_mode": true}}}'
@@ -54,72 +37,39 @@ orth run tako /v1/knowledge_search -b '{"inputs": {"text": "Bitcoin price histor
 
 ### Get Chart Insights
 
-Analyze any knowledge card and get AI-generated observations about trends, growth rates, and anomalies.
-
 ```bash
 orth run tako /v1/beta/chart_insights -q 'card_id=sXQPVnixcDUf2Iw35Via'
 ```
 
-<details>
-<summary>curl equivalent</summary>
-
-```bash
-curl -X POST "https://api.orth.sh/v1/run" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"api":"tako","path":"/v1/beta/chart_insights","query":{"card_id":"sXQPVnixcDUf2Iw35Via"}}'
-```
-</details>
-
 ### Visualize Your Own Data
 
-Turn your datasets into charts. Provide data as CSV strings with a natural language query, and Tako picks the best visualization.
+Provide data as CSV strings. Tako picks the best chart type automatically.
 
 ```bash
 orth run tako /v1/beta/visualize -b '{"csv": ["quarter,revenue_millions\nQ1 2024,100\nQ2 2024,150\nQ3 2024,220\nQ4 2024,310"], "query": "Show quarterly revenue as a bar chart"}'
 ```
 
-<details>
-<summary>curl equivalent</summary>
+Request a specific chart type:
 
 ```bash
-curl -X POST "https://api.orth.sh/v1/run" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"api":"tako","path":"/v1/beta/visualize","body":{"csv":["quarter,revenue_millions\nQ1 2024,100\nQ2 2024,150\nQ3 2024,220\nQ4 2024,310"],"query":"Show quarterly revenue as a bar chart"}}'
+orth run tako /v1/beta/visualize -b '{"csv": ["region,sales\nUS,500\nEU,300\nAsia,250"], "query": "Sales by region", "viz_component_type": "pie"}'
 ```
-</details>
 
-### Create a Custom Chart (Thin-Viz)
+### Create a Custom Chart
 
-Build charts from scratch by specifying components directly. Full control over chart type and layout.
+Build charts from scratch with full control over components and layout.
 
 ```bash
 orth run tako /v1/thin_viz/create/ -b '{"components": [{"component_type": "header", "config": {"title": "Sales by Region"}}, {"component_type": "categorical_bar", "config": {"datasets": [{"label": "Revenue (M)", "data": [{"x": "US", "y": 500}, {"x": "EU", "y": 300}, {"x": "Asia", "y": 250}]}]}}], "title": "Sales by Region", "source": "Internal Data"}'
 ```
 
-<details>
-<summary>curl equivalent</summary>
-
-```bash
-curl -X POST "https://api.orth.sh/v1/run" \
-  -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"api":"tako","path":"/v1/thin_viz/create/","body":{"components":[{"component_type":"header","config":{"title":"Sales by Region"}},{"component_type":"categorical_bar","config":{"datasets":[{"label":"Revenue (M)","data":[{"x":"US","y":500},{"x":"EU","y":300},{"x":"Asia","y":250}]}]}}],"title":"Sales by Region","source":"Internal Data"}}'
-```
-</details>
-
 ### List Available Chart Types
-
-See all available visualization templates before creating a custom chart.
 
 ```bash
 orth run tako /v1/thin_viz/default_schema/
 ```
 
 ### Get Tako Tool Descriptions
-
-Discover what data topics and metrics Tako can search across.
 
 ```bash
 orth run tako /v1/tako_tools_description
@@ -129,120 +79,96 @@ orth run tako /v1/tako_tools_description
 
 ### Knowledge Search (POST /v1/knowledge_search)
 
-Body parameters:
-- **inputs** (object, required) - Contains:
-  - **text** (string, required) - Natural language query (e.g. "US GDP growth 2020-2024", "Tesla vs Ford market cap")
-  - **search_effort** (string, optional) - "fast" for quick results, "medium" for balanced, "deep" for thorough research, "auto" to let Tako decide
-- **source_indexes** (array, optional) - Source priority order: "tako" (curated S&P Global, World Bank data), "web" (web sources), "tako_deep_v2" (deeper research). Default: ["tako"]
-- **country_code** (string, optional) - ISO 3166-1 alpha-2 code (e.g. "US", "GB"). Default: "US"
-- **locale** (string, optional) - Locale string (e.g. "en-US", "de-DE"). Default: "en-US"
-- **output_settings** (object, optional) - Set `{"knowledge_card_settings": {"image_dark_mode": true}}` for dark mode chart images
+Body:
+- **inputs.text** (string, required) - Natural language query (e.g. "Tesla vs Ford market cap")
+- **inputs.search_effort** (string) - "fast", "medium", "deep", or "auto"
+- **source_indexes** (array) - Priority order: "tako", "web", "tako_deep_v2". Default: ["tako"]
+- **country_code** (string) - ISO 3166-1 alpha-2 (e.g. "US", "GB"). Default: "US"
+- **locale** (string) - e.g. "en-US", "de-DE". Default: "en-US"
+- **output_settings** (object) - `{"knowledge_card_settings": {"image_dark_mode": true}}` for dark mode
 
 ### Chart Insights (GET /v1/beta/chart_insights)
 
-- **card_id** (string, required) - Knowledge card ID from a Knowledge Search or Create Card response
+- **card_id** (string, required) - Card ID from Knowledge Search or Create Card response
 
 ### Visualize Datasets (POST /v1/beta/visualize)
 
-Body parameters:
-- **csv** (array of strings, required) - Array of CSV strings to visualize. Each string should have headers in the first row. Example: `["name,value\nApple,3.7\nNVIDIA,3.4"]`. Pass multiple CSV strings for multi-dataset visualizations.
-- **query** (string, optional) - Natural language instructions for how to visualize (e.g. "Show as a bar chart", "Compare trends over time")
-- **viz_component_type** (string, optional) - Explicitly request a chart type: bar, grouped_bar, stacked_bar, timeseries, area_timeseries, stacked_area_timeseries, pie, choropleth, map, scatter, boxplot, heatmap, timeline, waterfall, histogram, table, treemap
+Body:
+- **csv** (array of strings, required) - CSV data with headers in first row. Example: `["name,value\nApple,3.7\nNVIDIA,3.4"]`
+- **query** (string) - How to visualize (e.g. "Show as a bar chart")
+- **viz_component_type** (string) - Force chart type: bar, grouped_bar, stacked_bar, timeseries, pie, choropleth, scatter, boxplot, heatmap, waterfall, histogram, table, treemap
 
-### Create Card / Thin-Viz (POST /v1/thin_viz/create/)
+### Create Card (POST /v1/thin_viz/create/)
 
-Body parameters:
-- **components** (array, required) - Array of component configs. Each needs:
-  - **component_type** (string) - One of: header, generic_timeseries, categorical_bar, pie, scatter, table, choropleth, heatmap, histogram, boxplot, treemap, waterfall, bubble, financial_boxes, data_table_chart
-  - **config** (object) - Type-specific configuration (use List Default Schemas to see required fields)
-- **title** (string, optional) - Card title
-- **description** (string, optional) - Card description
-- **source** (string, optional) - Data source attribution for the footer
+Body:
+- **components** (array, required) - Each needs `component_type` (header, categorical_bar, pie, scatter, table, choropleth, heatmap, histogram, boxplot, treemap, waterfall, bubble, etc.) and `config` (type-specific data)
+- **title** (string) - Card title
+- **description** (string) - Card description
+- **source** (string) - Data source attribution for footer
 
 ### List Default Schemas (GET /v1/thin_viz/default_schema/)
 
-No parameters. Returns available chart templates: stock_card, timeseries_card, bar_chart, grouped_bar_chart, pie_chart, scatter_chart, bubble_chart, choropleth, heatmap, histogram, boxplot, treemap, waterfall, table, and more.
+No parameters.
 
 ### Tool Descriptions (GET /v1/tako_tools_description)
 
-- **index_ids** (string, optional) - Comma-separated index IDs to filter. Omit for all.
+- **index_ids** (string) - Comma-separated index IDs to filter
 
 ## Response
 
-### Knowledge Search
+### Knowledge Search — `data.outputs.knowledge_cards[]`
 
-Returns `data.outputs.knowledge_cards` array. Each card has:
-- **card_id** (string) - Unique card ID (use for Chart Insights, embed URLs)
-- **title** (string) - Chart title (e.g. "Nvidia, AMD - Total Revenues (Annual)")
-- **description** (string) - Detailed text description of the data and trends
-- **card_type** (string) - "chart", "table", "company", or "text"
-- **webpage_url** (string) - Interactive card page on Tako
-- **image_url** (string) - Static chart image URL (great for embedding in messages)
-- **embed_url** (string) - Embeddable iframe URL
-- **relevance** (string) - "High", "Medium", or "Low"
-- **sources** (array) - Data sources with name and description (e.g. "S&P Global")
-- **visualization_data** (object) - Raw chart data points
+- **card_id** - Unique ID (use for Chart Insights or embed URLs)
+- **title** - Chart title
+- **description** - Text description of the data and trends
+- **card_type** - "chart", "table", "company", or "text"
+- **webpage_url** - Interactive card page on Tako
+- **image_url** - Static chart image (embed in messages, reports)
+- **embed_url** - Embeddable iframe URL
+- **relevance** - "High", "Medium", or "Low"
+- **sources** - Data sources with name and description
+- **visualization_data** - Raw chart data points
 
-### Chart Insights
+### Chart Insights — `data`
 
-Returns `data` with:
-- **insights** (array of strings) - AI-generated observations (e.g. "Tesla's revenue grew at 118% CAGR...")
-- **description** (string) - Chart description
+- **insights** - Array of AI-generated observations
+- **description** - Chart description
 
-### Create Card / Thin-Viz
+### Create Card — `data`
 
-Returns `data` with:
-- **card_id** (string) - Created card ID
-- **title** (string) - Card title
-- **webpage_url** (string) - Interactive card page
-- **image_url** (string) - Static chart image URL
-- **embed_url** (string) - Embeddable iframe URL
+- **card_id**, **title**, **webpage_url**, **image_url**, **embed_url**
 
 ## Examples
 
-**User:** "What's the US unemployment rate?"
 ```bash
+# What's the US unemployment rate?
 orth run tako /v1/knowledge_search -b '{"inputs": {"text": "US unemployment rate"}}'
-```
 
-**User:** "Compare Apple, Microsoft, and Google revenue"
-```bash
+# Compare company revenues
 orth run tako /v1/knowledge_search -b '{"inputs": {"text": "Apple vs Microsoft vs Google revenue", "search_effort": "deep"}}'
-```
 
-**User:** "Give me insights on this chart" (after getting a card_id)
-```bash
+# Get insights on a chart
 orth run tako /v1/beta/chart_insights -q 'card_id=sXQPVnixcDUf2Iw35Via'
-```
 
-**User:** "Visualize this sales data" (with your own CSV data)
-```bash
-orth run tako /v1/beta/visualize -b '{"csv": ["region,sales_millions\nNorth America,500\nEurope,300\nAsia,250\nLatAm,100"], "query": "Show sales by region as a bar chart"}'
-```
+# Visualize your own CSV data
+orth run tako /v1/beta/visualize -b '{"csv": ["region,sales_millions\nNorth America,500\nEurope,300\nAsia,250\nLatAm,100"], "query": "Show sales by region"}'
 
-**User:** "Make a pie chart of market share" (with your own data)
-```bash
-orth run tako /v1/thin_viz/create/ -b '{"components": [{"component_type": "header", "config": {"title": "Browser Market Share 2025"}}, {"component_type": "pie", "config": {"datasets": [{"data": [{"label": "Chrome", "value": 65}, {"label": "Safari", "value": 18}, {"label": "Firefox", "value": 8}, {"label": "Edge", "value": 5}, {"label": "Other", "value": 4}]}]}}], "source": "StatCounter"}'
-```
-
-**User:** "What data does Tako have?"
-```bash
-orth run tako /v1/tako_tools_description
+# Create a custom bar chart
+orth run tako /v1/thin_viz/create/ -b '{"components": [{"component_type": "categorical_bar", "config": {"datasets": [{"label": "Revenue", "data": [{"x": "Q1", "y": 100}, {"x": "Q2", "y": 200}]}]}}], "title": "Quarterly Revenue"}'
 ```
 
 ## Tips
 
-- **Knowledge Search** is the main endpoint. Start here for any data question.
-- Use **Chart Insights** after search to get AI analysis of the results.
-- Use **image_url** from responses to display charts in Slack, Discord, or other channels.
-- **embed_url** gives you an interactive iframe you can embed in web pages.
-- For custom charts, call **List Default Schemas** first to see what chart types and fields are available.
-- Set `search_effort: "deep"` for complex multi-metric comparisons.
-- Covers: stock prices, revenue, GDP, unemployment, population, sports stats, weather, health data, and much more.
+- **Knowledge Search** is the main endpoint — start here for any data question
+- Use **image_url** to display charts in Slack, Discord, or other channels
+- **embed_url** gives an interactive iframe for web pages
+- Call **List Default Schemas** before Create Card to see available chart types
+- Set `search_effort: "deep"` for complex multi-metric comparisons
+- Data coverage: stock prices, revenue, GDP, unemployment, population, sports stats, weather, health, and more
 
 ## Error Handling
 
-- **400** - Invalid request body or missing required fields
-- **401** - Invalid or missing API key
-- **404** - Card not found (for Chart Insights - verify card_id is correct)
-- Empty `knowledge_cards` array means no results. Try rephrasing the query or using `source_indexes: ["tako", "web"]` for broader search.
+- **400** - Invalid body or missing required fields
+- **401** - Invalid API key
+- **404** - Card not found (Chart Insights) or no results found (Knowledge Search)
+- Empty `knowledge_cards` array — try rephrasing or using `source_indexes: ["tako", "web"]`
