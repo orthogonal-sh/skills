@@ -93,25 +93,21 @@ Populate Sector (C) and Location (D) from the batch scrape initially — they'll
 
 **Share the sheet link with the user immediately** so they can watch it fill in.
 
-## Step 3: Research All Companies
+## Step 3: Research Each Company — Row by Row
 
 ### Parallelization Strategy
 
-Speed matters for a live demo. Do NOT process one company at a time. Use this phased approach:
+The investor watches the sheet fill in live. **Parallelize within each company, not across companies.** Process one company at a time so each row appears fully filled every ~5-10 seconds.
 
-**Phase 1 — Scrape all individual YC pages (parallel)**
-Run all YC page scrapes in parallel (batches of 10-11 if needed). This gets you founders, LinkedIn URLs, company websites, and detailed sectors for every company.
+For each company:
+1. **Scrape the YC company page** (Step 3a) — must run first, gives you founders, LinkedIn URLs, company website
+2. **In parallel**, run all three downstream calls:
+   - Scrape the company's website (Step 3b)
+   - Apollo lookup for each founder (Step 3c) — multiple calls if multiple founders, all in parallel
+   - Perplexity market analysis (Step 3d)
+3. **Compile results and update the row** (Step 4) — immediately, before moving to the next company
 
-**Phase 2 — Run all downstream research in parallel**
-Once you have founder LinkedIn URLs and company websites from Phase 1, launch ALL of these simultaneously:
-- All company website scrapes (Step 3b) — in parallel
-- All Apollo founder lookups (Step 3c) — in parallel (may be 30-50 calls if companies have 2-3 founders each)
-- All Perplexity market analyses (Step 3d) — in parallel
-
-**Phase 3 — Compile and update rows**
-As each company's full research set completes, immediately update its row in the sheet. Don't wait for all companies to finish.
-
-This approach completes ~22 companies in 1-2 minutes vs 10+ minutes if done sequentially.
+This gives a steady cadence of rows appearing in the sheet. The investor sees progress every few seconds instead of waiting for everything at once.
 
 ### 3a. Scrape the YC company page (~$0.03 each)
 
