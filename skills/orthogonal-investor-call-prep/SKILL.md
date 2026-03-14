@@ -153,16 +153,6 @@ orth run perplexity /chat/completions --body '{
 }'
 ```
 
-### 3d. Fiber — structured portfolio data
-
-```bash
-orth run fiber /v1/natural-language-search/companies --body '{
-  "query": "companies invested in by {firm_name}",
-  "pageSize": 10
-}'
-```
-
-Cross-reference returned companies against competitor list.
 
 ## Step 4: Classify Before Compiling
 
@@ -191,7 +181,7 @@ Only flag as **Competitor Conflict** if the portfolio company is a direct compet
 
 ## Step 5: Compile Prep Sheet
 
-Cross-reference all sources. When they conflict, prefer: **website > Apollo > Perplexity > Fiber**.
+Cross-reference all sources. When they conflict, prefer: **website > Apollo > Perplexity**.
 
 ### Output format per meeting:
 
