@@ -1,11 +1,11 @@
 ---
 name: crustdata
-description: B2B data platform for company and people intelligence. Search companies by industry, headcount, funding, and growth metrics. Find professionals by title, company, and seniority. Enrich companies and people by domain, LinkedIn URL, or email. Get LinkedIn posts, job listings, Gartner reviews, and ProductHunt data.
+description: B2B data platform for company and people intelligence. Search companies by industry, headcount, funding, and growth metrics. Find professionals by title, company, and seniority. Enrich companies and people by domain, LinkedIn URL, or email. Get LinkedIn posts, job listings, and Gartner reviews.
 ---
 
 # Crustdata — B2B Company & People Intelligence
 
-Comprehensive B2B data platform with firmographic data, growth metrics, people profiles, LinkedIn posts, and dataset APIs covering 16+ data sources.
+Comprehensive B2B data platform with firmographic data, growth metrics, people profiles, LinkedIn posts, and dataset APIs covering 16 diverse data sources.
 
 ## When to Use
 
@@ -18,7 +18,7 @@ Comprehensive B2B data platform with firmographic data, growth metrics, people p
 - Search LinkedIn posts by keyword
 - Get job listings for specific companies
 - Get Gartner review data for companies
-- Get ProductHunt launch metrics for companies
+
 
 ## Usage
 
@@ -32,7 +32,7 @@ orth run crustdata /screener/companydb/search -b '{
     "op": "and",
     "conditions": [
       {"filter_type": "linkedin_industries", "type": "(.)", "value": "technology"},
-      {"filter_type": "employee_metrics.growth_12m_percent", "type": ">=", "value": 30},
+      {"filter_type": "employee_metrics.growth_12m_percent", "type": ">", "value": 30},
       {"filter_type": "year_founded", "type": ">", "value": 2018}
     ]
   },
@@ -43,7 +43,7 @@ orth run crustdata /screener/companydb/search -b '{
 
 **Filter types:** company_name, hq_country, hq_location, largest_headcount_country, linkedin_industries, linkedin_categories, crunchbase_categories, markets, company_website_domain, year_founded, employee_count_range, employee_metrics.latest_count, employee_metrics.growth_12m_percent, employee_metrics.growth_6m_percent, follower_metrics.latest_count, estimated_revenue_lower_bound_usd, crunchbase_total_investment_usd, crunchbase_valuation_usd, last_funding_round_type (seed, series_a, series_b, series_c, etc.), last_funding_date, acquisition_status, linkedin_id.
 
-**Operators:** `=`, `!=`, `in`, `not_in`, `>`, `<`, `>=`, `<=`, `(.)` (fuzzy text match).
+**Operators:** `=`, `!=`, `in`, `not_in`, `>`, `<`, `(.)` (fuzzy text match).
 
 **Pagination:** Use `next_cursor` from response as `cursor` in next request.
 
@@ -69,14 +69,14 @@ orth run crustdata /screener/persondb/search -b '{
     "conditions": [
       {"column": "current_employers.seniority_level", "type": "=", "value": "CXO"},
       {"column": "region", "type": "=", "value": "San Francisco Bay Area"},
-      {"column": "current_employers.company_name", "type": "(.)", "value": "Stripe"}
+      {"column": "current_employers.name", "type": "(.)", "value": "Stripe"}
     ]
   },
   "limit": 100
 }'
 ```
 
-**Columns:** current_employers.title, current_employers.company_name, current_employers.seniority_level (CXO, VP, Director, Manager, Senior, Entry), past_employers.title, past_employers.company_name, region, skills, languages, name, first_name, last_name, headline, years_of_experience_raw, recently_changed_jobs, emails, linkedin_profile_url.
+**Columns:** current_employers.title, current_employers.name, current_employers.seniority_level (CXO, VP, Director, Manager, Senior, Entry), past_employers.title, past_employers.name, region, skills, languages, name, first_name, last_name, headline, years_of_experience_raw, recently_changed_jobs, emails, linkedin_profile_url.
 
 ### Company Identification
 
@@ -106,7 +106,7 @@ orth run crustdata /screener/company -q 'company_domain=stripe.com,hubspot.com,n
 
 With specific fields (reduces response size):
 ```bash
-orth run crustdata /screener/company -q 'company_domain=stripe.com&fields=company_name,headcount,linkedin_company_url,job_openings,news_articles'
+orth run crustdata /screener/company -q 'company_domain=stripe.com&fields=company_name,headcount,linkedin_profile_url,job_openings,news_articles'
 ```
 
 Realtime enrichment (for companies not yet in database, takes ~10 minutes):
@@ -214,7 +214,7 @@ orth run crustdata /data_lab/gartner_reviews/Table/ -b '{
   "filters": {
     "op": "and",
     "conditions": [
-      {"column": "gartner_review_overall_rating", "type": ">=", "value": "4"}
+      {"column": "gartner_review_overall_rating", "type": ">", "value": "3"}
     ]
   },
   "offset": 0,
@@ -227,28 +227,7 @@ orth run crustdata /data_lab/gartner_reviews/Table/ -b '{
 }'
 ```
 
-### ProductHunt Metrics
 
-Get ProductHunt launch data and performance metrics.
-
-```bash
-orth run crustdata /data_lab/producthunt_metrics/Table/ -b '{
-  "dataset": {"name": "producthunt_metrics", "id": "producthuntmetric"},
-  "filters": {
-    "op": "and",
-    "conditions": [
-      {"column": "company_id", "type": "in", "value": [680992, 673947]}
-    ]
-  },
-  "offset": 0,
-  "limit": 50,
-  "tickers": [],
-  "groups": [],
-  "aggregations": [],
-  "functions": [],
-  "sorts": []
-}'
-```
 
 ## Common Workflows
 
@@ -258,7 +237,7 @@ orth run crustdata /data_lab/producthunt_metrics/Table/ -b '{
 # 1. Find companies
 orth run crustdata /screener/companydb/search -b '{
   "filters": {"op": "and", "conditions": [
-    {"filter_type": "employee_metrics.growth_12m_percent", "type": ">=", "value": 50},
+    {"filter_type": "employee_metrics.growth_12m_percent", "type": ">", "value": 50},
     {"filter_type": "last_funding_round_type", "type": "in", "value": ["series_a", "series_b"]},
     {"filter_type": "hq_country", "type": "=", "value": "United States"}
   ]},
@@ -268,7 +247,7 @@ orth run crustdata /screener/companydb/search -b '{
 # 2. Find CTOs/VPs at those companies
 orth run crustdata /screener/persondb/search -b '{
   "filters": {"op": "and", "conditions": [
-    {"column": "current_employers.company_name", "type": "(.)", "value": "CompanyName"},
+    {"column": "current_employers.name", "type": "(.)", "value": "CompanyName"},
     {"column": "current_employers.seniority_level", "type": "in", "value": ["CXO", "VP"]}
   ]},
   "limit": 20
@@ -318,12 +297,12 @@ orth run crustdata /screener/linkedin_posts/keyword_search/ -b '{
 | People Search (In-DB) | $0.66 | Scales with limit: $0.66 per 100 records |
 | Company Identification | $0.22 | Fixed |
 | Company Enrichment | $0.22 | $1.10 if enrich_realtime=true |
-| Person Enrichment | $0.66 | $1.10 if enrich_realtime=true |
+| Person Enrichment | $1.10 | Fixed (includes email enrichment) |
 | LinkedIn Posts | $0.22 | $1.10 if requesting reactors/comments |
 | LinkedIn Post by Keyword | $0.22 | $1.10 if requesting reactors/comments |
 | Job Listings | $0.22 | Fixed |
 | Gartner Reviews | $0.22 | Fixed |
-| ProductHunt Metrics | $0.22 | Fixed |
+
 
 ## Tips
 
@@ -331,7 +310,7 @@ orth run crustdata /screener/linkedin_posts/keyword_search/ -b '{
 - **Use fields parameter:** Company and Person Enrichment return huge payloads by default. Specify `fields` to get only what you need.
 - **Fuzzy matching:** Use the `(.)` operator in In-DB searches for flexible text matching (e.g., "tech" matches "technology", "tech startup", etc.).
 - **Cursor pagination:** In-DB search endpoints use cursor-based pagination. Pass `next_cursor` from the response as `cursor` in the next request.
-- **Dataset endpoints require boilerplate:** Job Listings, Gartner, and ProductHunt need `dataset`, `tickers`, `groups`, `aggregations`, `functions` fields. Copy from examples above.
+- **Dataset endpoints require boilerplate:** Job Listings and Gartner need `dataset`, `tickers`, `groups`, `aggregations`, `functions` fields. Copy from examples above.
 - **LinkedIn Posts:** Use `page` OR `limit`, never both. For posts with engagement data (reactors/comments), set `max_reactors` and/or `max_comments`.
 
 ## Error Handling
