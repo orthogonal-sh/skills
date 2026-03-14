@@ -97,17 +97,18 @@ Populate Sector (C) and Location (D) from the batch scrape initially — they'll
 
 ### Parallelization Strategy
 
-The investor watches the sheet fill in live. **Parallelize within each company, not across companies.** Process one company at a time so each row appears fully filled every ~5-10 seconds.
+Process companies in **batches of 3-5 at a time**. Within each batch, all companies run in parallel. Rows appear in the sheet as each company's research completes — giving a steady live-fill cadence while being 3-5x faster than purely sequential.
 
-For each company:
-1. **Scrape the YC company page** (Step 3a) — must run first, gives you founders, LinkedIn URLs, company website
-2. **In parallel**, run all three downstream calls:
+For each batch of companies (run all in parallel):
+1. **Scrape all YC company pages** in the batch simultaneously (Step 3a)
+2. As each YC page returns, **immediately launch its downstream calls in parallel**:
    - Scrape the company's website (Step 3b)
    - Apollo lookup for each founder (Step 3c) — multiple calls if multiple founders, all in parallel
    - Perplexity market analysis (Step 3d)
-3. **Compile results and update the row** (Step 4) — immediately, before moving to the next company
+3. As each company's full research set completes, **compile and update its row** (Step 4) immediately
+4. Move to the next batch
 
-This gives a steady cadence of rows appearing in the sheet. The investor sees progress every few seconds instead of waiting for everything at once.
+This gives a steady cadence of rows appearing every few seconds. With batches of 5, a 22-company batch completes in ~2-3 minutes.
 
 ### 3a. Scrape the YC company page (~$0.03 each)
 
@@ -238,18 +239,18 @@ orth run apollo /api/v1/people/match --body '{
 - `person.city` + `person.state` — use as **location fallback** if the YC page didn't have a location.
 - `person.headline` — often has a concise summary of their background.
 
-**No LinkedIn URL on YC page?** Fallback — search by name + company:
+**No LinkedIn URL on YC page?** Fallback — match by name + company:
 
 ```bash
-orth run apollo /api/v1/mixed_people/search --body '{
-  "q_person_name": "{founder_name}",
-  "q_organization_names": ["{company_name}"],
-  "page": 1,
-  "per_page": 1
+orth run apollo /api/v1/people/match --body '{
+  "first_name": "{first_name}",
+  "last_name": "{last_name}",
+  "organization_name": "{company_name}",
+  "reveal_personal_emails": true
 }'
 ```
 
-This usually returns their LinkedIn and work history even when the YC page doesn't list it. Results are in `people[0]` with same structure as above.
+Note: The `mixed_people/search` endpoint is NOT available. Use `people/match` with `first_name`, `last_name`, and `organization_name` as the fallback. This usually returns their employment history even without a LinkedIn URL.
 
 ### 3d. Perplexity — market context (~$0.005 each)
 
