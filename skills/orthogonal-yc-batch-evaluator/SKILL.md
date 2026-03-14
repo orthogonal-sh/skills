@@ -15,6 +15,8 @@ Scrape a YC batch, research every company and founder, assess founder-company fi
 
 ## Step 1: Scrape the YC Batch Directory
 
+The YC companies page is JavaScript-rendered (Algolia-powered). Scrapegraph handles the JS rendering.
+
 ```bash
 orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://www.ycombinator.com/companies?batch={batch_url_encoded}",
@@ -26,13 +28,51 @@ Batch URL encoding: "Spring 2026" → `Spring%202026`, "Winter 2026" → `Winter
 
 If the investor specified sectors, filter the list. Otherwise process all companies.
 
+**Expected response structure:**
+```json
+{
+  "result": {
+    "companies": [
+      {
+        "name": "Indexable",
+        "description": "sandbox infrastructure for AI agents",
+        "tags": ["B2B", "Infrastructure"],
+        "location": "San Francisco, CA, USA",
+        "url_slug": "/companies/indexable"
+      }
+    ]
+  }
+}
+```
+
+Note: The batch page returns `tags` (e.g. "B2B", "Infrastructure"), NOT detailed sectors. Individual YC pages (Step 3a) return richer `sectors` (e.g. "Artificial Intelligence", "Manufacturing"). Always prefer individual page data when available.
+
 ## Step 2: Create Google Sheet and Share Link Immediately
 
-Before any research, create the sheet and populate it with company names + descriptions. Share the link so the investor can watch results fill in live.
+Before any research, create the sheet and populate it with company names + descriptions from the batch scrape. Share the link so the investor can watch results fill in live.
 
 ```bash
 orth run google-sheets /create-spreadsheet --body '{"title": "YC {batch} Batch Evaluation"}'
 ```
+
+**Column layout (A through N):**
+
+| Col | Header | Source |
+|-----|--------|--------|
+| A | Company | Batch scrape |
+| B | Description | Batch scrape |
+| C | Sector | Individual YC page (`sectors`) — overwrite batch `tags` |
+| D | Location | Individual YC page → Apollo fallback |
+| E | Website | Individual YC page (`website_url`) |
+| F | Founders | Individual YC page (names + titles) |
+| G | Founder LinkedIn(s) | Individual YC page (`linkedin_url`) |
+| H | Founder Twitter/X | Individual YC page (`twitter_url`) |
+| I | Founder Background | Apollo employment history + YC page bios |
+| J | Founder-Company Fit | Your assessment |
+| K | Website Analysis | Company website scrape |
+| L | Market/Competitors | Perplexity |
+| M | Overall Assessment | Your assessment |
+| N | Priority Rank | Your ranking |
 
 Write header row + all company rows (research columns blank):
 
@@ -43,21 +83,39 @@ orth run google-sheets /update-values --body '{
   "first_cell_location": "A1",
   "valueInputOption": "USER_ENTERED",
   "values": [
-    ["Priority Rank", "Company", "Description", "Sector", "Location", "Website", "Founders", "Founder LinkedIn(s)", "Founder Twitter/X", "Founder Background", "Founder-Company Fit", "Website Analysis", "Market/Competitors", "Overall Assessment"],
-    ["", "{company_name}", "{description}", "{sectors}", "{location}", "", "", "", "", "", "", "", "", ""]
+    ["Company", "Description", "Sector", "Location", "Website", "Founders", "Founder LinkedIn(s)", "Founder Twitter/X", "Founder Background", "Founder-Company Fit", "Website Analysis", "Market/Competitors", "Overall Assessment", "Priority Rank"],
+    ["{company_name}", "{description}", "{tags}", "{location}", "", "", "", "", "", "", "", "", "", ""]
   ]
 }'
 ```
 
+Populate Sector (C) and Location (D) from the batch scrape initially — they'll be overwritten with richer data from the individual YC pages.
+
 **Share the sheet link with the user immediately** so they can watch it fill in.
 
-## Step 3: Research Each Company — Row by Row
+## Step 3: Research All Companies
 
-Process one company at a time. For each company, run all 4 research calls in parallel, then compile the results and **update that company's row immediately** before moving to the next. This lets the user watch the sheet fill in live.
+### Parallelization Strategy
 
-### 3a. Scrape the YC company page (~$0.03)
+Speed matters for a live demo. Do NOT process one company at a time. Use this phased approach:
 
-YC company pages have rich data: founders with LinkedIn, Twitter/X, bios, team size, sectors, website.
+**Phase 1 — Scrape all individual YC pages (parallel)**
+Run all YC page scrapes in parallel (batches of 10-11 if needed). This gets you founders, LinkedIn URLs, company websites, and detailed sectors for every company.
+
+**Phase 2 — Run all downstream research in parallel**
+Once you have founder LinkedIn URLs and company websites from Phase 1, launch ALL of these simultaneously:
+- All company website scrapes (Step 3b) — in parallel
+- All Apollo founder lookups (Step 3c) — in parallel (may be 30-50 calls if companies have 2-3 founders each)
+- All Perplexity market analyses (Step 3d) — in parallel
+
+**Phase 3 — Compile and update rows**
+As each company's full research set completes, immediately update its row in the sheet. Don't wait for all companies to finish.
+
+This approach completes ~22 companies in 1-2 minutes vs 10+ minutes if done sequentially.
+
+### 3a. Scrape the YC company page (~$0.03 each)
+
+YC company pages are server-rendered and contain rich data: founders with LinkedIn, Twitter/X, bios, team size, sectors, website.
 
 ```bash
 orth run scrapegraph /v1/smartscraper --body '{
@@ -66,28 +124,83 @@ orth run scrapegraph /v1/smartscraper --body '{
 }'
 ```
 
-**Parsing notes:**
-- Website field may be `website_url`, `company_website_url`, or `company_website` — check all three.
-- Sectors may be `sectors`, `sector_tags`, or `tags` — check all three. Individual page data is richer than batch data.
-- **Filter out YC partners**: If title contains "Primary Partner" or "Group Partner", exclude them — they're YC staff, not founders.
-- Location from the individual page is often more specific than the batch page.
+**Expected response structure:**
+```json
+{
+  "result": {
+    "founders": [
+      {
+        "full_name": "William Alexander",
+        "title": "Founder",
+        "linkedin_url": "https://www.linkedin.com/in/william--alexander/",
+        "twitter_url": null,
+        "bio": "Manufacturing nerd from Iowa. Stanford Econ + CS."
+      },
+      {
+        "full_name": "Tom Blomfield",
+        "title": "Primary Partner",
+        "linkedin_url": null,
+        "twitter_url": null,
+        "bio": null
+      }
+    ],
+    "website_url": "https://arzana.ai",
+    "location": "San Francisco, CA, US",
+    "sectors": ["Artificial Intelligence", "Manufacturing"],
+    "team_size": 4,
+    "founding_year": 2025
+  }
+}
+```
 
-### 3b. Scrape the company's own website (~$0.03)
+**Critical parsing rules:**
 
-**Always run this step.** It provides product details, traction signals, and customer info that no other source has.
+1. **Filter out YC partners**: Entries with title "Primary Partner" or "Group Partner" are YC staff (e.g. Tom Blomfield, Harj Taggar), NOT founders. Exclude them.
+
+2. **Website field name varies**: Check `website_url`, `company_website_url`, and `company_website` — Scrapegraph returns different field names depending on the page.
+
+3. **Sectors field name varies**: Check `sectors`, `sector_tags`, and `tags`. Prefer the individual page's `sectors` over the batch page's `tags` — individual pages return specific sectors like "Artificial Intelligence" vs generic tags like "B2B".
+
+4. **LinkedIn URL may be null**: Some founders don't have LinkedIn listed on YC. Use Apollo fallback (Step 3c) with name + company search.
+
+5. **Twitter/X URL may be null**: Only populate if present, don't invent URLs.
+
+### 3b. Scrape the company's own website (~$0.03 each)
+
+**Always run this step.** Company websites have product details, pricing, customer logos, testimonials, and hiring signals that no other source provides.
 
 ```bash
 orth run scrapegraph /v1/smartscraper --body '{
   "website_url": "https://{company_website}",
-  "user_prompt": "Extract: what the product does, target customer, pricing model, key features, traction signals (customer logos, metrics, testimonials), hiring signals, tech stack. Be specific about what you find."
+  "user_prompt": "Extract: what the product does, target customer, pricing model, key features, traction signals (customer logos, metrics, testimonials), hiring signals. Be specific about what you find."
 }'
 ```
 
-If the scrape fails (404, timeout), note "Website not available" in the Website Analysis column — don't leave it blank.
+**Expected response — varies by company, but typically includes:**
+```json
+{
+  "result": {
+    "product_description": "...",
+    "target_customer": "..." or ["...", "..."],
+    "pricing": "Not disclosed" or {"model": "...", "price": "..."},
+    "key_features": ["...", "..."],
+    "traction_signals": {
+      "customer_logos": ["Heineken", "Toyota", "..."],
+      "metrics": ["99.7% accuracy", "25K patients/day"],
+      "testimonials": [{"author": "...", "quote": "..."}]
+    },
+    "hiring_signals": ["Careers page present"]
+  }
+}
+```
+
+Note: The response structure varies significantly between companies. The `traction_signals` field is sometimes called `traction`. Customer logos may be actual names or just "logos displayed but not identified". Pricing may be a string, object, or array. Parse flexibly.
+
+If the scrape fails (404, timeout, empty), put "Website not available or pre-launch" in the Website Analysis column — never leave it blank.
 
 ### 3c. Apollo — founder work history (~$0.01 per founder)
 
-Use the LinkedIn URL from the YC page to get full employment history.
+Use the LinkedIn URL from the YC page to get full employment history. Run one call per founder.
 
 ```bash
 orth run apollo /api/v1/people/match --body '{
@@ -96,7 +209,38 @@ orth run apollo /api/v1/people/match --body '{
 }'
 ```
 
-Returns: employment history (companies, titles, dates), education, current role, **city/state/country**. Use the city/state as a fallback for company location if the YC page doesn't list one.
+**Key fields in the Apollo response:**
+```json
+{
+  "person": {
+    "name": "William Alexander",
+    "headline": "Co-Founder & CEO, Arzana | Stanford Economics + CS",
+    "city": "San Francisco",
+    "state": "California",
+    "employment_history": [
+      {
+        "organization_name": "Arzana",
+        "title": "Co-Founder",
+        "start_date": "2025-06-01",
+        "end_date": null,
+        "current": true
+      },
+      {
+        "organization_name": "Previous Company",
+        "title": "Engineer",
+        "start_date": "2022-01-01",
+        "end_date": "2025-05-01",
+        "current": false
+      }
+    ]
+  }
+}
+```
+
+**What to extract:**
+- `person.employment_history[]` — the key input for Founder Background and Founder-Company Fit. Look at `organization_name`, `title`, and dates.
+- `person.city` + `person.state` — use as **location fallback** if the YC page didn't have a location.
+- `person.headline` — often has a concise summary of their background.
 
 **No LinkedIn URL on YC page?** Fallback — search by name + company:
 
@@ -109,9 +253,11 @@ orth run apollo /api/v1/mixed_people/search --body '{
 }'
 ```
 
-This usually returns their LinkedIn and work history even when the YC page doesn't list it.
+This usually returns their LinkedIn and work history even when the YC page doesn't list it. Results are in `people[0]` with same structure as above.
 
-### 3d. Perplexity — market context (~$0.005)
+### 3d. Perplexity — market context (~$0.005 each)
+
+Include rich context in the prompt — company description and founder bios. Generic prompts like "tell me about {company}" return generic results.
 
 ```bash
 orth run perplexity /chat/completions --body '{
@@ -120,85 +266,161 @@ orth run perplexity /chat/completions --body '{
 }'
 ```
 
-## Step 4: Compile and Update Row
+**Response parsing:** The answer is in `choices[0].message.content` as a text string. Extract the key points for the Market/Competitors column.
 
-After all 4 research calls complete for a company, compile the results and update that row.
+## Step 4: Compile and Update Each Row
 
-### Links — plain URLs, not HYPERLINK formulas
-
-Google Sheets cannot have multiple `=HYPERLINK()` formulas in one cell (extras show as FALSE). Instead:
-
-- **Website**: Put the plain URL — Sheets auto-linkifies single URLs.
-- **Founder LinkedIn**: One URL per line. If multiple founders, separate with newlines. Sheets auto-linkifies each.
-- **Founder Twitter/X**: Same — one URL per line.
-
-### Location fallback
-
-If the YC page has no location, use the founder's city/state from Apollo (`person.city`, `person.state`). Use the first founder's location as the company location.
-
-### Founder-Company Fit (Strong / Moderate / Weak)
-
-Assess whether the founders' backgrounds make them uniquely suited to build THIS specific company. YC selects well, so most founders will have decent fit — but be specific about what makes the fit strong or where there are gaps.
-
-**Strong** — Direct domain expertise in the problem they're solving.
-> "Strong — CEO spent 5 years at Stripe building payment APIs, now building payment infrastructure. Deep domain match."
-
-**Moderate** — Strong technical background but limited domain experience.
-> "Moderate — both founders are strong engineers (Google, Amazon) but no direct healthcare experience for a healthcare product."
-
-**Weak** — No relevant background for the space, or very thin visible track record.
-> "Weak — general engineering background with no visible agent infrastructure or protocol experience for an agent communication platform."
-
-### Website Analysis
-
-Summarize what you found from scraping the company's website. Include: product description, target customer, any traction signals (customer logos, metrics), pricing model. If the website is pre-launch or thin, say so.
-
-### Overall Assessment (High Priority / Interesting / Pass)
-
-Consider: founder-company fit, market size, competitive landscape, team completeness, product clarity, website maturity.
-
-If the investor provided a thesis, weight the assessment heavily toward their focus areas.
-
-### Priority Rank
-
-Rank all companies 1 to N. #1 is the strongest overall.
-
-- **With thesis**: Rank by thesis alignment (stage, sector, geography fit).
-- **Without thesis**: Rank on general investment quality = founder-company fit × market size × team strength.
+As each company's research completes, immediately update its row. The column mapping:
 
 ```bash
 orth run google-sheets /update-values --body '{
   "spreadsheet_id": "{spreadsheet_id}",
   "sheet_name": "Sheet1",
-  "first_cell_location": "A{row_number}",
+  "first_cell_location": "C{row_number}",
   "valueInputOption": "USER_ENTERED",
-  "values": [["{rank}", "{company}", "{desc}", "{sectors}", "{location}", "{website}", "{founders}", "{linkedins}", "{twitters}", "{background}", "{fit}", "{website_analysis}", "{market}", "{overall}"]]
+  "values": [["{sectors}", "{location}", "{website}", "{founders}", "{linkedins}", "{twitters}", "{background}", "{fit}", "{website_analysis}", "{market}", "{overall}", ""]]
 }'
 ```
 
-## Step 5: Re-sort and Final Summary
+This updates columns C through N for a single row (sectors through priority rank), leaving Priority Rank blank until the final sort.
 
-After all companies are researched, re-sort the sheet by Priority Rank (column A) so the best companies are at the top. Then output a summary:
+### Formatting rules
+
+**Links — plain URLs, not HYPERLINK formulas**
+
+Google Sheets cannot have multiple `=HYPERLINK()` formulas in one cell — extras evaluate to FALSE. Instead:
+- **Website (E)**: Plain URL (e.g. `https://arzana.ai`). Sheets auto-linkifies it.
+- **Founder LinkedIn (G)**: One plain URL per line. If multiple founders, separate with newlines (`\n`).
+- **Founder Twitter/X (H)**: Same — one plain URL per line.
+
+**Founders (F)**: List as "Name (Title), Name (Title)". Example: "William Alexander (CEO), Marshall Kools (COO)"
+
+**Founder Background (I)**: One line per founder with key career highlights from Apollo employment history. Example:
+> "William Alexander: Stanford Econ+CS, previously founded Athluence and Lost in the Sauce Pizza. Marshall Kools: Stanford MS Engineering, D1 wrestler, previously at [company]."
+
+**Location (D)**: Use YC page location. If blank, use Apollo `person.city`, `person.state` from the first founder.
+
+**Sectors (C)**: Use individual YC page `sectors` (e.g. "Artificial Intelligence, Manufacturing"). If unavailable, fall back to batch `tags`.
+
+### Founder-Company Fit (J) — Strong / Moderate / Weak
+
+Assess whether the founders' backgrounds make them uniquely suited to build THIS specific company. YC selects well, so most fits will be decent — but be specific about what makes it strong or where there are gaps.
+
+**Strong** — Direct domain expertise or deep work history in the problem they're solving.
+> "Strong — CEO spent 5 years at Stripe building payment APIs, now building payment infrastructure. Deep domain match."
+> "Strong — manufacturing nerd from Iowa, Stanford Econ+CS, building AI for manufacturing. Direct domain background."
+
+**Moderate** — Strong technical background but limited domain experience, or relevant adjacent experience.
+> "Moderate — both founders are strong engineers (Google, Amazon) but no direct healthcare experience for a healthcare product."
+> "Moderate — strong ML background from MIT/Caltech, but building for educators which is a different domain."
+
+**Weak** — No relevant background for the space, or very thin visible track record.
+> "Weak — general engineering background with no visible agent infrastructure or protocol experience for an agent communication platform."
+> "Weak — first-time founders, Apollo shows minimal work history, no clear domain expertise for the space."
+
+### Website Analysis (K)
+
+Summarize what you found from the company website scrape. Be specific and include:
+- What the product actually does (may be more detailed than YC one-liner)
+- Target customer
+- Pricing if disclosed
+- Traction signals: customer logos by name, metrics, testimonials
+- Hiring signals
+- How mature the site/product looks
+
+Examples from real scrapes:
+> "Strong product site. AI for manufacturing office — quoting, estimating, purchasing, CRM. $2.5-7K/mo pricing. 9 customer logos (Tier1, Tecton, Koike, Zeiss, Schneider). TTQ reduced 5 days to 1 day. Testimonial from VP Sales. Hiring."
+> "AI voice agents focused on MENA/Arabic dialects. Batch calling, knowledge base, call transfer. 100+ users. 8 testimonials. Hiring via Zoho Recruit."
+> "Developer email service — email to webhook as JSON. Free for unlimited domains. Minimal traction signals — very early stage."
+
+### Market/Competitors (L)
+
+Extract from Perplexity response: market size, top competitors, any press/traction mentions. Keep it to 2-3 sentences.
+
+### Overall Assessment (M) — High Priority / Interesting / Pass
+
+Consider: founder-company fit, market size, competitive landscape, team completeness, product/website maturity, traction signals.
+
+If the investor provided a thesis, weight the assessment heavily toward their focus areas.
+
+> "High Priority — strong founder-market fit, clear product with paying customers, large TAM in manufacturing automation."
+> "Interesting — impressive tech (26ms forks) but very early, single founder, no customers yet."
+> "Pass — minimal traction, thin founder backgrounds for the space, crowded market."
+
+### Priority Rank (N)
+
+Assigned in Step 5 after all companies are researched.
+
+## Step 5: Rank, Re-sort, and Summary
+
+After ALL companies are researched and their rows updated:
+
+1. **Assign ranks 1 to N** based on overall quality:
+   - **With thesis**: Rank by thesis alignment (stage, sector, geography fit).
+   - **Without thesis**: Rank on general investment quality = founder-company fit × market size × traction signals × team strength.
+
+2. **Update the Priority Rank column** for all companies.
+
+3. **Re-sort the entire sheet** by Priority Rank so the strongest companies appear at the top. Read all rows, sort by rank, rewrite:
+
+```bash
+# Read all current data
+orth run google-sheets /get-values --body '{
+  "spreadsheet_id": "{spreadsheet_id}",
+  "ranges": ["Sheet1!A2:N{last_row}"]
+}'
+
+# Sort rows by Priority Rank (column N), then rewrite
+orth run google-sheets /update-values --body '{
+  "spreadsheet_id": "{spreadsheet_id}",
+  "sheet_name": "Sheet1",
+  "first_cell_location": "A2",
+  "valueInputOption": "USER_ENTERED",
+  "values": [{sorted_rows}]
+}'
+```
+
+4. **Output a summary** to the user:
 
 ```
+Evaluated {N} companies from YC {batch}.
+Sheet: {sheet_url}
+
 Top Priority:
 1. {Company} — {one-line why}
-2. ...
+2. {Company} — {one-line why}
+3. {Company} — {one-line why}
 
 Worth a Look:
+- {Company} — {one-line why}
 - {Company} — {one-line why}
 
 Skip:
 - {Company} — {one-line why}
 ```
 
+## Cost Estimate
+
+For a batch of ~22 companies with ~40 founders:
+
+| API | Calls | Cost |
+|-----|-------|------|
+| Scrapegraph (batch page) | 1 | ~$0.03 |
+| Scrapegraph (YC pages) | 22 | ~$0.66 |
+| Scrapegraph (company websites) | 22 | ~$0.66 |
+| Apollo (founder lookups) | ~40 | ~$0.40 |
+| Perplexity (market analysis) | 22 | ~$0.11 |
+| Google Sheets | ~25 | free |
+| **Total** | | **~$1.86** |
+
 ## Tips
 
-- **Row by row, not batch**: Research one company → update its row → move to next. The live-fill effect is the point.
-- **Parallelize within each company**: All 4 research calls (YC page, website, Apollo, Perplexity) run in parallel per company.
+- **Parallel, then row-by-row updates**: Research ALL companies in parallel phases, but UPDATE the sheet one row at a time as each company's data arrives. The live-fill effect is the point.
 - **Never leave Website Analysis blank**: Either summarize what you found or note "Website not available / pre-launch".
-- **Filter out YC partners**: Tom Blomfield, Harj Taggar, etc. appear as "Primary Partner" on company pages — exclude them from the founders list.
+- **Filter out YC partners**: Tom Blomfield, Harj Taggar, etc. appear with title "Primary Partner" or "Group Partner" on company pages. They are YC staff, not founders — exclude them.
 - **Check multiple field names**: Scrapegraph returns varying field names. Always check `website_url` / `company_website_url` / `company_website` for websites; `sectors` / `sector_tags` / `tags` for sectors.
-- **Apollo for missing data**: Use Apollo `city`/`state` as location fallback. Use `mixed_people/search` as LinkedIn fallback.
-- **Plain URLs, not HYPERLINK formulas**: Multiple HYPERLINKs in one cell causes FALSE. Plain URLs auto-linkify in Sheets.
-- **Be honest and specific**: Reference the actual founder backgrounds, not generic assessments. If the market is tiny, say so. Investors value honesty.
+- **Apollo for missing data**: Use `person.city`/`person.state` as location fallback. Use `mixed_people/search` as LinkedIn fallback when no LinkedIn URL on YC page.
+- **Plain URLs, not HYPERLINK formulas**: Multiple `=HYPERLINK()` in one cell → FALSE. Plain URLs auto-linkify in Sheets.
+- **Rich Perplexity prompts**: Include company description and founder bios. "Tell me about {company_name}" gets generic results. Specific context gets useful answers.
+- **Be honest and specific**: Reference actual founder backgrounds, not generic assessments. If the market is tiny, say so. Investors value honesty over hype.
+- **Skip gracefully**: If a company website 404s or Apollo returns nothing, still fill what you have. Partial data > empty row.
