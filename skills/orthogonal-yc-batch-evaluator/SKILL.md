@@ -7,11 +7,17 @@ description: Evaluate YC batch companies for investment — scrapes the YC direc
 
 Scrape a YC batch, research every company and founder, assess founder-company fit, and export a live-updating Google Sheet with priority rankings. Designed for investors evaluating YC companies.
 
+## IMPORTANT: Do NOT ask clarifying questions. Just start immediately.
+
+All inputs are optional. If the user said a batch, use it. If they didn't specify sectors or thesis, process ALL companies. **Always create a new Google Sheet** — never ask for an existing spreadsheet ID. **Start scraping immediately — do not ask "which batch?", "any sector filters?", or "should I create a sheet?".** This is designed for live demos where speed and visual impact matter.
+
+"Spring 2026" is a real YC batch (also called "X26"). It exists and has ~22 companies.
+
 ## Input
 
 - **batch** (optional) — defaults to "Spring 2026". Examples: "Winter 2026", "Summer 2025"
-- **sectors** (optional) — filter to specific sectors (e.g. "AI", "fintech", "infrastructure")
-- **thesis** (optional) — investor's focus areas for tailored scoring and ranking
+- **sectors** (optional) — filter to specific sectors (e.g. "AI", "fintech", "infrastructure"). If not provided, process ALL companies.
+- **thesis** (optional) — investor's focus areas for tailored scoring and ranking. If not provided, rank on general investment quality.
 
 ## Step 1: Scrape the YC Batch Directory
 
@@ -97,7 +103,9 @@ Populate Sector (C) and Location (D) from the batch scrape initially — they'll
 
 ### Parallelization Strategy
 
-Process companies in **batches of 3-5 at a time**. Within each batch, all companies run in parallel. Rows appear in the sheet as each company's research completes — giving a steady live-fill cadence while being 3-5x faster than purely sequential.
+**The demo effect matters.** Rows filling in one-by-one on the spreadsheet is the visual payoff. Optimize for a steady stream of rows appearing — not for dumping everything at once.
+
+Process companies in **batches of 3-5 at a time**. Within each batch, all companies' research runs in parallel. But **update each row individually** the moment that company's research completes — do NOT wait for the whole batch to finish before writing.
 
 For each batch of companies (run all in parallel):
 1. **Scrape all YC company pages** in the batch simultaneously (Step 3a)
@@ -105,10 +113,12 @@ For each batch of companies (run all in parallel):
    - Scrape the company's website (Step 3b)
    - Apollo lookup for each founder (Step 3c) — multiple calls if multiple founders, all in parallel
    - Perplexity market analysis (Step 3d)
-3. As each company's full research set completes, **compile and update its row** (Step 4) immediately
+3. As each company's full research set completes, **compile and update its row** (Step 4) **immediately** — one `update-values` call per row, don't batch them
 4. Move to the next batch
 
-This gives a steady cadence of rows appearing every few seconds. With batches of 5, a 22-company batch completes in ~2-3 minutes.
+**Key: each row gets its own sheet update call.** This creates the live-fill effect where the investor watches rows appear every 3-5 seconds. Never batch multiple rows into a single sheet write — that kills the visual cadence.
+
+With batches of 5, a 22-company batch completes in ~2-3 minutes with rows streaming in throughout.
 
 ### 3a. Scrape the YC company page (~$0.03 each)
 
@@ -267,7 +277,26 @@ orth run perplexity /chat/completions --body '{
 
 ## Step 4: Compile and Update Each Row
 
-As each company's research completes, immediately update its row. The column mapping:
+As each company's research completes, immediately update its row. **The values array MUST have exactly 12 elements in this exact order:**
+
+```
+values: [[
+  C: sectors,           // e.g. "AI, Manufacturing" (from YC page)
+  D: location,          // e.g. "San Francisco, CA" (from YC page, short)
+  E: website,           // e.g. "https://arzana.ai" (plain URL)
+  F: founders,          // e.g. "William Alexander (CEO)\nMarshall Kools (COO)"
+  G: linkedin_urls,     // e.g. "https://linkedin.com/in/william--alexander/\nhttps://linkedin.com/in/marshallkools/"
+  H: twitter_urls,      // e.g. "https://x.com/alexisaftalion" or ""
+  I: background,        // Founder work history from Apollo
+  J: fit_rating,        // "Strong — ..." or "Moderate — ..." or "Weak — ..."
+  K: website_analysis,  // Summary of company website scrape
+  L: market,            // Market size + competitors from Perplexity
+  M: overall,           // "High Priority — ..." or "Interesting — ..." or "Pass — ..."
+  N: ""                 // Priority Rank — leave blank, filled in Step 5
+]]
+```
+
+**CRITICAL: Exactly 12 values starting at column C. Do NOT include extra fields like company description, founding year, or team size — those go in the wrong columns and misalign the entire row.**
 
 ```bash
 orth run google-sheets /update-values --body '{
@@ -279,7 +308,7 @@ orth run google-sheets /update-values --body '{
 }'
 ```
 
-This updates columns C through N for a single row (sectors through priority rank), leaving Priority Rank blank until the final sort.
+This updates columns C through N for a single row. One call per company — this creates the live-fill demo effect.
 
 ### Formatting rules
 
@@ -350,32 +379,38 @@ Assigned in Step 5 after all companies are researched.
 
 ## Step 5: Rank, Re-sort, and Summary
 
+**This step is NOT optional. You MUST sort the sheet after all research is complete.** The investor expects the best companies at the top.
+
 After ALL companies are researched and their rows updated:
 
 1. **Assign ranks 1 to N** based on overall quality:
    - **With thesis**: Rank by thesis alignment (stage, sector, geography fit).
    - **Without thesis**: Rank on general investment quality = founder-company fit × market size × traction signals × team strength.
 
-2. **Update the Priority Rank column** for all companies.
+2. **Write ranks to column N** for all companies.
 
-3. **Re-sort the entire sheet** by Priority Rank so the strongest companies appear at the top. Read all rows, sort by rank, rewrite:
+3. **Re-sort the entire sheet by Priority Rank.** This is critical — the sheet must end with rank #1 at the top.
 
 ```bash
-# Read all current data
+# Step 5a: Read all current data
 orth run google-sheets /get-values --body '{
   "spreadsheet_id": "{spreadsheet_id}",
   "ranges": ["Sheet1!A2:N{last_row}"]
 }'
+```
 
-# Sort rows by Priority Rank (column N), then rewrite
+```bash
+# Step 5b: Sort the rows by column N (Priority Rank) ascending, then rewrite ALL rows
 orth run google-sheets /update-values --body '{
   "spreadsheet_id": "{spreadsheet_id}",
   "sheet_name": "Sheet1",
   "first_cell_location": "A2",
   "valueInputOption": "USER_ENTERED",
-  "values": [{sorted_rows}]
+  "values": [{rows_sorted_by_column_N_ascending}]
 }'
 ```
+
+**Do not skip the sort.** Writing rank numbers without reordering the rows defeats the purpose. The investor opens the sheet and should see the top-ranked companies first.
 
 4. **Output a summary** to the user:
 
@@ -416,7 +451,7 @@ For a batch of ~22 companies with ~40 founders:
 - **Never leave Website Analysis blank**: Either summarize what you found or note "Website not available / pre-launch".
 - **Filter out YC partners**: Tom Blomfield, Harj Taggar, etc. appear with title "Primary Partner" or "Group Partner" on company pages. They are YC staff, not founders — exclude them.
 - **Check multiple field names**: Scrapegraph returns varying field names. Always check `website_url` / `company_website_url` / `company_website` for websites; `sectors` / `sector_tags` / `tags` for sectors.
-- **Apollo for missing data**: Use `person.city`/`person.state` as location fallback. Use `mixed_people/search` as LinkedIn fallback when no LinkedIn URL on YC page.
+- **Apollo for missing data**: Use `person.city`/`person.state` as location fallback. Use `people/match` with `first_name`/`last_name`/`organization_name` as fallback when no LinkedIn URL on YC page. The `mixed_people/search` endpoint is NOT available.
 - **Plain URLs, not HYPERLINK formulas**: Multiple `=HYPERLINK()` in one cell → FALSE. Plain URLs auto-linkify in Sheets.
 - **Rich Perplexity prompts**: Include company description and founder bios. "Tell me about {company_name}" gets generic results. Specific context gets useful answers.
 - **Be honest and specific**: Reference actual founder backgrounds, not generic assessments. If the market is tiny, say so. Investors value honesty over hype.
