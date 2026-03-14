@@ -18,42 +18,77 @@ Always export to Google Sheets at the end — it's free and takes seconds.
 
 ## Step 1: Pull Investor Meetings
 
+Pull from today through Demo Day (March 24, 2026). All W26 companies are fundraising now through Demo Day. Make multiple calls if needed to avoid truncation — e.g. split into week 1 and week 2.
+
 ```bash
+# Adjust timeMin to today's date
 orth run google-calendar /list-events --body '{
   "calendarId": "primary",
   "timeMin": "{today}T00:00:00Z",
-  "timeMax": "{end_date}T23:59:59Z",
+  "timeMax": "{midpoint}T23:59:59Z",
+  "maxResults": 100,
+  "singleEvents": true,
+  "orderBy": "startTime"
+}'
+
+orth run google-calendar /list-events --body '{
+  "calendarId": "primary",
+  "timeMin": "{midpoint+1}T00:00:00Z",
+  "timeMax": "2026-03-24T23:59:59Z",
   "maxResults": 100,
   "singleEvents": true,
   "orderBy": "startTime"
 }'
 ```
 
-Filter events where title contains: `invest`, `vc`, `pitch`, `raise`, `fund`, `partner`, `capital`, `ventures`, `angel`, `seed`, `series`.
+### Filtering — be precise, not greedy
+
+The keyword approach catches false positives (personal meetings, mock pitches, etc.). Use this priority order:
+
+1. **Strong signal (auto-include):** Title starts with "Investors between" — this is the standard Cal.com booking format for investor meetings.
+2. **Medium signal (auto-include):** Attendee email domain is a known VC domain (e.g. `@moonfire.com`, `@a16z.com`, `@accel.com`) OR the event description contains VC firm names.
+3. **Weak signal (requires confirmation):** Title contains keywords like `invest`, `vc`, `fund`, `capital`, `ventures`, `angel`, `seed`, `series` — BUT does NOT match pattern #1. These need manual review.
+4. **Exclude:** Events with "mock" or "practice" in title/description (these are rehearsals, not real meetings). Also exclude batch/group events with no attendees (e.g. "Fundraising Open Mic", "Demo Day") — these are YC events, not 1:1 investor calls.
 
 Extract: title, date/time, attendee emails (non-company = investor contacts), description (often has investor names/emails even when attendee list doesn't).
 
 **Present filtered list to user for confirmation before proceeding.**
 
+### Create the Google Sheet immediately after confirmation
+
+Before starting any research, create the spreadsheet and populate it with all confirmed investor rows (date/time, firm name, investor name, firm website — leave research columns blank). Share the link with the user so they can watch results fill in live as each investor is researched. This is much better UX than waiting for all research to complete.
+
 ## Step 2: Research the User's Company
 
-Run in parallel:
+**Ask the user to describe their company in 1-2 sentences** rather than relying on Perplexity, which often confuses companies with similar names (e.g. orthogonal.com vs orthogonal.io). The user's own description is always more accurate than a web search for early-stage startups.
+
+Then auto-detect competitors:
 
 ```bash
-# Company context + ideal investor profile
-orth run perplexity /chat/completions --body '{
-  "model": "sonar",
-  "messages": [{"role": "user", "content": "What does {company_name} ({domain}) do? Product, target market, business model, stage. What kind of investor is an ideal fit — what thesis, stage focus, sector expertise?"}]
-}'
-
 # Auto-detect competitors (skip if user provided)
 orth run perplexity /chat/completions --body '{
   "model": "sonar",
-  "messages": [{"role": "user", "content": "Top 5-10 competitors of {company_name} ({domain})? {description}. Company names and domains only."}]
+  "messages": [{"role": "user", "content": "Top 5-10 competitors of {company_name} ({domain})? {user_provided_description}. Company names and domains only."}]
 }'
 ```
 
-Save this company profile — use it to assess every investor's fit.
+**Verify the competitor list with the user** before proceeding. Perplexity often returns enterprise incumbents (MuleSoft, Workato) rather than actual startup competitors. The user knows their competitive landscape better.
+
+Save the company description and confirmed competitor list — use them for every investor assessment.
+
+### Step 2b: Reverse-lookup competitor investors (one-time, cheap)
+
+Instead of asking each investor "have you invested in X?" (unreliable), do a single reverse lookup for each competitor. This is 1 Perplexity call per competitor — not per investor.
+
+```bash
+# Run one call per competitor (e.g. 5 competitors = 5 calls total)
+orth run perplexity /chat/completions --body '{
+  "model": "sonar",
+  "messages": [{"role": "user", "content": "Who are the investors in {competitor_name} ({competitor_domain})? List all known venture capital firms and angel investors who have invested in them, with round details if available."}]
+}'
+```
+
+Build a lookup table: `{investor_firm -> [competitors they backed]}`. Cross-reference this against the meeting list. This catches conflicts that per-investor Perplexity queries miss, at a fraction of the cost.
 
 ## Step 3: Research Each Investor
 
@@ -129,7 +164,32 @@ orth run fiber /v1/natural-language-search/companies --body '{
 
 Cross-reference returned companies against competitor list.
 
-## Step 4: Compile Prep Sheet
+## Step 4: Classify Before Compiling
+
+Before writing up the prep sheet, classify each meeting into one of these categories based on research:
+
+1. **VC Fund** — traditional venture capital firm (GP, Partner, Principal, Associate)
+2. **Angel** — individual investor (current/former founder, operator, or executive investing personally)
+3. **NOT an investor** — flag prominently. This includes:
+   - Founders of other startups (potential BD/partnership, not fundraise)
+   - Researchers/academics with no investing track record
+   - Operators at companies (not investing personally)
+   - Mock pitch / practice sessions
+
+For non-investors, still include them in the sheet but mark the Compatibility column as "NOT AN INVESTOR" and explain what the meeting likely is (BD, partnership, mock pitch, etc.). This prevents the user from wasting prep time on a fundraise pitch when the meeting is something else.
+
+### Surface ecosystem investments, not just competitor conflicts
+
+When an investor has portfolio companies that are **adjacent** to the user's space (not direct competitors but in the same ecosystem), surface these as **Ecosystem Signals** rather than ignoring them. These are actually positive — they show the investor understands the space.
+
+Examples:
+- An investor backed CrewAI (AI agent framework) → they understand agents need API access → good hook for Orthogonal
+- An investor backed Arcade.dev (AI tooling) → adjacent, not a conflict → shows thesis alignment
+- An investor backed Langbase (AI agents) → ecosystem overlap → talking point
+
+Only flag as **Competitor Conflict** if the portfolio company is a direct competitor (same product, same customer, same use case). Adjacent/ecosystem companies go in the Talking Points column as conversation hooks.
+
+## Step 5: Compile Prep Sheet
 
 Cross-reference all sources. When they conflict, prefer: **website > Apollo > Perplexity > Fiber**.
 
@@ -174,24 +234,11 @@ Every rating must reference the user's specific company, product, and sector. Ge
 **Competitor Conflict** — Flag prominently.
 > "They backed Composio — a direct competitor. Ask early whether this creates a conflict."
 
-## Step 5: Google Sheets Export (optional)
+## Step 6: Google Sheets Export
 
-```bash
-orth run google-sheets /create-spreadsheet --body '{"title": "Investor Call Prep — {date_range}"}'
-```
+The spreadsheet was already created in Step 1. Update each row as research completes — use `orth run google-sheets /update-values` with `first_cell_location` targeting the specific row (e.g. "D5" for row 5, columns D onward).
 
-```bash
-orth run google-sheets /update-values --body '{
-  "spreadsheet_id": "{spreadsheet_id}",
-  "sheet_name": "Sheet1",
-  "first_cell_location": "A1",
-  "valueInputOption": "USER_ENTERED",
-  "values": [
-    ["Date/Time", "Firm", "Investor", "Title", "LinkedIn", "Firm LinkedIn", "Website", "Thesis", "Stage", "Check Size", "Portfolio", "Conflicts", "Compatibility", "Why", "Talking Points"],
-    ["{...}"]
-  ]
-}'
-```
+**Important:** Always use `orth run google-sheets` for sheet updates — this is the Orthogonal platform's Google Sheets integration. Do NOT try to use gcloud, service accounts, or Python scripts. If `orth run google-sheets` fails, write the data to a TSV file as fallback and tell the user to paste it in.
 
 ## Tips
 
