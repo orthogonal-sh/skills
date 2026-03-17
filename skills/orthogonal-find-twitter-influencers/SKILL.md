@@ -107,13 +107,13 @@ Some influencers are better indexed on LinkedIn but have active Twitter accounts
 
 ```bash
 # Core niche
-orth run fiber /v1/natural-language-search/profiles --body '{
+orth run fiber -X POST /v1/natural-language-search/profiles --body '{
   "query": "{niche} thought leader content creator with Twitter presence at {industry} companies",
   "pageSize": 20
 }'
 
 # Adjacent niche — broader coverage
-orth run fiber /v1/natural-language-search/profiles --body '{
+orth run fiber -X POST /v1/natural-language-search/profiles --body '{
   "query": "{adjacent_niche} influencer expert with large social media following",
   "pageSize": 20
 }'
@@ -245,7 +245,7 @@ Launch ALL these Exa searches in parallel (multiple tool calls in a single messa
 **Step 3 — Fiber kitchen-sink** (best coverage for professionals):
 ```bash
 # With LinkedIn URL (best match rate — ALWAYS prefer this):
-orth run fiber /v1/kitchen-sink/person --body '{
+orth run fiber -X POST /v1/kitchen-sink/person --body '{
   "profileIdentifier": "https://linkedin.com/in/janesmith"
 }'
 ```
@@ -317,7 +317,7 @@ orth run nyne /person/newsfeed --query 'request_id=REQUEST_ID'
 
 **LinkedIn profile** (full work history, credentials, other ventures):
 ```bash
-orth run fiber /v1/linkedin-live-fetch/profile/single --body '{"identifier": "https://linkedin.com/in/TARGET"}'
+orth run fiber -X POST /v1/linkedin-live-fetch/profile/single --body '{"identifier": "https://linkedin.com/in/TARGET"}'
 ```
 
 **Deep enrichment** (AI-powered research — slow, ~30-60s):

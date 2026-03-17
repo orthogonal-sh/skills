@@ -38,7 +38,7 @@ Best source for industry-specific company lists. Returns targeted results from i
 **Strategy B — Fiber NL company search** (co-primary — best structured data):
 
 ```bash
-orth run fiber /v1/natural-language-search/companies --body '{
+orth run fiber -X POST /v1/natural-language-search/companies --body '{
   "query": "{industry} companies in {location} with {employee_min}+ employees",
   "pageSize": 20
 }'
@@ -63,12 +63,12 @@ For 20+ results, run parallel searches by sub-region or sub-vertical:
 
 ```bash
 # Parallel searches for different sub-regions
-orth run fiber /v1/natural-language-search/companies --body '{
+orth run fiber -X POST /v1/natural-language-search/companies --body '{
   "query": "{industry} companies in New York with {size}+ employees",
   "pageSize": 15
 }'
 
-orth run fiber /v1/natural-language-search/companies --body '{
+orth run fiber -X POST /v1/natural-language-search/companies --body '{
   "query": "{industry} companies in California with {size}+ employees",
   "pageSize": 15
 }'
@@ -101,7 +101,7 @@ In testing, a single broad query like "COO at staffing companies in the US" retu
 **Primary — Fiber NL profile search (broad industry query):**
 
 ```bash
-orth run fiber /v1/natural-language-search/profiles --body '{
+orth run fiber -X POST /v1/natural-language-search/profiles --body '{
   "query": "{title_1} or {title_2} at a {industry} company in {location}",
   "pageSize": 15
 }'
@@ -112,7 +112,7 @@ This is the highest-yield approach. Returns decision makers across the industry 
 **Per-company fallback — Fiber NL profile search** (for companies not covered by the broad search):
 
 ```bash
-orth run fiber /v1/natural-language-search/profiles --body '{
+orth run fiber -X POST /v1/natural-language-search/profiles --body '{
   "query": "{title_1} or {title_2} at {company_name}",
   "pageSize": 5
 }'
@@ -193,7 +193,7 @@ orth run sixtyfour /enrich-lead --body '{
 **Fiber kitchen-sink enrichment** (if LinkedIn URL available — may return 400):
 
 ```bash
-orth run fiber /v1/kitchen-sink/person --body '{
+orth run fiber -X POST /v1/kitchen-sink/person --body '{
   "profileIdentifier": "{linkedin_url}"
 }'
 ```
@@ -205,7 +205,7 @@ Kitchen-sink can intermittently return 400 errors regardless of parameter format
 ```bash
 orth run hunter /v2/email-verifier --query 'email={email}'
 orth run tomba /v1/email-verifier --query 'email={email}'
-orth run fiber /v1/validate-email/single --body '{"email": "{email}"}'
+orth run fiber -X POST /v1/validate-email/single --body '{"email": "{email}"}'
 ```
 
 Take the consensus. Label each email as verified/unverified. Collect both work and personal emails.
@@ -245,7 +245,7 @@ orth run scrapegraph /v1/smartscraper --body '{
 **Optional — Fiber job search** (attempt, may be unreliable):
 
 ```bash
-orth run fiber /v1/job-search --body '{
+orth run fiber -X POST /v1/job-search --body '{
   "searchParams": {
     "job_titles": ["{signal_role}"],
     "industries": ["{industry}"]
@@ -353,7 +353,7 @@ Found {N} companies with {M} decision makers identified.
 
 ```bash
 # Step 2: Find staffing companies (parallel)
-orth run fiber /v1/natural-language-search/companies --body '{
+orth run fiber -X POST /v1/natural-language-search/companies --body '{
   "query": "staffing and recruiting companies in the United States with 100 or more employees",
   "pageSize": 20
 }'
@@ -366,7 +366,7 @@ orth run scrapegraph /v1/searchscraper --body '{
 }'
 
 # Step 4: Find COOs (parallel, per company)
-orth run fiber /v1/natural-language-search/profiles --body '{
+orth run fiber -X POST /v1/natural-language-search/profiles --body '{
   "query": "COO or Chief Operating Officer or Head of Operations at {company_name}",
   "pageSize": 3
 }'
@@ -389,13 +389,13 @@ orth run scrapegraph /v1/searchscraper --body '{
 
 ```bash
 # Companies
-orth run fiber /v1/natural-language-search/companies --body '{
+orth run fiber -X POST /v1/natural-language-search/companies --body '{
   "query": "fintech startups in the United States with 50 to 200 employees",
   "pageSize": 20
 }'
 
 # Decision makers (per company)
-orth run fiber /v1/natural-language-search/profiles --body '{
+orth run fiber -X POST /v1/natural-language-search/profiles --body '{
   "query": "VP Engineering or CTO at {company_name}",
   "pageSize": 3
 }'
@@ -413,13 +413,13 @@ orth run scrapegraph /v1/searchscraper --body '{
 
 ```bash
 # Companies
-orth run fiber /v1/natural-language-search/companies --body '{
+orth run fiber -X POST /v1/natural-language-search/companies --body '{
   "query": "healthcare companies in Texas with 500 or more employees",
   "pageSize": 20
 }'
 
 # Decision makers
-orth run fiber /v1/natural-language-search/profiles --body '{
+orth run fiber -X POST /v1/natural-language-search/profiles --body '{
   "query": "HR Director or VP Human Resources at {company_name}",
   "pageSize": 3
 }'
@@ -431,13 +431,13 @@ orth run fiber /v1/natural-language-search/profiles --body '{
 
 ```bash
 # Companies
-orth run fiber /v1/natural-language-search/companies --body '{
+orth run fiber -X POST /v1/natural-language-search/companies --body '{
   "query": "construction companies in California",
   "pageSize": 15
 }'
 
 # Decision makers
-orth run fiber /v1/natural-language-search/profiles --body '{
+orth run fiber -X POST /v1/natural-language-search/profiles --body '{
   "query": "Head of Safety or Safety Director or VP Safety at {company_name}",
   "pageSize": 3
 }'

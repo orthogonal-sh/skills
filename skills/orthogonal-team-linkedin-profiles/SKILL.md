@@ -103,7 +103,7 @@ Include a note about coverage: "Some profiles may show abbreviated names (e.g., 
 Only if the user requests more detail on specific people, use Fiber live-fetch per profile:
 
 ```bash
-orth run fiber /v1/linkedin-live-fetch/profile/single --body '{"identifier": "https://linkedin.com/in/USERNAME"}'
+orth run fiber -X POST /v1/linkedin-live-fetch/profile/single --body '{"identifier": "https://linkedin.com/in/USERNAME"}'
 ```
 
 This returns full work history, education, skills, and recent activity. Run these in parallel for multiple profiles.

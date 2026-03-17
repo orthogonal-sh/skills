@@ -33,13 +33,13 @@ Run ALL of these in parallel where possible. Collect everything, then compile.
 **Fiber kitchen-sink** (accepts LinkedIn URL, email, or name+company):
 ```bash
 # By LinkedIn URL:
-orth run fiber /v1/kitchen-sink/person --body '{"profileIdentifier": "https://linkedin.com/in/johndoe"}'
+orth run fiber -X POST /v1/kitchen-sink/person --body '{"profileIdentifier": "https://linkedin.com/in/johndoe"}'
 
 # By email:
-orth run fiber /v1/kitchen-sink/person --body '{"emailAddress": "john@stripe.com"}'
+orth run fiber -X POST /v1/kitchen-sink/person --body '{"emailAddress": "john@stripe.com"}'
 
 # By name + company:
-orth run fiber /v1/kitchen-sink/person --body '{
+orth run fiber -X POST /v1/kitchen-sink/person --body '{
   "personName": {"fullName": "John Doe"},
   "companyName": {"name": "Stripe"},
   "companyDomain": {"domain": "stripe.com"}
@@ -89,7 +89,7 @@ Nyne person/search and Sixtyfour enrich-lead (Section 2a) also return personal e
 ```bash
 orth run hunter /v2/email-verifier --query email=john@stripe.com
 orth run tomba /v1/email-verifier --query email=john@stripe.com
-orth run fiber /v1/validate-email/single --body '{"email": "john@stripe.com"}'
+orth run fiber -X POST /v1/validate-email/single --body '{"email": "john@stripe.com"}'
 ```
 Verify every email found — work and personal. Run verifiers in parallel across all emails.
 
@@ -104,12 +104,12 @@ orth run sixtyfour /find-phone --body '{
 
 **LinkedIn profile** (Fiber):
 ```bash
-orth run fiber /v1/linkedin-live-fetch/profile/single --body '{"identifier": "https://linkedin.com/in/johndoe"}'
+orth run fiber -X POST /v1/linkedin-live-fetch/profile/single --body '{"identifier": "https://linkedin.com/in/johndoe"}'
 ```
 
 **LinkedIn recent posts** (Fiber):
 ```bash
-orth run fiber /v1/linkedin-live-fetch/profile-posts --body '{"identifier": "https://linkedin.com/in/johndoe"}'
+orth run fiber -X POST /v1/linkedin-live-fetch/profile-posts --body '{"identifier": "https://linkedin.com/in/johndoe"}'
 ```
 
 **Twitter/X activity** (Nyne — async, returns tweets + engagement metrics):
@@ -158,14 +158,14 @@ orth run hunter /v2/domain-search --query domain=stripe.com
 
 **Fiber company data** (LinkedIn-enriched):
 ```bash
-orth run fiber /v1/kitchen-sink/company --body '{"companyDomain": {"domain": "stripe.com"}}'
+orth run fiber -X POST /v1/kitchen-sink/company --body '{"companyDomain": {"domain": "stripe.com"}}'
 ```
 
 ### 3b. Leadership & Employees
 
 **Key people by title:**
 ```bash
-orth run fiber /v1/natural-language-search/profiles --body '{"query": "CEO, CTO, CFO, COO, VP at Stripe", "pageSize": 10}'
+orth run fiber -X POST /v1/natural-language-search/profiles --body '{"query": "CEO, CTO, CFO, COO, VP at Stripe", "pageSize": 10}'
 ```
 
 
@@ -228,7 +228,7 @@ Cross-reference all API results. Merge overview, leadership, funding, products, 
 **Step 2: Person enrichment** (run in parallel):
 ```bash
 # Profile (3 sources)
-orth run fiber /v1/kitchen-sink/person --body '{"emailAddress": "john@stripe.com", "companyDomain": {"domain": "stripe.com"}}'
+orth run fiber -X POST /v1/kitchen-sink/person --body '{"emailAddress": "john@stripe.com", "companyDomain": {"domain": "stripe.com"}}'
 orth run nyne /person/search -d '{"query": "john stripe.com"}'
 orth run sixtyfour /enrich-lead --body '{"lead_info": {"email": "john@stripe.com", "company": "Stripe"}, "struct": {"work_email": "Work email", "personal_email": "Personal email", "phone": "Phone", "title": "Title", "bio": "Bio"}}'
 
@@ -238,7 +238,7 @@ orth run tomba /v1/enrich --query email=john@stripe.com
 # Verify work email (3 sources)
 orth run hunter /v2/email-verifier --query email=john@stripe.com
 orth run tomba /v1/email-verifier --query email=john@stripe.com
-orth run fiber /v1/validate-email/single --body '{"email": "john@stripe.com"}'
+orth run fiber -X POST /v1/validate-email/single --body '{"email": "john@stripe.com"}'
 # Also verify any personal emails found with the same 3 verifiers
 
 # Phone
@@ -251,8 +251,8 @@ orth run linkup /search --body '{"q": "john stripe.com", "depth": "deep", "outpu
 Once you have the person's full name + LinkedIn from Step 2, fire off:
 ```bash
 # LinkedIn profile + posts
-orth run fiber /v1/linkedin-live-fetch/profile/single --body '{"identifier": "LINKEDIN_URL"}'
-orth run fiber /v1/linkedin-live-fetch/profile-posts --body '{"identifier": "LINKEDIN_URL"}'
+orth run fiber -X POST /v1/linkedin-live-fetch/profile/single --body '{"identifier": "LINKEDIN_URL"}'
+orth run fiber -X POST /v1/linkedin-live-fetch/profile-posts --body '{"identifier": "LINKEDIN_URL"}'
 
 # Twitter (if discovered)
 orth run -X POST nyne /person/newsfeed -d '{"social_media_url": "https://x.com/TWITTER_HANDLE"}'
@@ -263,10 +263,10 @@ orth run -X POST nyne /person/newsfeed -d '{"social_media_url": "https://x.com/T
 # Overview
 orth run brand-dev /v1/brand/retrieve --query domain=stripe.com
 orth run hunter /v2/domain-search --query domain=stripe.com
-orth run fiber /v1/kitchen-sink/company --body '{"companyDomain": {"domain": "stripe.com"}}'
+orth run fiber -X POST /v1/kitchen-sink/company --body '{"companyDomain": {"domain": "stripe.com"}}'
 
 # Leadership
-orth run fiber /v1/natural-language-search/profiles --body '{"query": "CEO, CTO, CFO, COO, VP at Stripe", "pageSize": 10}'
+orth run fiber -X POST /v1/natural-language-search/profiles --body '{"query": "CEO, CTO, CFO, COO, VP at Stripe", "pageSize": 10}'
 
 # Funding
 orth run -X POST nyne /company/funding -d '{"company_name": "Stripe"}'

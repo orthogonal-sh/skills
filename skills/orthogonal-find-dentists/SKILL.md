@@ -116,7 +116,7 @@ Run in parallel for all practices with websites. This is the **most reliable met
 **Fallback — Fiber kitchen-sink** (if you found a LinkedIn URL for someone at the practice):
 
 ```bash
-orth run fiber /v1/kitchen-sink/person --body '{
+orth run fiber -X POST /v1/kitchen-sink/person --body '{
   "profileIdentifier": "https://linkedin.com/in/drmanali"
 }'
 ```
