@@ -1,201 +1,207 @@
 ---
 name: valyu
-description: Web search, AI answers, content extraction, and async deep research
+description: "Use when the agent needs to search the web, proprietary datasets, or news sources, get AI-generated answers grounded in search results, extract clean structured content from URLs, or run async deep research tasks with batch support via the Valyu API through orth."
 ---
 
-# Valyu - Search, Answer & Deep Research
+# Valyu
 
-Search the web, get AI answers, extract content, and run deep research tasks.
+Valyu provides four core capabilities through the `orth` CLI: real-time search across web, proprietary, and news datasets; AI-generated answers blended from search results; structured content extraction from URLs; and asynchronous deep research tasks that run for minutes to hours and produce reports, PDFs, or structured data. Deep research tasks support batching for parallel execution at scale.
 
-## Capabilities
+## Workflow
 
-- **Get Status**: Reference for getting deep research task status via GET /v1/deepresearch/tasks/{id}/status
-- **Update Task**: Reference for adding follow-up instructions to a running task via POST /v1/deepresearch/tasks/{id}/update
-- **Cancel Task**: Reference for cancelling a running task via POST /v1/deepresearch/tasks/{id}/cancel
-- **Delete Task**: Reference for deleting a task via DELETE /v1/deepresearch/tasks/{id}/delete
-- **Get Batch Status**: Reference for getting batch status via GET /v1/deepresearch/batches/
-- **List Batch Tasks**: Reference for listing tasks in a batch via GET /v1/deepresearch/batches//tasks
-- **Cancel Batch**: Reference for cancelling a batch via POST /v1/deepresearch/batches//cancel
-- **Search**: Reference for the Valyu Search endpoint to search the web, research, and proprietary datasets via POST /v1/search
-- **Answer**: Reference for the Valyu Answer endpoint that blends search results into AI-generated answers via POST /v1/answer
-- **Contents**: Reference for the Valyu Contents endpoint that extracts clean, structured content from any URL via POST /v1/contents
-- **Create Batch**: Reference for creating a new batch via POST /v1/deepresearch/batches
-- **Create Task**: Reference for creating a new deep research task via POST /v1/deepresearch/tasks
-- **Add Tasks to Batch**: Reference for adding tasks to a batch via POST /v1/deepresearch/batches//tasks
+1. **Determine the goal.** The agent identifies whether the user needs quick information retrieval (search/answer), content extraction from known URLs, or in-depth research on a complex topic.
+2. **Select the right capability:**
+   - For factual lookups or sourced results, the agent uses **Search** (`POST /v1/search`).
+   - For a synthesized, AI-generated response grounded in search results, the agent uses **Answer** (`POST /v1/answer`).
+   - For extracting clean text or screenshots from specific URLs, the agent uses **Contents** (`POST /v1/contents`).
+   - For complex, long-running research that requires deep analysis, the agent uses **Deep Research** (`POST /v1/deepresearch/tasks`).
+3. **Configure parameters.** The agent sets search type, filters, output format, and mode based on the user's requirements (see parameter references below).
+4. **Execute the request.** The agent runs the appropriate `orth api run valyu` command.
+5. **For deep research, monitor and manage.** Since tasks run asynchronously, the agent polls status, optionally adds follow-up instructions before the writing phase, and retrieves results when complete. For multiple related queries, the agent creates a batch and adds tasks to it.
+6. **Return results.** The agent presents search results, answers, extracted content, or completed research reports to the user.
 
-## Usage
+## Searching the Web, News, and Proprietary Datasets
 
-### Get Status
-Reference for getting deep research task status via GET /v1/deepresearch/tasks/{id}/status.
+The agent performs searches via `POST /v1/search`. Three search types are available: `web` for general web content, `proprietary` for Valyu's full-text multimodal indices (arxiv, pubmed, academic content), and `news` for news articles only.
 
-```bash
-orth api run valyu /v1/deepresearch/tasks/{id}/status
-```
-
-### Update Task
-Reference for adding follow-up instructions to a running task via POST /v1/deepresearch/tasks/{id}/update.
-
-Parameters:
-- instruction* (string) - Follow-up instruction to add to the running task. Must be submitted before the writing phase begins.
-
-```bash
-orth api run valyu /v1/deepresearch/tasks/{id}/update --body '{"query": "Updated research query"}'
-```
-
-### Cancel Task
-Reference for cancelling a running task via POST /v1/deepresearch/tasks/{id}/cancel.
-
-```bash
-orth api run valyu /v1/deepresearch/tasks/{id}/cancel
-```
-
-### Delete Task
-Reference for deleting a task via DELETE /v1/deepresearch/tasks/{id}/delete.
-
-```bash
-orth api run valyu /v1/deepresearch/tasks/{id}/delete
-```
-
-### Get Batch Status
-Reference for getting batch status via GET /v1/deepresearch/batches/.
-
-```bash
-orth api run valyu /v1/deepresearch/batches/{id}
-```
-
-### List Batch Tasks
-Reference for listing tasks in a batch via GET /v1/deepresearch/batches//tasks.
-
-```bash
-orth api run valyu /v1/deepresearch/batches/{id}/tasks
-```
-
-### Cancel Batch
-Reference for cancelling a batch via POST /v1/deepresearch/batches//cancel.
-
-```bash
-orth api run valyu /v1/deepresearch/batches/{id}/cancel
-```
-
-### Search
-Reference for the Valyu Search endpoint to search the web, research, and proprietary datasets via POST /v1/search.
-
-Parameters:
+**Parameters:**
 - query* (string) - The query string for the search
-- max_num_results (integer) - Maximum number of results to return (1-20 for standard API keys, up to 100 with a special API key)
-- search_type (enum<string>) - Type of search to perform.'web' searches and returns web content. 'proprietary' uses Valyu's full-text multimodal indicies (arxiv/pubmed/proprietary academic content). 'news' searches and returns only news articles.
-- fast_mode (boolean) - Enable fast mode for reduced latency but shorter results. Best for general purpose queries.
-- max_price (number<float>) - Maximum price in dollars for a thousand retrievals (CPM). Only applies when provided. If not provided, adjusts automatically based on search type and max number of results.
-- relevance_threshold (number<float>) - Minimum relevance score for results (0.0-1.0)
-- included_sources (string[]) - List of specific sources to search (URLs, domains or dataset names). When a URL or domain path is provided (e.g., 'https://valyu.ai/blog' or 'valyu.ai/blog'), only that specific path will be searched. For entire domains, use either the domain name (e.g., 'valyu.ai') or the base URL (e.g., 'https://valyu.ai').
-- excluded_sources (string[]) - List of specific sources to exclude from search (URLs, domains, or dataset names). When a URL or domain path is provided (e.g., 'https://valyu.ai/blog' or 'valyu.ai/blog'), only that specific path will be excluded. For entire domains, use either the domain name (e.g., 'valyu.ai') or the base URL (e.g., 'https://valyu.ai').
-- category (string) - Natural language category/guide phrase to help guide the search to the most relevant content. For example 'agentic use-cases
-- response_length (default:short) - Controls the length of content returned per result. Can be an integer for character count or predefined values: 'short' (25k), 'medium' (50k), 'large' (100k), 'max' (full)
-- country_code (string) - 2-letter ISO country code to bias search results to a specific country
-- is_tool_call (boolean) - Tunes retrieval process based on whether the API is being called by an AI agent as a tool call, or a user query.
-- start_date (string<date>) - Start date for time-filtered searches (YYYY-MM-DD)
-- end_date (string<date>) - End date for time-filtered searches (YYYY-MM-DD)
-- url_only (boolean) - When set to true, only returns URLs for results (no content). Only applies when search_type is 'web' or 'news'.
+- search_type (enum<string>) - `web`, `proprietary`, or `news`
+- max_num_results (integer) - Maximum results to return (1-20 standard, up to 100 with special API key)
+- fast_mode (boolean) - Reduced latency but shorter results; best for general purpose queries
+- max_price (number<float>) - Maximum price in dollars per thousand retrievals (CPM); auto-adjusts if omitted
+- relevance_threshold (number<float>) - Minimum relevance score (0.0-1.0)
+- included_sources (string[]) - Restrict search to specific URLs, domains, or dataset names (e.g., `valyu.ai/blog` searches only that path; `valyu.ai` searches the entire domain)
+- excluded_sources (string[]) - Exclude specific URLs, domains, or dataset names from results
+- category (string) - Natural language guide phrase to steer relevance (e.g., `agentic use-cases`)
+- response_length (default: `short`) - Content length per result: `short` (25k chars), `medium` (50k), `large` (100k), `max` (full), or a custom integer
+- country_code (string) - 2-letter ISO country code to bias results geographically
+- is_tool_call (boolean) - Tunes retrieval for AI agent tool calls vs. user queries
+- start_date (string<date>) - Filter results from this date (YYYY-MM-DD)
+- end_date (string<date>) - Filter results until this date (YYYY-MM-DD)
+- url_only (boolean) - Return only URLs (no content); applies to `web` and `news` search types
 
 ```bash
 orth api run valyu /v1/search --body '{"query": "AI agent frameworks comparison"}'
 ```
 
-### Answer
-Reference for the Valyu Answer endpoint that blends search results into AI-generated answers via POST /v1/answer.
+## Getting AI-Generated Answers
 
-Parameters:
+The agent uses `POST /v1/answer` to get an AI-synthesized response grounded in live search results. This is ideal when the user needs a direct answer rather than a list of sources.
+
+**Parameters:**
 - query* (string) - The search query
 - system_instructions (string) - Custom instructions for AI processing
-- structured_output (object) - JSON schema for structured output. When provided, enables JSON mode and returns structured data
+- structured_output (object) - JSON schema for structured output; enables JSON mode when provided
 - search_type (string) - Type of search to perform
-- fast_mode (boolean) - Enable fast mode for reduced latency but shorter results. Best for general purpose queries.
-- data_max_price (number) - Maximum price in dollars for data retrieval (search costs only, does not affect AI costs)
-- included_sources (string[]) - List of specific sources to search (URLs, domains or dataset names). When a URL or domain path is provided (e.g., 'https://valyu.ai/blog' or 'valyu.ai/blog'), only that specific path will be searched. For entire domains, use either the domain name (e.g., 'valyu.ai') or the base URL (e.g., 'https://valyu.ai').
-- excluded_sources (string[]) - List of specific sources to exclude from search (URLs, domains, or dataset names). When a URL or domain path is provided (e.g., 'https://valyu.ai/blog' or 'valyu.ai/blog'), only that specific path will be excluded. For entire domains, use either the domain name (e.g., 'valyu.ai') or the base URL (e.g., 'https://valyu.ai').
+- fast_mode (boolean) - Reduced latency but shorter results
+- data_max_price (number) - Maximum price in dollars for data retrieval (search costs only)
+- included_sources (string[]) - Restrict to specific URLs, domains, or dataset names
+- excluded_sources (string[]) - Exclude specific URLs, domains, or dataset names
 - start_date (string) - Start date filter (YYYY-MM-DD)
 - end_date (string) - End date filter (YYYY-MM-DD)
-- country_code (string) - 2-letter ISO country code to bias search results to a specific country
-- streaming (boolean) - Enable Server-Sent Events (SSE) streaming. When true, returns a stream of chunks: search_results first, then content deltas, then metadata, then [DONE].
+- country_code (string) - 2-letter ISO country code for geographic bias
+- streaming (boolean) - Enable SSE streaming; returns chunks in order: search_results, content deltas, metadata, then `[DONE]`
 
 ```bash
 orth api run valyu /v1/answer --body '{"query": "What are the best practices for building AI agents?"}'
 ```
 
-### Contents
-Reference for the Valyu Contents endpoint that extracts clean, structured content from any URL via POST /v1/contents.
+## Extracting Content from URLs
 
-Parameters:
-- urls* (string[]) - List of URLs to process (maximum 10 URLs per request)
-- response_length (default:short) - Content length configuration: "short": 25,000 characters (good for summaries) "medium": 50,000 characters (good for articles) "large": 100,000 characters (good for academic papers) "max": No character limit Custom integer: Specific character limit
-- max_price_dollars (number) - Maximum cost limit in dollars for the entire request. If not specified, defaults to 2x the estimated cost.
-- extract_effort (string) - Processing effort level: "normal": Fastest extraction speed (Fastest) "high": Enhanced extraction with better content quality and reliability (Slower) "auto": Automatically chooses the right effort level (Slowest)
-- screenshot (boolean) - Request page screenshots. When true, each result will include a screenshot_url field containing a pre-signed URL to a screenshot image of the page. Screenshots are captured during page rendering.
-- summary (boolean) - Toggle AI processing (false is default)
+The agent uses `POST /v1/contents` to extract clean, structured content from up to 10 URLs per request. The agent can control extraction quality, content length, and optionally capture page screenshots.
+
+**Parameters:**
+- urls* (string[]) - List of URLs to process (maximum 10 per request)
+- response_length (default: `short`) - `short` (25k chars, good for summaries), `medium` (50k, articles), `large` (100k, academic papers), `max` (no limit), or a custom integer
+- max_price_dollars (number) - Maximum cost in dollars for the entire request; defaults to 2x estimated cost if omitted
+- extract_effort (string) - `normal` (fastest), `high` (better quality, slower), or `auto` (automatically selects effort level)
+- screenshot (boolean) - When true, each result includes a `screenshot_url` with a pre-signed URL to a page screenshot
+- summary (boolean) - Toggle AI processing (default: false)
 
 ```bash
 orth api run valyu /v1/contents --body '{"urls": ["https://example.com/article"]}'
 ```
 
-### Create Batch
-Reference for creating a new batch via POST /v1/deepresearch/batches.
+## Running Deep Research Tasks
 
-Parameters:
-- name (string) - Optional name for the batch
-- mode (enum<string>) - DeepResearch mode for all tasks in this batch
-- output_formats ((string | object)[]) - Default output formats for all tasks (markdown, pdf, toon, or structured JSON schema). Cannot mix JSON schema with markdown/pdf. toon requires a JSON schema.
-- search (object) - Search configuration applied to all tasks in the batch (cannot be overridden per task)
-- webhook_url (string<uri>) - HTTPS URL to receive notifications when the batch completes
-- metadata (object) - Custom metadata for tracking and organization
+Deep research tasks run asynchronously and produce comprehensive reports. The agent creates a task, monitors its progress, and retrieves results when complete. Three modes control depth and duration.
 
-```bash
-orth api run valyu /v1/deepresearch/batches --body '{"name": "Competitor Research"}'
-```
+### Creating a Task
 
-### Create Task
-Reference for creating a new deep research task via POST /v1/deepresearch/tasks.
+The agent submits a research task via `POST /v1/deepresearch/tasks`.
 
-Parameters:
+**Parameters:**
 - query* (string) - Research query or task description
-- mode (string) - DeepResearch mode: fast: Ideal for quicker answers and lightweight research. Typically completes in ~2–5 minutes. standard: A balanced option for deeper insights without long wait times. Runs for ~10–20 minutes. heavy: Designed for in-depth, long-running research tasks. Can run for up to ~90 minutes.
-- model (string) - DeepResearch mode (deprecated, use 'mode' instead)
-- output_formats (string) - Output formats. Use ['markdown'], ['markdown', 'pdf'], or a JSON schema object for structured output. Cannot mix JSON schema with markdown/pdf.
+- mode (string) - `fast` (~2-5 min, lightweight), `standard` (~10-20 min, balanced), or `heavy` (up to ~90 min, in-depth)
+- model (string) - Deprecated; use `mode` instead
+- output_formats (string) - `['markdown']`, `['markdown', 'pdf']`, or a JSON schema object for structured output (cannot mix JSON schema with markdown/pdf)
 - strategy (string) - Natural language strategy instructions prepended to the system prompt
 - search (object) - Search configuration parameters
 - urls (string[]) - URLs to extract content from (max 10)
-- files (object[]) - File attachments (PDFs, images, documents). Max 10 files.
+- files (object[]) - File attachments: PDFs, images, documents (max 10)
 - mcp_servers (object[]) - MCP server configurations for custom tools (max 5 servers)
 - code_execution (boolean) - Enable/disable code execution during research
 - previous_reports (string[]) - Previous deep research IDs to use as context (max 3)
-- webhook_url (string) - HTTPS URL for webhook notifications. When provided, Valyu will POST the full task result to this URL when the task completes or fails. The request includes X-Webhook-Signature and X-Webhook-Timestamp headers for verification. HTTP URLs are rejected—only HTTPS is supported.
+- webhook_url (string) - HTTPS URL for webhook notifications; Valyu POSTs full results with `X-Webhook-Signature` and `X-Webhook-Timestamp` headers
 - metadata (object) - Custom metadata for tracking
-- deliverables (object[]) - Additional file outputs to generate from the research (CSV, Excel, PowerPoint, Word, PDF). Max 10 deliverables.
+- deliverables (object[]) - Additional file outputs: CSV, Excel, PowerPoint, Word, PDF (max 10)
 
 ```bash
-orth api run valyu /v1/deepresearch/tasks --body '{"query": "Comprehensive analysis of vector databases market"}'
+orth api run valyu /v1/deepresearch/tasks --body '{"query": "Comprehensive analysis of vector databases market", "mode": "standard"}'
 ```
 
-### Add Tasks to Batch
-Reference for adding tasks to a batch via POST /v1/deepresearch/batches//tasks.
+### Managing Tasks
 
-Parameters:
-- tasks* (object[]) - Array of tasks to add to the batch (1-100 tasks per request)
+The agent monitors and controls running tasks using these endpoints:
+
+- **Get status** via `GET /v1/deepresearch/tasks/{id}/status`:
+  ```bash
+  orth api run valyu /v1/deepresearch/tasks/{id}/status
+  ```
+- **Update a running task** via `POST /v1/deepresearch/tasks/{id}/update` (must be sent before the writing phase begins):
+  - Parameters: instruction* (string) - Follow-up instruction to add
+  ```bash
+  orth api run valyu /v1/deepresearch/tasks/{id}/update --body '{"instruction": "Also include pricing comparisons"}'
+  ```
+- **Cancel a task** via `POST /v1/deepresearch/tasks/{id}/cancel`:
+  ```bash
+  orth api run valyu /v1/deepresearch/tasks/{id}/cancel
+  ```
+- **Delete a task** via `DELETE /v1/deepresearch/tasks/{id}/delete`:
+  ```bash
+  orth api run valyu /v1/deepresearch/tasks/{id}/delete
+  ```
+
+### Batch Operations
+
+For running multiple research tasks in parallel, the agent creates a batch and adds tasks to it.
+
+- **Create a batch** via `POST /v1/deepresearch/batches`:
+  - Parameters: name (string), mode (enum<string>), output_formats ((string | object)[]), search (object) - applied to all tasks and cannot be overridden per task, webhook_url (string<uri>), metadata (object)
+  ```bash
+  orth api run valyu /v1/deepresearch/batches --body '{"name": "Competitor Research", "mode": "standard"}'
+  ```
+- **Add tasks to a batch** via `POST /v1/deepresearch/batches/{id}/tasks`:
+  - Parameters: tasks* (object[]) - Array of 1-100 tasks per request
+  ```bash
+  orth api run valyu /v1/deepresearch/batches/{id}/tasks --body '{"tasks": [{"query": "Company A analysis"}, {"query": "Company B analysis"}]}'
+  ```
+- **Get batch status** via `GET /v1/deepresearch/batches/{id}`:
+  ```bash
+  orth api run valyu /v1/deepresearch/batches/{id}
+  ```
+- **List batch tasks** via `GET /v1/deepresearch/batches/{id}/tasks`:
+  ```bash
+  orth api run valyu /v1/deepresearch/batches/{id}/tasks
+  ```
+- **Cancel a batch** via `POST /v1/deepresearch/batches/{id}/cancel`:
+  ```bash
+  orth api run valyu /v1/deepresearch/batches/{id}/cancel
+  ```
+
+## Examples
+
+### Example 1: Research a topic and get sourced results
+
+The user asks for recent news about a specific technology. The agent searches news sources with a date filter.
 
 ```bash
-orth api run valyu /v1/deepresearch/batches/{id}/tasks
+orth api run valyu /v1/search --body '{"query": "large language model regulation 2025", "search_type": "news", "max_num_results": 10, "start_date": "2025-01-01", "country_code": "US"}'
 ```
 
-## Use Cases
+The agent receives a list of news articles with titles, URLs, and content snippets, then summarizes the findings for the user.
 
-1. **Research Automation**: Comprehensive research on any topic
-2. **Content Intelligence**: Extract and analyze web content
-3. **Market Analysis**: Research markets and competitors
-4. **Due Diligence**: Gather information for decisions
-5. **Knowledge Base Building**: Collect structured information
+### Example 2: Extract and summarize content from competitor pages
+
+The user provides three competitor URLs and wants structured summaries. The agent extracts content with AI summarization enabled.
+
+```bash
+orth api run valyu /v1/contents --body '{"urls": ["https://competitor-a.com/pricing", "https://competitor-b.com/pricing", "https://competitor-c.com/pricing"], "response_length": "medium", "extract_effort": "high", "summary": true}'
+```
+
+The agent receives clean, structured content from each page with AI-generated summaries and presents a comparison to the user.
+
+### Example 3: Run deep research with batch processing
+
+The user needs market analysis reports for five product categories. The agent creates a batch and adds all tasks, then monitors completion.
+
+```bash
+# Step 1: Create the batch
+orth api run valyu /v1/deepresearch/batches --body '{"name": "Q1 Market Analysis", "mode": "standard"}'
+
+# Step 2: Add tasks (using the returned batch ID)
+orth api run valyu /v1/deepresearch/batches/{batch_id}/tasks --body '{"tasks": [{"query": "Cloud infrastructure market analysis 2025"}, {"query": "AI chipset market trends and forecast"}, {"query": "Edge computing adoption in enterprise"}]}'
+
+# Step 3: Monitor batch progress
+orth api run valyu /v1/deepresearch/batches/{batch_id}
+```
+
+The agent polls batch status periodically and retrieves individual task results as they complete.
 
 ## Discover More
 
-For full endpoint details and parameters:
+The agent can list all available Valyu endpoints and inspect specific endpoint details:
 
 ```bash
 orth api show valyu              # List all endpoints
