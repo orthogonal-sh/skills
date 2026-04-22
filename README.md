@@ -87,6 +87,9 @@ A skill is a `SKILL.md` file that tells an AI agent how to do something. When yo
 |-------|-------------|
 | [company-intel](skills/orthogonal-company-intel) | Full company reports: team, funding, products, news |
 | [company-funding-search](skills/orthogonal-company-funding-search) | Funding history, investors, investment details |
+| [fundable](skills/orthogonal-fundable) | VC data: companies, investors, deals, funding rounds with filters and AI semantic search |
+| [recent-funding-rounds](skills/orthogonal-recent-funding-rounds) | Find companies that raised recently by date, stage, industry, and size |
+| [investor-recent-investments](skills/orthogonal-investor-recent-investments) | Find an investment firm's most recent portfolio activity |
 | [competitor-research](skills/orthogonal-competitor-research) | Products, pricing, team, funding, and strategy |
 | [market-research](skills/orthogonal-market-research) | Market trends, size, competitors, growth |
 | [investor-research](skills/orthogonal-investor-research) | VC and angel investor portfolios, thesis, contact info |
