@@ -70,10 +70,10 @@ orth skills add weather && cat ~/.openclaw/skills/weather/SKILL.md
 The CLI installs skills for all supported agents:
 - **Cursor** — `~/.cursor/skills/`
 - **Claude Code** — `~/.claude/skills/`
-- **Copilot**
-- **Windsurf**
-- **Codex**
-- **Gemini**
+- **Copilot** — `~/.github/skills/`
+- **Windsurf** — `~/.codeium/windsurf/skills/`
+- **Codex** — `~/.agents/skills/`
+- **Gemini** — `~/.gemini/skills/`
 - **OpenClaw** — `~/.openclaw/skills/`
 - **Hermes** — `~/.hermes/skills/`
 
