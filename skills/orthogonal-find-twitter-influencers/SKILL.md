@@ -246,7 +246,7 @@ Launch ALL these Exa searches in parallel (multiple tool calls in a single messa
 ```bash
 # With LinkedIn URL (best match rate — ALWAYS prefer this):
 orth run fiber /v1/kitchen-sink/person --body '{
-  "profileIdentifier": "https://linkedin.com/in/janesmith"
+  "profileIdentifier": {"identifier": "linkedinUrl", "value": "https://www.linkedin.com/in/janesmith"}
 }'
 ```
 

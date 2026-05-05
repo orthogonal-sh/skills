@@ -117,7 +117,7 @@ Run in parallel for all practices with websites. This is the **most reliable met
 
 ```bash
 orth run fiber /v1/kitchen-sink/person --body '{
-  "profileIdentifier": "https://linkedin.com/in/drmanali"
+  "profileIdentifier": {"identifier": "linkedinUrl", "value": "https://www.linkedin.com/in/drmanali"}
 }'
 ```
 

@@ -194,7 +194,7 @@ orth run sixtyfour /enrich-lead --body '{
 
 ```bash
 orth run fiber /v1/kitchen-sink/person --body '{
-  "profileIdentifier": "{linkedin_url}"
+  "profileIdentifier": {"identifier": "linkedinUrl", "value": "{linkedin_url}"}
 }'
 ```
 

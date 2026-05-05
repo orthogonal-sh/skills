@@ -33,7 +33,7 @@ Run ALL of these in parallel where possible. Collect everything, then compile.
 **Fiber kitchen-sink** (accepts LinkedIn URL, email, or name+company):
 ```bash
 # By LinkedIn URL:
-orth run fiber /v1/kitchen-sink/person --body '{"profileIdentifier": "https://linkedin.com/in/johndoe"}'
+orth run fiber /v1/kitchen-sink/person --body '{"profileIdentifier": {"identifier": "linkedinUrl", "value": "https://www.linkedin.com/in/johndoe"}}'
 
 # By email:
 orth run fiber /v1/kitchen-sink/person --body '{"emailAddress": "john@stripe.com"}'
@@ -42,7 +42,7 @@ orth run fiber /v1/kitchen-sink/person --body '{"emailAddress": "john@stripe.com
 orth run fiber /v1/kitchen-sink/person --body '{
   "personName": {"fullName": "John Doe"},
   "companyName": {"name": "Stripe"},
-  "companyDomain": {"domain": "stripe.com"}
+  "companyDomain": {"value": "stripe.com"}
 }'
 ```
 
@@ -158,7 +158,7 @@ orth run hunter /v2/domain-search --query domain=stripe.com
 
 **Fiber company data** (LinkedIn-enriched):
 ```bash
-orth run fiber /v1/kitchen-sink/company --body '{"companyDomain": {"domain": "stripe.com"}}'
+orth run fiber /v1/kitchen-sink/company --body '{"companyDomain": {"value": "stripe.com"}}'
 ```
 
 ### 3b. Leadership & Employees
@@ -228,7 +228,7 @@ Cross-reference all API results. Merge overview, leadership, funding, products, 
 **Step 2: Person enrichment** (run in parallel):
 ```bash
 # Profile (3 sources)
-orth run fiber /v1/kitchen-sink/person --body '{"emailAddress": "john@stripe.com", "companyDomain": {"domain": "stripe.com"}}'
+orth run fiber /v1/kitchen-sink/person --body '{"emailAddress": "john@stripe.com", "companyDomain": {"value": "stripe.com"}}'
 orth run nyne /person/search -d '{"query": "john stripe.com"}'
 orth run sixtyfour /enrich-lead --body '{"lead_info": {"email": "john@stripe.com", "company": "Stripe"}, "struct": {"work_email": "Work email", "personal_email": "Personal email", "phone": "Phone", "title": "Title", "bio": "Bio"}}'
 
@@ -263,7 +263,7 @@ orth run -X POST nyne /person/newsfeed -d '{"social_media_url": "https://x.com/T
 # Overview
 orth run brand-dev /v1/brand/retrieve --query domain=stripe.com
 orth run hunter /v2/domain-search --query domain=stripe.com
-orth run fiber /v1/kitchen-sink/company --body '{"companyDomain": {"domain": "stripe.com"}}'
+orth run fiber /v1/kitchen-sink/company --body '{"companyDomain": {"value": "stripe.com"}}'
 
 # Leadership
 orth run fiber /v1/natural-language-search/profiles --body '{"query": "CEO, CTO, CFO, COO, VP at Stripe", "pageSize": 10}'

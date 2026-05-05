@@ -107,7 +107,7 @@ Parameters:
 - getDetailedWorkExperience (['boolean', 'null']) - Whether to include deep details about each work experience item, like the company's LinkedIn URL, website, location, etc. That'll be put in the detailedWorkExperience array. This slows down the API call, so only enable this if you need it.
 
 ```bash
-orth api run fiber /v1/kitchen-sink/person --body '{"linkedin_url": "https://linkedin.com/in/johndoe"}'
+orth api run fiber /v1/kitchen-sink/person --body '{"profileIdentifier": {"identifier": "linkedinUrl", "value": "https://www.linkedin.com/in/johndoe"}}'
 ```
 
 ### Kitchen sink company lookup
@@ -120,7 +120,7 @@ Parameters:
 - numCompanies (integer) - The number of companies you want to fetch. Companies are sorted by best match first.
 
 ```bash
-orth api run fiber /v1/kitchen-sink/company --body '{"domain": "openai.com"}'
+orth api run fiber /v1/kitchen-sink/company --body '{"companyDomain": {"value": "openai.com"}}'
 ```
 
 ### Investor search
@@ -159,7 +159,7 @@ Parameters:
 - value* (string) - The company's LinkedIn slug (e.g., 'microsoft'), LinkedIn URL (e.g., 'https://www.linkedin.com/company/microsoft' or 'https://www.linkedin.com/company/1441'), LinkedIn organization ID (e.g., '1441' for Google), or Fiber company ID (e.g., 'comp_1441')
 
 ```bash
-orth api run fiber /v1/linkedin-live-fetch/company/single --body '{"identifier": "https://linkedin.com/company/openai"}'
+orth api run fiber /v1/linkedin-live-fetch/company/single --body '{"type": "liUrl", "value": "https://www.linkedin.com/company/openai"}'
 ```
 
 ### People search
@@ -190,7 +190,7 @@ Parameters:
 - cursor (['string', 'null']) - Pagination cursor for fetching additional pages of posts
 
 ```bash
-orth api run fiber /v1/linkedin-live-fetch/post-comments --body '{"identifier": "https://linkedin.com/feed/update/urn:li:activity:1234"}'
+orth api run fiber /v1/linkedin-live-fetch/post-comments --body '{"contentId": "urn:li:activity:7123456789012345678"}'
 ```
 
 ### Company search
@@ -258,7 +258,7 @@ Parameters:
 - cursor (['string', 'null']) - Pagination cursor for fetching additional pages of posts
 
 ```bash
-orth api run fiber /v1/linkedin-live-fetch/post-reactions --body '{"identifier": "https://linkedin.com/feed/update/urn:li:activity:1234"}'
+orth api run fiber /v1/linkedin-live-fetch/post-reactions --body '{"contentId": "urn:li:activity:7123456789012345678", "reactionType": "LIKE"}'
 ```
 
 ## Use Cases

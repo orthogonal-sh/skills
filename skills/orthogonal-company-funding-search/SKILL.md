@@ -83,7 +83,7 @@ Best for: Finding companies by funding stage, industry, location, etc.
 ### Natural Language Company Search
 
 ```bash
-orth run -X POST fiber /v1/natural-language-search/companies -d '{"query":"AI companies that raised Series B in 2024","limit":10}'
+orth run -X POST fiber /v1/natural-language-search/companies -d '{"query":"AI companies that raised Series B in 2024","pageSize":10}'
 ```
 
 <details>
@@ -93,7 +93,7 @@ orth run -X POST fiber /v1/natural-language-search/companies -d '{"query":"AI co
 curl -X POST https://api.orth.sh/v1/run/fiber/v1/natural-language-search/companies \
   -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"query":"AI companies that raised Series B in 2024","limit":10}'
+  -d '{"query":"AI companies that raised Series B in 2024","pageSize":10}'
 ```
 </details>
 
@@ -102,7 +102,7 @@ curl -X POST https://api.orth.sh/v1/run/fiber/v1/natural-language-search/compani
 Search for investors/VCs (filter-based, not natural language):
 
 ```bash
-orth run -X POST fiber /v1/investor-search -d '{"searchParams":{},"limit":10}'
+orth run -X POST fiber /v1/investor-search -d '{"searchParams":{},"pageSize":10}'
 ```
 
 <details>
@@ -112,7 +112,7 @@ orth run -X POST fiber /v1/investor-search -d '{"searchParams":{},"limit":10}'
 curl -X POST https://api.orth.sh/v1/run/fiber/v1/investor-search \
   -H "Authorization: Bearer $ORTHOGONAL_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"searchParams":{},"limit":10}'
+  -d '{"searchParams":{},"pageSize":10}'
 ```
 </details>
 
