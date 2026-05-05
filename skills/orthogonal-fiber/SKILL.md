@@ -1,6 +1,6 @@
 ---
 name: fiber
-description: People, company, investor, and job search with LinkedIn data enrichment
+description: People, company, investor, job search, contact details reveal, and LinkedIn data enrichment
 ---
 
 # Fiber AI - People & Company Intelligence
@@ -26,6 +26,10 @@ Comprehensive search and enrichment for people, companies, investors, and jobs.
 - **Convert text into profile search filters**: Takes free-form text (e
 - **Job postings search**: Search for job postings with flexible filtering capabilities
 - **Fetch LinkedIn post reactions**: Fetches paginated reactions of a specific type for a LinkedIn post
+- **Reveal contact details (standard)**: Get work emails, personal emails, and phone numbers from a LinkedIn URL (sync, balanced speed/cost)
+- **Reveal contact details (turbo)**: Fastest contact reveal with premium enrichment stack (sync, higher cost)
+- **Reveal contact details (exhaustive)**: Maximum-coverage async contact reveal with all waterfall steps (start + poll)
+- **Batch contact details**: Reveal contact details for up to 2000 people in batch (start + poll)
 
 ## Usage
 
@@ -261,6 +265,97 @@ Parameters:
 orth api run fiber /v1/linkedin-live-fetch/post-reactions --body '{"identifier": "https://linkedin.com/feed/update/urn:li:activity:1234"}'
 ```
 
+### Reveal contact details (standard)
+Standard synchronous contact reveal — best balance of speed, cost, and coverage. Only requires a LinkedIn URL; profile details are resolved automatically.
+
+Parameters:
+- linkedinUrl* (string) - The person's LinkedIn URL (e.g. 'https://www.linkedin.com/in/william-h-gates') or a bare slug (e.g. 'william-h-gates')
+- enrichmentType (object) - What to request: `getWorkEmails` (bool), `getPersonalEmails` (bool), `getPhoneNumbers` (bool). All default to true.
+- validateEmails (boolean) - Whether to bounce-validate emails before returning them. Default true.
+
+Cost (per request): 5 credits (all phones + all emails), 2 credits (work email only), 2 credits (personal email only), 3 credits (phone only), 3 credits (all emails). Timeout: 2 minutes.
+
+```bash
+orth api run fiber /v1/contact-details/single --body '{"linkedinUrl": "https://www.linkedin.com/in/johndoe", "enrichmentType": {"getWorkEmails": true, "getPersonalEmails": false, "getPhoneNumbers": false}}'
+```
+
+### Reveal contact details (turbo)
+Fastest synchronous contact reveal — optimized for speed at a higher credit cost. Uses a premium enrichment stack for lowest latency.
+
+Parameters:
+- linkedinUrl* (string) - The person's LinkedIn URL or entity URN
+- enrichmentType (object) - Same as standard: `getWorkEmails`, `getPersonalEmails`, `getPhoneNumbers`
+
+Cost (per request): 7 credits (all phones + all emails), 3 credits (work email only), 3 credits (personal email only), 5 credits (phone only), 5 credits (all emails). Timeout: 90 seconds.
+
+```bash
+orth api run fiber /v1/contact-details/turbo/sync --body '{"linkedinUrl": "https://www.linkedin.com/in/johndoe", "enrichmentType": {"getWorkEmails": true, "getPersonalEmails": true, "getPhoneNumbers": true}}'
+```
+
+### Start exhaustive contact details reveal
+Maximum-coverage contact reveal — async. Runs all waterfall steps in parallel for the most comprehensive results. Call this to start, then poll with the returned task ID.
+
+Parameters:
+- linkedinUrl* (string) - Person's LinkedIn URL or slug
+- enrichmentType (object) - Same as standard: `getWorkEmails`, `getPersonalEmails`, `getPhoneNumbers`
+
+Cost (per request): 12 credits (all phones + all emails), 5 credits (work email only), 5 credits (personal email only), 4 credits (phone only), 9 credits (all emails).
+
+```bash
+orth api run fiber /v1/contact-details/exhaustive/start --body '{"linkedinUrl": "https://www.linkedin.com/in/johndoe", "enrichmentType": {"getWorkEmails": true, "getPersonalEmails": true, "getPhoneNumbers": true}}'
+```
+
+### Poll exhaustive contact details reveal result
+Polls the status of an exhaustive contact reveal task. Returns current status and, once complete, the full set of discovered emails and phone numbers.
+
+Parameters:
+- taskId* (string) - Task ID from the start endpoint
+
+```bash
+orth api run fiber /v1/contact-details/exhaustive/poll --body '{"taskId": "TASK_ID_FROM_START"}'
+```
+
+### Start batch contact details
+Starts fetching contact details for multiple people (up to 2000) in batch. Async — use polling endpoint to check progress and get results.
+
+Parameters:
+- personDetails* (array) - Array of objects, each with `linkedinUrl: {value: "https://www.linkedin.com/in/..."}`
+- enrichmentTypes (object) - Same as standard: `getWorkEmails`, `getPersonalEmails`, `getPhoneNumbers`
+
+Cost: Same as standard per person. Credits charged upfront (after deduping). Undelivered data is refunded.
+
+```bash
+orth api run fiber /v1/contact-details/batch/start --body '{
+  "personDetails": [
+    {"linkedinUrl": {"value": "https://www.linkedin.com/in/johndoe"}},
+    {"linkedinUrl": {"value": "https://www.linkedin.com/in/janedoe"}}
+  ],
+  "enrichmentTypes": {"getWorkEmails": true, "getPersonalEmails": true, "getPhoneNumbers": true}
+}'
+```
+
+### Poll batch contact details
+Polls a batch contact details task. Returns partial results as they complete. Call repeatedly until `done` is true.
+
+Parameters:
+- taskId* (string) - Task ID from the batch start endpoint
+- cursor (string|null) - Pagination cursor from previous poll response
+- take (integer) - Number of people to return per page (max 100, default 100)
+
+```bash
+orth api run fiber /v1/contact-details/batch/poll --body '{"taskId": "TASK_ID_FROM_START"}'
+```
+
+### Contact details — tips and gotchas
+
+- **Only person profile URLs** — only `/in/`, `/sales/lead/`, or `/talent/profile/` LinkedIn URLs are accepted. Company URLs (`/company/`) will produce a server error.
+- **Batch requires full URLs** — the batch endpoint enforces a strict regex and does NOT accept bare slugs. Use full LinkedIn URLs like `https://www.linkedin.com/in/slug`. The single/turbo/exhaustive endpoints accept bare slugs.
+- **`enrichmentType` controls billing, not filtering** — data may still appear from cached sources even when a type is set to `false`. You are only charged for the types you request.
+- **Email `status` field** — each returned email includes a `status`: `valid`, `risky`, `unknown`, or `invalid`. Use this to filter before outreach.
+- **Phone `type` field** — each returned phone includes a `type`: `mobile`, `other`, or `unknown`.
+- **Rate limits** — `/single`: 200/min, `/turbo/sync`: 120/min, `/exhaustive/start`: 120/min, `/batch/start`: 30/min, `/poll` endpoints: 240/min.
+- **402 = out of credits** — the 402 response includes an `outOfCreditsAlert` object with remaining balance and a URL to top up.
+
 ## Use Cases
 
 1. **Recruiting**: Find candidates matching specific criteria
@@ -268,6 +363,7 @@ orth api run fiber /v1/linkedin-live-fetch/post-reactions --body '{"identifier":
 3. **Fundraising**: Research investors in your space
 4. **Competitive Intel**: Track companies and their employees
 5. **Job Search**: Find relevant job opportunities
+6. **Contact Enrichment**: Reveal work/personal emails and phone numbers from LinkedIn profiles
 
 ## Discover More
 
