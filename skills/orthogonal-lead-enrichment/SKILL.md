@@ -9,21 +9,34 @@ Enrich partial lead data with emails, phone numbers, and company information usi
 
 ## Workflow
 
-### Step 1: Find Email Address
-Use Hunter to find email:
+### Step 1: Get Email + Phone from LinkedIn (Fiber — Best Option)
+If you have a LinkedIn URL, Fiber returns work emails, personal emails, and phone numbers in one call:
+
+```bash
+orth api run fiber /v1/contact-details/single --body '{
+  "linkedinUrl": "https://www.linkedin.com/in/johndoe",
+  "enrichmentType": {"getWorkEmails": true, "getPersonalEmails": true, "getPhoneNumbers": true},
+  "validateEmails": true
+}'
+```
+
+Cost: 5 credits for all contact types, 2 credits for work email only. Timeout: up to 2 minutes (use `/v1/contact-details/turbo/sync` if speed is critical — 7 credits, ~10s). If this returns results, you can skip Steps 2-4.
+
+### Step 2: Find Email Address (Fallback — when no LinkedIn URL)
+Use Hunter to find email by name + domain:
 
 ```bash
 orth api run hunter /v2/email-finder --query domain=stripe.com first_name=John last_name=Doe
 ```
 
-### Step 2: Verify Email
+### Step 3: Verify Email
 Verify the email is deliverable:
 
 ```bash
 orth api run hunter /v2/email-verifier --query 'email=john@stripe.com'
 ```
 
-### Step 3: Get More Contact Info
+### Step 4: Get More Contact Info
 Use Sixtyfour for additional enrichment:
 
 ```bash
@@ -38,7 +51,7 @@ orth api run sixtyfour /enrich-lead --body '{
 }'
 ```
 
-### Step 4: Find Phone Number
+### Step 5: Find Phone Number (if not from Fiber)
 Use Sixtyfour to find phone:
 
 ```bash
@@ -51,14 +64,14 @@ orth api run sixtyfour /find-phone --body '{
 }'
 ```
 
-### Step 5: Enrich Company Data
+### Step 6: Enrich Company Data
 Get detailed company information:
 
 ```bash
 orth api run hunter /v2/companies/find --query 'domain=stripe.com'
 ```
 
-### Step 6: Get LinkedIn Data
+### Step 7: Get LinkedIn Data
 Fetch real-time LinkedIn profile:
 
 ```bash

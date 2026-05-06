@@ -17,9 +17,20 @@ Find a person's email address when you know their name and company/domain. Essen
 
 ## How It Works
 
-Uses Hunter or Tomba APIs to find the most likely email address for a person based on their name and company domain.
+Uses Hunter, Tomba, or Fiber APIs to find email addresses. If you have a LinkedIn URL, Fiber's contact-details endpoint is the most reliable option and can also return phone numbers.
 
 ## Usage
+
+### Find Email with Fiber (Best when you have a LinkedIn URL)
+
+```bash
+orth api run fiber /v1/contact-details/single --body '{
+  "linkedinUrl": "https://www.linkedin.com/in/patrickcollison",
+  "enrichmentType": {"getWorkEmails": true, "getPersonalEmails": true, "getPhoneNumbers": false}
+}'
+```
+
+Returns work emails, personal emails, and optionally phone numbers in one call. Cost: 2 credits (work email only), 5 credits (all contact types). Note: may take up to 2 minutes; use `/v1/contact-details/turbo/sync` (3-7 credits) for faster results.
 
 ### Find Email with Hunter
 
@@ -94,8 +105,9 @@ orth run tomba /v1/email-finder --query 'domain=google.com&company=Google&first_
 
 ## Tips
 
+- **If you have a LinkedIn URL**, use Fiber first — highest match rate and returns verified emails
 - Use the company's main domain (not subdomains)
-- Try both Hunter and Tomba if one doesn't find results
+- Try multiple sources (Fiber, Hunter, Tomba) if one doesn't find results
 - Check confidence scores - high confidence means the email is likely correct
 - Always verify important emails before sending cold outreach
-- For LinkedIn profiles, Tomba's LinkedIn finder is very effective
+- For LinkedIn profiles, Fiber contact-details or Tomba's LinkedIn finder are most effective

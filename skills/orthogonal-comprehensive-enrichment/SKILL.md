@@ -62,11 +62,21 @@ orth run sixtyfour /enrich-lead --body '{
 }'
 ```
 
-### 2b. Email — Find & Verify
+### 2b. Email & Phone — Find & Verify
 
 Collect ALL emails — work AND personal. Many use cases (recruiting, etc.) need personal emails. Present each email with its type (work/personal) and verification status.
 
-**Find work email** (cross-reference Hunter + Tomba):
+**Fiber contact-details** (best when you have a LinkedIn URL — returns emails + phone in one call):
+```bash
+orth api run fiber /v1/contact-details/single --body '{
+  "linkedinUrl": "https://www.linkedin.com/in/johndoe",
+  "enrichmentType": {"getWorkEmails": true, "getPersonalEmails": true, "getPhoneNumbers": true},
+  "validateEmails": true
+}'
+```
+Cost: 5 credits for all types. Returns work emails, personal emails, and phone numbers. Use turbo tier (`/v1/contact-details/turbo/sync`) for faster results at higher cost (7 credits), or exhaustive tier (`/v1/contact-details/exhaustive/start` + `/poll`) for maximum coverage (12 credits).
+
+**Find work email** (cross-reference Hunter + Tomba — use when no LinkedIn URL):
 ```bash
 # Hunter (returns work email)
 orth run hunter /v2/email-finder --query domain=stripe.com first_name=John last_name=Doe
@@ -91,9 +101,18 @@ orth run hunter /v2/email-verifier --query email=john@stripe.com
 orth run tomba /v1/email-verifier --query email=john@stripe.com
 orth run fiber /v1/validate-email/single --body '{"email": "john@stripe.com"}'
 ```
-Verify every email found — work and personal. Run verifiers in parallel across all emails.
+Verify every email found — work and personal. Run verifiers in parallel across all emails. Note: Fiber contact-details turbo tier already returns email `status` (`valid`, `risky`, `unknown`, `invalid`) — you can skip re-verification for those.
 
 ### 2c. Phone
+**Fiber contact-details** (if not already retrieved in 2b):
+```bash
+orth api run fiber /v1/contact-details/single --body '{
+  "linkedinUrl": "https://www.linkedin.com/in/johndoe",
+  "enrichmentType": {"getWorkEmails": false, "getPersonalEmails": false, "getPhoneNumbers": true}
+}'
+```
+
+**Sixtyfour** (fallback — when no LinkedIn URL):
 ```bash
 orth run sixtyfour /find-phone --body '{
   "lead": {"first_name": "John", "last_name": "Doe", "company": "Stripe"}
@@ -232,6 +251,9 @@ orth run fiber /v1/kitchen-sink/person --body '{"emailAddress": "john@stripe.com
 orth run nyne /person/search -d '{"query": "john stripe.com"}'
 orth run sixtyfour /enrich-lead --body '{"lead_info": {"email": "john@stripe.com", "company": "Stripe"}, "struct": {"work_email": "Work email", "personal_email": "Personal email", "phone": "Phone", "title": "Title", "bio": "Bio"}}'
 
+# Contact details via Fiber (if LinkedIn URL is known — gets emails + phone in one call)
+orth api run fiber /v1/contact-details/single --body '{"linkedinUrl": "https://www.linkedin.com/in/johndoe", "enrichmentType": {"getWorkEmails": true, "getPersonalEmails": true, "getPhoneNumbers": true}, "validateEmails": true}'
+
 # Find personal email
 orth run tomba /v1/enrich --query email=john@stripe.com
 
@@ -241,7 +263,7 @@ orth run tomba /v1/email-verifier --query email=john@stripe.com
 orth run fiber /v1/validate-email/single --body '{"email": "john@stripe.com"}'
 # Also verify any personal emails found with the same 3 verifiers
 
-# Phone
+# Phone (Fiber contact-details above already returns phone; Sixtyfour as fallback)
 orth run sixtyfour /find-phone --body '{"lead": {"email": "john@stripe.com", "company": "Stripe"}}'
 
 # Research
@@ -355,7 +377,8 @@ Present Tier 2 with clear section headers. Include source labels on every data p
 - **Conflicts**: When APIs disagree, show both values with source labels — never silently pick one
 - **LinkedIn URLs**: Dramatically improve match rates for Fiber and Tomba — extract from any source that returns them
 - **All emails matter**: Always collect both work AND personal emails — recruiting and hiring use cases need personal emails. Label each as work/personal
-- **Email verification**: Verify every email (work + personal) with all 3 verifiers (Hunter, Tomba, Fiber) and take consensus
+- **Fiber contact-details**: If you have a LinkedIn URL, this is the fastest path to emails + phone in one call. Use standard tier for most cases, turbo for speed, exhaustive for high-value targets
+- **Email verification**: Verify every email (work + personal) with all 3 verifiers (Hunter, Tomba, Fiber) and take consensus. Fiber turbo/exhaustive tiers already include verification status
 - **Person → Company**: Person enrichment always cascades — once you identify their employer, run full company enrichment automatically
 - **Linkup deep search**: Best for personalization angles — recent talks, interviews, blog posts, news mentions
 - **Sixtyfour enrich-lead is slow**: Takes 30-60 seconds (AI web research). Fire it early, don't block on it — continue processing other API results and merge Sixtyfour data when it arrives
