@@ -351,7 +351,7 @@ orth api run fiber /v1/contact-details/batch/poll --body '{"taskId": "TASK_ID_FR
 - **Only person profile URLs** — only `/in/`, `/sales/lead/`, or `/talent/profile/` LinkedIn URLs are accepted. Company URLs (`/company/`) will produce a server error.
 - **Batch requires full URLs** — the batch endpoint enforces a strict regex and does NOT accept bare slugs. Use full LinkedIn URLs like `https://www.linkedin.com/in/slug`. The single/turbo/exhaustive endpoints accept bare slugs.
 - **`enrichmentType` controls billing, not filtering** — data may still appear from cached sources even when a type is set to `false`. You are only charged for the types you request.
-- **Email `status` field** — each returned email includes a `status`: `valid`, `risky`, `unknown`, or `invalid`. Use this to filter before outreach.
+- **Email `status` field** — turbo and exhaustive tiers return a `status` per email (`valid`, `risky`, `unknown`, `invalid`). Standard (`/single`) does not include `status`. Use this to filter before outreach when available.
 - **Phone `type` field** — each returned phone includes a `type`: `mobile`, `other`, or `unknown`.
 - **Rate limits** — `/single`: 200/min, `/turbo/sync`: 120/min, `/exhaustive/start`: 120/min, `/batch/start`: 30/min, `/poll` endpoints: 240/min.
 - **402 = out of credits** — the 402 response includes an `outOfCreditsAlert` object with remaining balance and a URL to top up.
