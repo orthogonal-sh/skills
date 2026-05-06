@@ -26,6 +26,11 @@ Comprehensive search and enrichment for people, companies, investors, and jobs.
 - **Convert text into profile search filters**: Takes free-form text (e
 - **Job postings search**: Search for job postings with flexible filtering capabilities
 - **Fetch LinkedIn post reactions**: Fetches paginated reactions of a specific type for a LinkedIn post
+- **Find person by GitHub username (single)**: Given a GitHub username, find the person's LinkedIn profile and extract work emails
+- **Start GitHub to LinkedIn batch lookup**: Convert up to 1000 GitHub usernames to LinkedIn profiles in batch
+- **Poll GitHub to LinkedIn batch results**: Poll for results of a batch GitHub-to-LinkedIn lookup
+- **Search stealth/ex-stealth founders**: Find people currently at stealth-mode companies, or who recently left stealth
+- **Search profiles from a job description**: Paste a raw job description and get matching LinkedIn profiles
 
 ## Usage
 
@@ -261,6 +266,90 @@ Parameters:
 orth api run fiber /v1/linkedin-live-fetch/post-reactions --body '{"identifier": "https://linkedin.com/feed/update/urn:li:activity:1234"}'
 ```
 
+### Find person by GitHub username (single)
+Given a GitHub username, find the person's LinkedIn profile and extract work emails. Synchronous — returns results directly.
+
+Parameters:
+- githubUsername* (string) - The GitHub username to look up (NOT a URL, just the username)
+- outputType (string) - What to extract: `linkedin` (find LinkedIn), `email` (extract work emails from commits), `both` (default). Cost varies by type.
+
+Cost: 5 credits (LinkedIn lookup) + 3 credits (email extraction). Use `outputType: "linkedin"` or `"email"` to pay for only what you need. Timeout: 2 minutes.
+
+```bash
+orth api run fiber /v1/github-to-linkedin/single --body '{"githubUsername": "torvalds", "outputType": "both"}'
+```
+
+Returns: `linkedInUrl`, `linkedInSlug`, `confidenceOutOf10` (0-10), `matchSource`, `extractedEmails[]`, `githubProfile` (name, company, bio, etc).
+
+### Start GitHub to LinkedIn batch lookup
+Convert up to 1000 GitHub usernames to LinkedIn profiles in batch. Async — use polling endpoint to get results.
+
+Parameters:
+- people* (array) - Array of objects with `githubUsername` (string). Max 1000.
+- outputType (string) - `linkedin`, `email`, or `both` (default: `linkedin`)
+- overallContext (string|null) - What the people have in common (e.g. "YC founders 2021 batch"). Helps disambiguate.
+
+Cost: 1 credit/person (linkedin only), 1 credit/person (email only), 2 credits/person (both). Rate limit: 30/min.
+
+```bash
+orth api run fiber /v1/github-to-linkedin/trigger --body '{
+  "people": [
+    {"githubUsername": "torvalds"},
+    {"githubUsername": "gaearon"}
+  ],
+  "outputType": "linkedin",
+  "overallContext": "Notable open source maintainers"
+}'
+```
+
+### Poll GitHub to LinkedIn batch results
+Poll for results of a batch GitHub-to-LinkedIn lookup.
+
+Parameters:
+- githubAgentRunId* (string) - Run ID from the trigger endpoint
+- cursor (string|null) - Pagination cursor from previous response
+- pageSize (number) - Results per page (default 10, max 100)
+
+```bash
+orth api run fiber /v1/github-to-linkedin/polling --body '{"githubAgentRunId": "RUN_ID_FROM_TRIGGER"}'
+```
+
+### Search stealth/ex-stealth founders
+Find people currently at stealth-mode companies, or who recently left stealth (launched). Supports profile search filters.
+
+Parameters:
+- stealthConfig* (object) - `{"mode": "in-stealth"}` for current stealth founders, or `{"mode": "left-stealth"}` for exited founders. Optional date filters available.
+- searchParams (object) - Standard people-search filters (location, keywords, job titles, etc.)
+- pageSize (integer) - Number of profiles per page (max 1000)
+- cursor (string|null) - Pagination cursor
+
+Cost: 1 credit per profile found. Rate limit: 120/min.
+
+```bash
+orth api run fiber /v1/stealth-founders/search --body '{"stealthConfig": {"mode": "in-stealth"}, "pageSize": 10}'
+```
+
+### Search profiles from a job description
+Paste a raw job description and get matching LinkedIn profiles. Ideal for sourcing candidates directly from a JD.
+
+Parameters:
+- search* (object) - For first page: `{"request": "initial", "query": "...full JD text..."}`. For next pages: `{"request": "next", "cursor": "..."}`
+- pageSize (integer) - Profiles per page (default 25, max 1000)
+- getDetailedEducation (boolean) - Include school details (slower)
+- getDetailedWorkExperience (boolean) - Include company details (slower)
+
+Cost: 2 credits per request + 1 credit per profile found. Rate limit: 120/min.
+
+```bash
+orth api run fiber /v1/natural-language-search/job-description-search --body '{
+  "search": {
+    "request": "initial",
+    "query": "Senior Backend Engineer with 5+ years experience in Go or Rust, distributed systems, Kubernetes. Remote-friendly, Series B startup."
+  },
+  "pageSize": 10
+}'
+```
+
 ## Use Cases
 
 1. **Recruiting**: Find candidates matching specific criteria
@@ -268,6 +357,8 @@ orth api run fiber /v1/linkedin-live-fetch/post-reactions --body '{"identifier":
 3. **Fundraising**: Research investors in your space
 4. **Competitive Intel**: Track companies and their employees
 5. **Job Search**: Find relevant job opportunities
+6. **Developer Sourcing**: Convert GitHub contributors to LinkedIn profiles with contact info
+7. **Stealth Tracking**: Find founders entering or exiting stealth mode
 
 ## Discover More
 
