@@ -17,7 +17,10 @@ Extract from the user's query:
 - **Location** (optional, default: US) — country, state, city, or region
 - **Company size** (optional) — employee count min/max, revenue floor
 - **Hiring signal roles** (optional) — job postings that indicate buying intent (e.g., "Scheduling Coordinator" = ops pain, "DevOps Engineer" = infra investment)
-- **Max results** (optional, default 15)
+- **Quantitative thresholds** (optional) — counts the user wants to filter on. Triggers Step 6b. Examples:
+  - "≥10 job postings" / "10+ openings" / "actively hiring at scale"
+  - "fewer than 10 recruiters" / "<5 engineers" / "small TA team"
+- **Max results** (optional, default 25 — bump higher when the user asks for "as many as possible" or specifies a count)
 - **Company/product** (optional) — if user mentions what they're selling, triggers competitive intel in Step 7
 
 ### 2. Find Target Companies
@@ -59,7 +62,9 @@ Nyne is async — POST returns a `request_id`, poll with GET until complete (5-2
 
 #### Scaling Up
 
-For 20+ results, run parallel searches by sub-region or sub-vertical:
+**Default behavior at higher counts.** When `Max results ≥ 20` (the new default of 25 lands here), run parallel searches by sub-region or sub-vertical *automatically* rather than treating it as opt-in. A single Fiber/Scrapegraph call caps at ~15–20 high-quality results before noise increases; splitting the query roughly doubles yield without a runtime penalty since the calls run in parallel.
+
+Example:
 
 ```bash
 # Parallel searches for different sub-regions
@@ -80,16 +85,22 @@ Merge results from all strategies. For each company, extract:
 - **Company name**
 - **Domain / website URL**
 - **Employee count** (primary size proxy — revenue data is often unavailable)
+- **Headcount source** — track which API the count came from. One of:
+  - `Fiber` — from `/v1/natural-language-search/companies` structured `employee_count`
+  - `Context.dev` — from `/v1/brand/retrieve`
+  - `Scrapegraph (web estimate)` — from `searchscraper` prose; least authoritative
+  - `LinkedIn (kitchen-sink)` — from Fiber `/v1/kitchen-sink/company` if available
+  - `Multiple` — when ≥2 sources agree within 20%
 - **Headquarters / location**
 - **LinkedIn company URL** (if returned by Fiber/Nyne)
 - **Description / industry tags**
 
-Deduplicate by domain first, then by normalized company name. Apply user's size filters — use employee count as revenue proxy when revenue is unavailable (100+ employees ≈ $10M+ revenue as rough heuristic).
+Deduplicate by domain first, then by normalized company name. Apply user's size filters — use employee count as revenue proxy when revenue is unavailable (100+ employees ≈ $10M+ revenue as rough heuristic). When two sources disagree on headcount, prefer Fiber > LinkedIn > Context.dev > Scrapegraph and label `headcount_source` accordingly. Surface the source in the final output (Step 8) so the user can judge confidence.
 
-Enrich top companies with Brand.dev for industry context:
+Enrich top companies with Context.dev for industry context:
 
 ```bash
-orth run brand-dev /v1/brand/retrieve --query 'domain={company_domain}'
+orth run context-dev /v1/brand/retrieve --query 'domain={company_domain}'
 ```
 
 ### 4. Find Decision Makers
@@ -137,6 +148,26 @@ orth run scrapegraph /v1/smartscraper --body '{
 ```
 
 If `/about` returns 422, fall back to the homepage URL.
+
+**Enterprise fallback** — only when the per-company Fiber profile search AND the `/about` + homepage scrapes all return empty. Common at large public companies (ManpowerGroup, ASGN, etc.) where C-suite info lives in press releases, annual reports, and proxy filings rather than indexable LinkedIn profiles or `/about` pages.
+
+Run both in parallel:
+
+```bash
+# 1. Web search for the named exec (pulls from press releases, 10-Ks, news)
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "Who is the {title} at {company_name}? Return name, title, and LinkedIn URL.",
+  "num_results": 5
+}'
+
+# 2. Fiber NL profile search resolved by domain instead of name
+orth run fiber /v1/natural-language-search/profiles --body '{
+  "query": "{title} at the company with website {company_domain}",
+  "pageSize": 5
+}'
+```
+
+If both still return empty, the company belongs in **Lower Priority** with `Decision Maker: — (enterprise — research manually via investor-relations page)`. Don't fabricate a decision maker.
 
 ### 5. Enrich Contacts
 
@@ -208,7 +239,27 @@ orth run tomba /v1/email-verifier --query 'email={email}'
 orth run fiber /v1/validate-email/single --body '{"email": "{email}"}'
 ```
 
-Take the consensus. Label each email as verified/unverified. Collect both work and personal emails.
+**Consensus rules** — count each service's positive/negative vote, then label:
+
+- `Verified (3/3)` — all three return positive (deliverable / valid).
+- `Verified (2/3)` — two of three positive. Safe to use; the third often disagrees on catch-all domains.
+- `Risky (1/3)` — only one positive. Show the email but flag it; do not call it verified.
+- `Unverified` — zero positive. Drop the email or label clearly.
+- `Accept-all` — when any service returns "accept_all" / "catch_all", record it as a separate flag rather than a positive vote (catch-all domains accept anything, so the result tells you nothing about the specific mailbox). A row with 1 positive + 1 accept-all + 1 negative is `Risky (1/3)`, not `Verified (2/3)`.
+
+Collect both work and personal emails. When both exist, prefer the work email for the primary contact field and surface the personal one in `Notes:`.
+
+**Person-level location check** — only when the user specified a location filter. Without this step, global execs at multinationals (e.g. a "COO, Randstad Enterprise" with a `@randstad.de` mailbox) slip into US-only lists.
+
+For each decision maker, downgrade to **Lower Priority** with an explanatory note when **any** of these are true:
+
+- LinkedIn `location` (returned by Fiber profile search) is outside the user's region.
+- Verified email's domain ccTLD doesn't match the user's region (`.de`, `.uk`, `.in`, `.com.au`, etc. for a US-only query) **AND** the person's title contains a global/regional scope keyword (`Global`, `International`, `EMEA`, `APAC`, `LATAM`, `EU`, `UK`, `Worldwide`).
+- Sixtyfour `enrich-lead` returns a `location` field outside the region.
+
+Don't silently drop them — surface in Lower Priority with `Notes: LinkedIn location: {country}; verified email is {.cctld} domain — may not be the {region}-specific decision maker.` The user may still want global execs at multinationals; let them decide.
+
+When the email ccTLD is foreign but the title shows no global scope (e.g. "COO" not "Global COO"), it's almost certainly the wrong entity at a smaller firm — drop the email but keep the LinkedIn URL with a flag.
 
 ### 6. Hiring / Intent Signals
 
@@ -260,6 +311,56 @@ Note: Fiber job-search with searchParams filters can return 400 errors. Attempt 
 
 **Growth signals:** Check Fiber company data (from Step 4 kitchen-sink results) for headcount growth percentage. Companies growing >20% YoY are additional high-priority signals.
 
+### 6b. Quantitative Signals (when user asks for counts)
+
+**Trigger this mode** when the request includes thresholds on counts: `≥N job postings`, `more than N {role}`, `fewer than N {role}`, `at least N openings`, `<10 recruiters`, `10+ openings`, etc. Step 6's boolean "is this company hiring?" check isn't enough — the user wants the actual count to filter on.
+
+Two primitives, run per company in parallel:
+
+**(a) Job-posting count per company:**
+
+```bash
+# Scrapegraph searchscraper to enumerate open postings
+orth run scrapegraph /v1/searchscraper --body '{
+  "user_prompt": "List every open job posting at {company_name} with title and location. Include all roles.",
+  "num_results": 25
+}'
+
+# Tavily to find the careers page, then smartscraper to count listings
+orth run tavily /search --body '{
+  "query": "{company_name} careers open positions",
+  "max_results": 5
+}'
+
+orth run scrapegraph /v1/smartscraper --body '{
+  "website_url": "{careers_page_url}",
+  "user_prompt": "List every open job posting on this page with title and location. Return as a JSON array."
+}'
+
+# Optional supplemental — Fiber job-search filtered by company
+orth run fiber /v1/job-search --body '{
+  "searchParams": {"company_id": "{fiber_company_id}"},
+  "pageSize": 50
+}'
+```
+
+Take `count(distinct postings)` from the union (dedup by title + location). Apply the user's threshold (e.g. `≥10`).
+
+**(b) Employees-by-title count per company:**
+
+```bash
+orth run fiber /v1/natural-language-search/profiles --body '{
+  "query": "{title_keyword_1} or {title_keyword_2} at {company_name}",
+  "pageSize": 30
+}'
+```
+
+For the perfectly.so case, `title_keyword_1` = "Recruiter", `title_keyword_2` = "Talent Acquisition". Count returned profiles. Apply the user's threshold (e.g. `<10`).
+
+**Critical caveat:** Fiber profile counts are a *floor*, not exact — only public LinkedIn profiles are indexed. A company showing "4 recruiters" via Fiber may have 7 in reality (some with private profiles, some not on LinkedIn). Always describe results as "≥4 recruiters found on LinkedIn" rather than "exactly 4." For thresholds like `<10`, this is usually fine; for tight thresholds (`<3`), warn the user that floor counts are unreliable.
+
+**Output:** add a "Quant Signal" column in the High Priority table populated with `{posting_count} postings, ≥{recruiter_count} recruiters` so the threshold logic is auditable on the result.
+
 ### 7. Competitive Intel (Optional)
 
 **Only run if the user mentioned their product/company.** Research what the user sells and check prospects for competing solutions.
@@ -296,19 +397,21 @@ Output a prioritized table with **full URLs** (not markdown links — users need
 Found {N} companies with {M} decision makers identified.
 
 ### High Priority — Hiring Signal Detected
-| # | Company | Website | Employees | Decision Maker | Title | Email | Email Status | Phone | Signal |
-|---|---------|---------|-----------|---------------|-------|-------|-------------|-------|--------|
-| 1 | Acme Staffing | https://acmestaffing.com | 250 | Jane Smith | COO | jane@acme.com | Verified | (555) 123-4567 | Hiring Scheduling Coordinator |
+| # | Company | Website | Employees (source) | Decision Maker | Title | Email | Email Status | Phone | Signal | Quant Signal |
+|---|---------|---------|--------------------|---------------|-------|-------|-------------|-------|--------|--------------|
+| 1 | Acme Staffing | https://acmestaffing.com | 250 (Fiber) | Jane Smith | COO | jane@acme.com | Verified (3/3) | (555) 123-4567 | Hiring Scheduling Coordinator | 12 postings, ≥4 recruiters |
 
 ### Medium Priority — Matches ICP, No Signal Detected
-| # | Company | Website | Employees | Decision Maker | Title | Email | Email Status | Phone | Notes |
-|---|---------|---------|-----------|---------------|-------|-------|-------------|-------|-------|
-| 5 | Beta Corp | https://betacorp.com | 180 | John Doe | VP Ops | john@beta.com | Verified | — | Growing 25% YoY |
+| # | Company | Website | Employees (source) | Decision Maker | Title | Email | Email Status | Phone | Notes |
+|---|---------|---------|--------------------|---------------|-------|-------|-------------|-------|-------|
+| 5 | Beta Corp | https://betacorp.com | 180 (Multiple) | John Doe | VP Ops | john@beta.com | Verified (2/3) | — | Growing 25% YoY |
 
 ### Lower Priority — Limited Data or Below Target Size
-| # | Company | Website | Employees | Decision Maker | Title | Email | Phone | Notes |
-|---|---------|---------|-----------|---------------|-------|-------|-------|-------|
-| 10 | Small Co | https://smallco.com | 85 | — | — | — | — | Below 100 employee threshold |
+| # | Company | Website | Employees (source) | Decision Maker | Title | Email | Phone | Notes |
+|---|---------|---------|--------------------|---------------|-------|-------|-------|-------|
+| 10 | Small Co | https://smallco.com | 85 (Scrapegraph) | — | — | — | — | Below 100 employee threshold |
+| 11 | Globex | https://globex.com | 5,000 (Fiber) | Maria Schmidt | COO, EMEA | maria.schmidt@globex.de | Risky (1/3) | — | LinkedIn location: Germany; .de domain — may not be the US decision maker |
+| 12 | MegaCorp | https://megacorp.com | 28,000 (Fiber) | — | — | — | — | Enterprise — research manually via investor-relations page |
 
 ### Summary
 - **Companies found**: {N}
@@ -343,7 +446,7 @@ Found {N} companies with {M} decision makers identified.
 | **Sixtyfour** | `/find-email` | AI email finder |
 | **Sixtyfour** | `/find-phone` | AI phone finder |
 | **Sixtyfour** | `/enrich-lead` | AI deep enrichment |
-| **Brand.dev** | `/v1/brand/retrieve` | Company overview/context |
+| **Context.dev** | `/v1/brand/retrieve` | Company overview/context |
 
 ## Examples
 
@@ -468,3 +571,6 @@ orth run fiber /v1/natural-language-search/profiles --body '{
 - **Hunter email-verifier is fast and reliable** — Even when Hunter email-finder returns null, Hunter email-verifier is excellent for verifying emails found by Sixtyfour. Every email verified came back with score 89-100
 - **Include title variations** — Search for "COO OR Chief Operating Officer OR Head of Operations" to catch different title formats at the same level
 - **Filter Fiber company results by industry** — Use `li_industries`, `crunchbase_categories`, or keywords in `short_description` to filter out irrelevant companies from Fiber NL results
+- **Quantitative profile counts are a floor, not exact** — When using Step 6b to count employees by title (e.g. "fewer than 10 recruiters"), Fiber only sees public LinkedIn profiles. Real headcount is usually higher. Describe results as "≥N found on LinkedIn" and warn the user when their threshold is tight (`<3`)
+- **Surface headcount source on every row** — Show employee count alongside its source: `8,000+ (Fiber)`, `Est. 100+ (Scrapegraph)`. Without source attribution, "Est. 100+" looks like a guess and undermines the whole result
+- **Verify person-level location, not just company location** — A multinational like Randstad has US presence but a global exec may have a `.de` mailbox. Always check LinkedIn location, email ccTLD, and Sixtyfour location against the user's region filter — surface mismatches in Lower Priority with a note rather than silently including or dropping them
