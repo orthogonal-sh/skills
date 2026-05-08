@@ -203,7 +203,17 @@ orth run sixtyfour /find-phone --body '{
 
 Sixtyfour find-phone had a 100% hit rate in testing (10/10 prospects).
 
-**Deep enrichment** (fire early, don't block — takes 30-60s):
+**Deep enrichment** — conditional fallback, takes 30-60s:
+
+This call is the slowest in the enrichment phase. **Only fire it when `find-email` OR `find-phone` returned null** for a given prospect — when both succeeded, the data is already in hand and `enrich-lead` is pure dead weight. Skipping it on the common path saves ~30s per prospect.
+
+Run pattern:
+1. Fire `find-email` + `find-phone` in parallel (already done above; these are fast).
+2. Once both return, check the results.
+3. If both succeeded with valid data → **skip** `enrich-lead` entirely.
+4. If either is null/missing → fire `enrich-lead` now to fill the gap. Use its `work_email` / `personal_email` / `phone` fields.
+
+When fired, the call:
 
 ```bash
 orth run sixtyfour /enrich-lead --body '{
@@ -220,6 +230,8 @@ orth run sixtyfour /enrich-lead --body '{
   }
 }'
 ```
+
+(If you specifically need the `bio` or `title` fields and the cheap finders don't surface them, fire `enrich-lead` regardless — but for a contact-info-only run, the conditional skip is the right default.)
 
 **Fiber kitchen-sink enrichment** (if LinkedIn URL available — may return 400):
 
