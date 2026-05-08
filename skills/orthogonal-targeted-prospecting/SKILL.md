@@ -30,9 +30,9 @@ Run 2-3 search strategies **in parallel**:
 **Strategy A — Scrapegraph searchscraper** (primary — most targeted results):
 
 ```bash
-orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "top {industry} companies in {location} with company name, website, employee count, and headquarters",
-  "num_results": 15
+orth run scrapegraphai /api/search --body '{
+  "query": "top {industry} companies in {location} with company name, website, employee count, and headquarters",
+  "numResults": 15
 }'
 ```
 
@@ -87,7 +87,7 @@ Merge results from all strategies. For each company, extract:
 - **Employee count** (primary size proxy — revenue data is often unavailable)
 - **Headcount source** — track which API the count came from. One of:
   - `Fiber` — from `/v1/natural-language-search/companies` structured `employee_count`
-  - `Context.dev` — from `/v1/brand/retrieve`
+  - `Brand.dev` — from `/v1/brand/retrieve`
   - `Scrapegraph (web estimate)` — from `searchscraper` prose; least authoritative
   - `LinkedIn (kitchen-sink)` — from Fiber `/v1/kitchen-sink/company` if available
   - `Multiple` — when ≥2 sources agree within 20%
@@ -95,12 +95,12 @@ Merge results from all strategies. For each company, extract:
 - **LinkedIn company URL** (if returned by Fiber/Nyne)
 - **Description / industry tags**
 
-Deduplicate by domain first, then by normalized company name. Apply user's size filters — use employee count as revenue proxy when revenue is unavailable (100+ employees ≈ $10M+ revenue as rough heuristic). When two sources disagree on headcount, prefer Fiber > LinkedIn > Context.dev > Scrapegraph and label `headcount_source` accordingly. Surface the source in the final output (Step 8) so the user can judge confidence.
+Deduplicate by domain first, then by normalized company name. Apply user's size filters — use employee count as revenue proxy when revenue is unavailable (100+ employees ≈ $10M+ revenue as rough heuristic). When two sources disagree on headcount, prefer Fiber > LinkedIn > Brand.dev > Scrapegraph and label `headcount_source` accordingly. Surface the source in the final output (Step 8) so the user can judge confidence.
 
-Enrich top companies with Context.dev for industry context:
+Enrich top companies with Brand.dev for industry context:
 
 ```bash
-orth run context-dev /v1/brand/retrieve --query 'domain={company_domain}'
+orth run brand-dev /v1/brand/retrieve --query 'domain={company_domain}'
 ```
 
 ### 4. Find Decision Makers
@@ -141,9 +141,9 @@ orth run nyne /person/search -d '{"query": "{title} at {company_name} {location}
 **Fallback — Scrapegraph website scrape** (scrape the company's leadership page):
 
 ```bash
-orth run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://{company_domain}/about",
-  "user_prompt": "Extract names, titles, and any contact info for the leadership team. Identify anyone with these titles: {target_titles}"
+orth run scrapegraphai /api/extract --body '{
+  "url": "https://{company_domain}/about",
+  "prompt": "Extract names, titles, and any contact info for the leadership team. Identify anyone with these titles: {target_titles}"
 }'
 ```
 
@@ -155,9 +155,9 @@ Run both in parallel:
 
 ```bash
 # 1. Web search for the named exec (pulls from press releases, 10-Ks, news)
-orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "Who is the {title} at {company_name}? Return name, title, and LinkedIn URL.",
-  "num_results": 5
+orth run scrapegraphai /api/search --body '{
+  "query": "Who is the {title} at {company_name}? Return name, title, and LinkedIn URL.",
+  "numResults": 5
 }'
 
 # 2. Fiber NL profile search resolved by domain instead of name
@@ -280,9 +280,9 @@ When the email ccTLD is foreign but the title shows no global scope (e.g. "COO" 
 **Primary — Scrapegraph searchscraper for hiring signals:**
 
 ```bash
-orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "{industry} companies hiring {signal_role} in {location}, list company name, job title, and location",
-  "num_results": 15
+orth run scrapegraphai /api/search --body '{
+  "query": "{industry} companies hiring {signal_role} in {location}, list company name, job title, and location",
+  "numResults": 15
 }'
 ```
 
@@ -299,9 +299,9 @@ orth run tavily /search --body '{
 Then scrape top job board results for company names:
 
 ```bash
-orth run scrapegraph /v1/smartscraper --body '{
-  "website_url": "{job_board_url}",
-  "user_prompt": "Extract all company names hiring for {signal_role}, with job title and location"
+orth run scrapegraphai /api/extract --body '{
+  "url": "{job_board_url}",
+  "prompt": "Extract all company names hiring for {signal_role}, with job title and location"
 }'
 ```
 
@@ -333,9 +333,9 @@ Two primitives, run per company in parallel:
 
 ```bash
 # Scrapegraph searchscraper to enumerate open postings
-orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "List every open job posting at {company_name} with title and location. Include all roles.",
-  "num_results": 25
+orth run scrapegraphai /api/search --body '{
+  "query": "List every open job posting at {company_name} with title and location. Include all roles.",
+  "numResults": 25
 }'
 
 # Tavily to find the careers page, then smartscraper to count listings
@@ -344,9 +344,9 @@ orth run tavily /search --body '{
   "max_results": 5
 }'
 
-orth run scrapegraph /v1/smartscraper --body '{
-  "website_url": "{careers_page_url}",
-  "user_prompt": "List every open job posting on this page with title and location. Return as a JSON array."
+orth run scrapegraphai /api/extract --body '{
+  "url": "{careers_page_url}",
+  "prompt": "List every open job posting on this page with title and location. Return as a JSON array."
 }'
 
 # Optional supplemental — Fiber job-search filtered by company
@@ -379,21 +379,21 @@ For the perfectly.so case, `title_keyword_1` = "Recruiter", `title_keyword_2` = 
 
 ```bash
 # Research user's product
-orth run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://{user_company_domain}",
-  "user_prompt": "What does this company sell? Describe the product in one sentence."
+orth run scrapegraphai /api/extract --body '{
+  "url": "https://{user_company_domain}",
+  "prompt": "What does this company sell? Describe the product in one sentence."
 }'
 
 # Find competitors
-orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "competitors and alternatives to {user_product} for {industry}",
-  "num_results": 5
+orth run scrapegraphai /api/search --body '{
+  "query": "competitors and alternatives to {user_product} for {industry}",
+  "numResults": 5
 }'
 
 # Check each prospect's website for competing products (parallel)
-orth run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://{prospect_domain}",
-  "user_prompt": "Does this company use or mention: {competitor_1}, {competitor_2}, {competitor_3}? Check page content, footer, and embedded widgets."
+orth run scrapegraphai /api/extract --body '{
+  "url": "https://{prospect_domain}",
+  "prompt": "Does this company use or mention: {competitor_1}, {competitor_2}, {competitor_3}? Check page content, footer, and embedded widgets."
 }'
 ```
 
@@ -447,8 +447,8 @@ Found {N} companies with {M} decision makers identified.
 | **Fiber** | `/v1/validate-email/single` | Email verification |
 | **Nyne** | `/company/search` | Async company search by industry |
 | **Nyne** | `/person/search` | Async person search by company + role |
-| **Scrapegraph** | `/v1/searchscraper` | Web search for companies + hiring signals |
-| **Scrapegraph** | `/v1/smartscraper` | Scrape websites for leadership/competitive intel |
+| **ScrapeGraphAI** | `/api/search` | Web search + scrape for companies + hiring signals |
+| **ScrapeGraphAI** | `/api/extract` | LLM extraction from a URL for leadership / competitive intel |
 | **Tavily** | `/search` | Supplemental web search for job boards |
 | **Hunter** | `/v2/email-finder` | Find email by name + domain |
 | **Hunter** | `/v2/email-verifier` | Email verification |
@@ -458,7 +458,7 @@ Found {N} companies with {M} decision makers identified.
 | **Sixtyfour** | `/find-email` | AI email finder |
 | **Sixtyfour** | `/find-phone` | AI phone finder |
 | **Sixtyfour** | `/enrich-lead` | AI deep enrichment |
-| **Context.dev** | `/v1/brand/retrieve` | Company overview/context |
+| **Brand.dev** | `/v1/brand/retrieve` | Company overview/context |
 
 ## Examples
 
@@ -475,9 +475,9 @@ orth run fiber /v1/natural-language-search/companies --body '{
 
 orth run nyne /company/search -d '{"query": "staffing recruiting firms US 100+ employees"}'
 
-orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "top staffing and recruiting companies in the US with company name, website, employee count, and headquarters",
-  "num_results": 15
+orth run scrapegraphai /api/search --body '{
+  "query": "top staffing and recruiting companies in the US with company name, website, employee count, and headquarters",
+  "numResults": 15
 }'
 
 # Step 4: Find COOs (parallel, per company)
@@ -492,9 +492,9 @@ orth run sixtyfour /find-email --body '{"lead": {"first_name": "{first}", "last_
 orth run sixtyfour /find-phone --body '{"lead": {"first_name": "{first}", "last_name": "{last}", "company": "{company}"}}'
 
 # Step 6: Hiring signals
-orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "staffing companies hiring Scheduling Coordinator or Recruiting Coordinator in the US, list company name, job title, and location",
-  "num_results": 15
+orth run scrapegraphai /api/search --body '{
+  "query": "staffing companies hiring Scheduling Coordinator or Recruiting Coordinator in the US, list company name, job title, and location",
+  "numResults": 15
 }'
 ```
 
@@ -516,9 +516,9 @@ orth run fiber /v1/natural-language-search/profiles --body '{
 }'
 
 # Hiring signal
-orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "fintech companies hiring DevOps Engineer or Site Reliability Engineer in the US, list company name and job title",
-  "num_results": 15
+orth run scrapegraphai /api/search --body '{
+  "query": "fintech companies hiring DevOps Engineer or Site Reliability Engineer in the US, list company name and job title",
+  "numResults": 15
 }'
 ```
 
