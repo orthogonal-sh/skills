@@ -3,468 +3,260 @@ name: targeted-prospecting
 description: Build a prospect list of companies with decision makers, verified contact info, and hiring/intent signals. Use when asked to find leads by industry, build an account list with specific titles, prospect companies that are actively hiring, or create a targeted outreach list filtered by company size, location, and hiring activity.
 ---
 
-# Targeted Prospecting — Industry + Decision Makers + Hiring Signals
+# Targeted Prospecting — Lean
 
-Build a prioritized prospect list for any industry. Finds companies matching your ICP, identifies decision makers by title, enriches with verified contact info, and layers on hiring/intent signals to prioritize who's ready to buy now.
+Build a prioritized prospect list for any industry. Finds decision makers at companies matching your ICP, reveals verified contact info, and layers on hiring signals to prioritize who's ready to buy now.
+
+This skill orchestrates **4 APIs**: **Apollo** (people search + reveal + job postings), **Hunter** (email verification), **Sixtyfour** (phone discovery). Expected runtime: **~3–5 min for 25 prospects without phones**, **~10–15 min with phones** (Sixtyfour's tail latency dominates). Phone discovery is opt-in by default for this reason — see Step 6.
+
+## Concurrency rules
+
+These rules are load-bearing — without them the skill takes 2–3× longer.
+
+- **Issue all parallel-safe calls in a single tool-call batch**, not sequentially. When the workflow says "for each prospect, fire N calls in parallel," issue them as N tool calls in **one assistant message** — do not sequence them.
+- **Real data dependencies (must sequence):**
+  - Step 2 → Step 3: Step 3 needs the `id` field from each person in the Step 2 response.
+  - Step 3 → Steps 4/5/6: Step 4 needs the `email` revealed in Step 3; Step 5 needs the `organization.id` revealed in Step 3 (the search response in Step 2 does NOT include org IDs); Step 6 needs the real `last_name` + `linkedin_url` from Step 3.
+- **Parallel-safe within each step:**
+  - Step 3 fans out N parallel calls (one per person from Step 2).
+  - Steps 4 + 5 + 6 each fan out N parallel calls AND can run concurrently with each other (no dependency between verifying email, fetching job postings, and finding phone).
+- The optimal cadence is therefore: **1 call (Step 2) → N parallel calls (Step 3) → 3N parallel calls (Steps 4 + 5 + 6 simultaneously)**. Three round trips total, regardless of N.
 
 ## Workflow
 
-### 1. Parse the Request
+### 1. Parse the request
 
 Extract from the user's query:
-- **Industry/vertical** (required) — e.g., staffing, fintech, healthcare IT, construction
-- **Decision maker titles** (required) — e.g., COO, VP Engineering, Head of Marketing
-- **Location** (optional, default: US) — country, state, city, or region
-- **Company size** (optional) — employee count min/max, revenue floor
-- **Hiring signal roles** (optional) — job postings that indicate buying intent (e.g., "Scheduling Coordinator" = ops pain, "DevOps Engineer" = infra investment)
-- **Max results** (optional, default 15)
-- **Company/product** (optional) — if user mentions what they're selling, triggers competitive intel in Step 7
+- **Industry/vertical** (required) — e.g., staffing, fintech, healthcare IT
+- **Decision maker titles** (required) — e.g., COO, VP Engineering, Head of Operations
+- **Location** (default: US) — country, state, region; map to Apollo location strings
+- **Company size** (optional) — translate to Apollo `organization_num_employees_ranges` (e.g., 100+ FTE → `["100,500", "500,1000", "1000,5000", "5000,10000", "10000,1000000"]`)
+- **Seniority** (optional) — Apollo accepts: `owner`, `founder`, `c_suite`, `partner`, `vp`, `head`, `director`, `manager`
+- **Hiring signal roles** (optional) — job titles that indicate buying intent (e.g., "Recruiting Coordinator", "DevOps Engineer")
+- **Max results** (default 25)
 
-### 2. Find Target Companies
+### 2. Find decision makers
 
-Run 2-3 search strategies **in parallel**:
-
-**Strategy A — Scrapegraph searchscraper** (primary — most targeted results):
+**One call.** Apollo's people search filters by title + seniority + industry-keyword + location + company-size in a single request. Returns up to 100 people with their organization data attached.
 
 ```bash
-orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "top {industry} companies in {location} with company name, website, employee count, and headquarters",
-  "num_results": 15
+orth run apollo /api/v1/mixed_people/api_search --body '{
+  "person_titles": ["{title_1}", "{title_2}", "{title_3}"],
+  "person_seniorities": ["{seniority_1}", "{seniority_2}"],
+  "organization_locations": ["{location}"],
+  "organization_num_employees_ranges": ["{size_range_1}", "{size_range_2}"],
+  "q_keywords": "{industry_phrase}",
+  "per_page": 100,
+  "page": 1
 }'
 ```
 
-Best source for industry-specific company lists. Returns targeted results from industry directories, Inc 5000 lists, and trade publications. In testing, returned 28 staffing companies in a single call vs Fiber's noisy mix of tech giants and staffing firms.
+**Critical sizing note — over-fetch.** Apollo's `organization_num_employees_ranges` filter is loose; in testing, ~80% of returned companies fell BELOW the requested range. **Always request `per_page: 100` even when the user asked for 25 results** — you'll discard most after the post-hoc filter in Step 3. If the user asks for a strict size threshold and the per-page-100 yield still under-delivers, paginate (`page: 2`).
 
-**Strategy B — Fiber NL company search** (co-primary — best structured data):
+**Response shape:**
+- `people[]` with `id`, `first_name`, `last_name_obfuscated` (real last name masked — only revealed by Step 3), `title`, `has_email`, `has_direct_phone`.
+- `organization` in the search response is a **flag dictionary only** (`has_industry`, `has_phone`, `has_employee_count`, etc.) — it does NOT include `id`, `name`, `website_url`, or `estimated_num_employees`. **Org IDs come from Step 3's `/people/match` response, not from this call.**
+
+**Keyword tips:**
+- `q_keywords` uses AND-match across whitespace tokens. Multi-word keywords like `"staffing recruiting"` often return 0 results because Apollo requires both terms to match. **Use a single phrase**: `"staffing agency"` or `"fintech"`.
+- If `q_keywords` returns 0, drop `person_seniorities` first, then `organization_num_employees_ranges`, then try a broader single keyword.
+
+Take the returned `people[]` and pull each person's `id` for Step 3.
+
+### 3. Reveal contact info (parallel per person)
+
+**Fire all N calls in parallel.** Apollo's `/people/match` reveals full name, work email, LinkedIn URL, and complete company data — including verified employee count.
 
 ```bash
-orth run fiber /v1/natural-language-search/companies --body '{
-  "query": "{industry} companies in {location} with {employee_min}+ employees",
-  "pageSize": 20
+# Fire in parallel for every person from Step 2
+orth run apollo /api/v1/people/match --body '{
+  "id": "{apollo_person_id}",
+  "reveal_personal_emails": true
 }'
 ```
 
-Returns structured company data with employee counts, domains, LinkedIn URLs, and descriptions. **Caveat:** For niche industries (staffing, construction, etc.), Fiber NL search often returns broad/noisy results mixed with unrelated companies. Filter results by industry keywords from the description, `li_industries`, and `crunchbase_categories` fields. Use company `names` field (not `name_consensus`) for the company name.
+**Notes:**
+- Do NOT pass `reveal_phone_number: true` — Apollo requires a webhook for that. Phones come from Step 6.
+- Each response returns `person.first_name`, `person.last_name`, `person.email`, `person.personal_emails[]`, `person.linkedin_url`, `person.title`, `person.organization.name`, `person.organization.website_url`, `person.organization.estimated_num_employees`, `person.organization.industry`, `person.organization.primary_phone`.
+- Apply user's company-size filter post-hoc using `organization.estimated_num_employees` — Apollo's people search filter is best-effort; verify here.
 
-**Strategy C — Nyne company search** (supplemental — attempt, may return errors):
+### 4. Verify emails (parallel per email)
 
-```bash
-# Step 1: POST to start search
-orth run nyne /company/search -d '{"query": "{industry} companies {location} {size_qualifier}"}'
-# Step 2: Poll with GET using request_id
-orth run nyne /company/search -q request_id=REQUEST_ID
-```
-
-Nyne is async — POST returns a `request_id`, poll with GET until complete (5-20s). **Note:** Nyne company search can return 400 errors depending on query format. If it fails, proceed with Scrapegraph + Fiber results — don't block on Nyne.
-
-#### Scaling Up
-
-For 20+ results, run parallel searches by sub-region or sub-vertical:
+**Fire all N calls in parallel.** Hunter's verifier returns deliverable / undeliverable / accept_all / unknown for each email.
 
 ```bash
-# Parallel searches for different sub-regions
-orth run fiber /v1/natural-language-search/companies --body '{
-  "query": "{industry} companies in New York with {size}+ employees",
-  "pageSize": 15
-}'
-
-orth run fiber /v1/natural-language-search/companies --body '{
-  "query": "{industry} companies in California with {size}+ employees",
-  "pageSize": 15
-}'
+orth run hunter /v2/email-verifier -q email={person_email}
 ```
 
-### 3. Extract & Deduplicate
+**Output mapping for the result table** — read the `status` field (Hunter v2 deprecated `result` in favor of `status`):
+- Hunter `status: "valid"` AND `score >= 80` → `Verified ({score})`
+- Hunter `status: "valid"` AND `score < 80` → `Verified low ({score})`
+- Hunter `status: "accept_all"` → `Accept-all (mailbox not provable)`
+- Hunter `status: "invalid"` → drop or label `Unverified`
+- Hunter `status: "unknown"` / `disposable` / `webmail` → label `Unverified`
 
-Merge results from all strategies. For each company, extract:
-- **Company name**
-- **Domain / website URL**
-- **Employee count** (primary size proxy — revenue data is often unavailable)
-- **Headquarters / location**
-- **LinkedIn company URL** (if returned by Fiber/Nyne)
-- **Description / industry tags**
+For accept-all responses, note the email but flag it — catch-all domains accept everything, so deliverability ≠ this person actually reads it.
 
-Deduplicate by domain first, then by normalized company name. Apply user's size filters — use employee count as revenue proxy when revenue is unavailable (100+ employees ≈ $10M+ revenue as rough heuristic).
+### 5. Hiring signals (parallel per company)
 
-Enrich top companies with Brand.dev for industry context:
+**Fire all N calls in parallel.** Apollo's per-company job-postings endpoint is the cleanest source — no scraping, no Cloudflare blocks, returns titles and locations directly.
 
 ```bash
-orth run brand-dev /v1/brand/retrieve --query 'domain={company_domain}'
+orth run apollo /api/v1/organizations/{organization_id}/job_postings -q organization_id={org_id}
 ```
 
-### 4. Find Decision Makers
+**Match logic — be flexible.** Match against the user's signal roles using **any of**: exact substring, common synonyms, or related-role keywords. For example, "Recruiting Coordinator" should match "Recruiting Coordinator", "Recruitment Coordinator", "Talent Acquisition Coordinator", "Talent Coordinator", "TA Coordinator" — and reasonably any title containing both `recruit*` and `coord*`. Strict literal substring match drops too many real signals.
 
-**Best approach: one broad industry-wide search, then per-company fallbacks.**
+- Companies with ≥1 matching posting → **High Priority**.
+- Count matches and surface as a `Quant Signal` column when the user asked for thresholds (e.g., "10+ open postings").
+- Apollo's `/job_postings` response can be large (200KB+ for enterprise companies). Don't paste raw responses into the result; just extract titles + locations and discard.
 
-In testing, a single broad query like "COO at staffing companies in the US" returned 15 relevant profiles, while per-company queries (e.g., "COO at Robert Half") often returned 0 results. Start broad, then fill gaps.
+If the user did NOT specify hiring signal roles, skip this step.
 
-**Primary — Fiber NL profile search (broad industry query):**
+### 6. Phone discovery (opt-in, parallel per person)
 
-```bash
-orth run fiber /v1/natural-language-search/profiles --body '{
-  "query": "{title_1} or {title_2} at a {industry} company in {location}",
-  "pageSize": 15
-}'
-```
+**This step is optional.** Sixtyfour's find-phone has 100% hit rate but is the wall-clock killer — 25 parallel calls take ~10 minutes due to tail latency. Skip it by default. Run it only when:
+- The user explicitly asked for phone numbers, OR
+- The user explicitly said "complete" / "include everything" / "don't skip phones"
 
-This is the highest-yield approach. Returns decision makers across the industry with LinkedIn URLs, current titles, and company names.
-
-**Per-company fallback — Fiber NL profile search** (for companies not covered by the broad search):
-
-```bash
-orth run fiber /v1/natural-language-search/profiles --body '{
-  "query": "{title_1} or {title_2} at {company_name}",
-  "pageSize": 5
-}'
-```
-
-Per-company queries often return empty results, especially for large enterprises where C-suite profiles may not be indexed. Use this only for high-priority companies missing from the broad search.
-
-**Supplemental — Nyne person search** (async, may return errors):
-
-```bash
-orth run nyne /person/search -d '{"query": "{title} at {company_name} {location}"}'
-# Poll: orth run nyne /person/search -q request_id=REQUEST_ID
-```
-
-**Fallback — Scrapegraph website scrape** (scrape the company's leadership page):
-
-```bash
-orth run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://{company_domain}/about",
-  "user_prompt": "Extract names, titles, and any contact info for the leadership team. Identify anyone with these titles: {target_titles}"
-}'
-```
-
-If `/about` returns 422, fall back to the homepage URL.
-
-### 5. Enrich Contacts
-
-For each decision maker found, run **all** of these in parallel:
-
-**Email discovery — Sixtyfour first** (highest hit rate for small/mid-market domains):
-
-```bash
-# Sixtyfour AI email finder (PRIMARY — found 9/12 emails in testing)
-orth run sixtyfour /find-email --body '{
-  "lead": {"first_name": "{first}", "last_name": "{last}", "domain": "{company_domain}"}
-}'
-
-# Hunter email-finder (supplemental — often returns null for small company domains)
-orth run hunter /v2/email-finder --query 'domain={company_domain}&first_name={first}&last_name={last}'
-
-# Tomba email-finder (supplemental — similar limitations to Hunter on small domains)
-orth run tomba /v1/email-finder --query 'domain={company_domain}&company={company_name}&first_name={first}&last_name={last}'
-
-# Tomba LinkedIn-to-email (if LinkedIn URL found in Step 4)
-orth run tomba /v1/linkedin --query 'url={linkedin_url}'
-```
-
-In testing, Sixtyfour found emails for 9 out of 12 prospects where Hunter and Tomba returned null. Sixtyfour is the most reliable source for small/mid-market company domains. Still run all sources in parallel — each occasionally finds emails the others miss.
-
-**Phone discovery:**
+When you do run it, **fire all N calls in parallel**. Apollo phones require a webhook URL we don't have — Sixtyfour is the only option.
 
 ```bash
 orth run sixtyfour /find-phone --body '{
-  "lead": {"first_name": "{first}", "last_name": "{last}", "company": "{company_name}"}
-}'
-```
-
-Sixtyfour find-phone had a 100% hit rate in testing (10/10 prospects).
-
-**Deep enrichment** (fire early, don't block — takes 30-60s):
-
-```bash
-orth run sixtyfour /enrich-lead --body '{
-  "lead_info": {
-    "first_name": "{first}", "last_name": "{last}",
-    "company": "{company_name}", "linkedin_url": "{linkedin_url}"
-  },
-  "struct": {
-    "work_email": "Work email",
-    "personal_email": "Personal email",
-    "phone": "Phone number",
-    "title": "Current job title",
-    "bio": "Short professional bio"
+  "lead": {
+    "first_name": "{first}",
+    "last_name": "{last}",
+    "company": "{org_name}",
+    "linkedin_url": "{linkedin_url}"
   }
 }'
 ```
 
-**Fiber kitchen-sink enrichment** (if LinkedIn URL available — may return 400):
+**Notes:**
+- This is the slowest call in the workflow (~10–30s per individual call). Always fire concurrently with Steps 4 and 5 — don't sequence them.
+- Sixtyfour returns raw 10-digit phone strings (e.g., `"2077837000"`). Format to `(207) 783-7000` for the output table.
+- If the person's `linkedin_url` is missing from Step 3's response, omit it from the request body — Sixtyfour will fall back to name + company matching with lower hit rate.
 
-```bash
-orth run fiber /v1/kitchen-sink/person --body '{
-  "profileIdentifier": "{linkedin_url}"
-}'
-```
+### 7. Person-level location check
 
-Kitchen-sink can intermittently return 400 errors regardless of parameter format. If it fails, proceed with Sixtyfour + Hunter + Tomba results — don't block on kitchen-sink.
+If the user specified a location filter, verify each prospect actually lives/works in that region. Apollo's response includes `person.city`, `person.state`, `person.country` — drop or downgrade prospects whose location doesn't match.
 
-**Triple email verification** — verify ALL found emails with 3 services:
+Multinationals (Randstad, Manpower) sometimes surface global execs whose `country` is the user's region but whose actual scope is `EMEA` or `Global` — flag those in Notes rather than silently include them.
 
-```bash
-orth run hunter /v2/email-verifier --query 'email={email}'
-orth run tomba /v1/email-verifier --query 'email={email}'
-orth run fiber /v1/validate-email/single --body '{"email": "{email}"}'
-```
-
-Take the consensus. Label each email as verified/unverified. Collect both work and personal emails.
-
-### 6. Hiring / Intent Signals
-
-**Only run this step if the user specified hiring signal roles.** This is the key differentiator for prioritization.
-
-**Primary — Scrapegraph searchscraper for hiring signals:**
-
-```bash
-orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "{industry} companies hiring {signal_role} in {location}, list company name, job title, and location",
-  "num_results": 15
-}'
-```
-
-**Supplemental — Tavily for job board coverage:**
-
-```bash
-orth run tavily /search --body '{
-  "query": "{industry} {signal_role} job opening {location}",
-  "max_results": 10,
-  "include_answer": false
-}'
-```
-
-Then scrape top job board results for company names:
-
-```bash
-orth run scrapegraph /v1/smartscraper --body '{
-  "website_url": "{job_board_url}",
-  "user_prompt": "Extract all company names hiring for {signal_role}, with job title and location"
-}'
-```
-
-**Optional — Fiber job search** (attempt, may be unreliable):
-
-```bash
-orth run fiber /v1/job-search --body '{
-  "searchParams": {
-    "job_titles": ["{signal_role}"],
-    "industries": ["{industry}"]
-  },
-  "pageSize": 20
-}'
-```
-
-Note: Fiber job-search with searchParams filters can return 400 errors. Attempt it but don't rely on it — Scrapegraph is the primary method for hiring signals.
-
-**Cross-reference:** Match companies found hiring signal roles against the company list from Step 2. Matches become **High Priority** prospects. Companies hiring for signal roles that weren't in your original list are bonus leads — add them.
-
-**Growth signals:** Check Fiber company data (from Step 4 kitchen-sink results) for headcount growth percentage. Companies growing >20% YoY are additional high-priority signals.
-
-### 7. Competitive Intel (Optional)
-
-**Only run if the user mentioned their product/company.** Research what the user sells and check prospects for competing solutions.
-
-```bash
-# Research user's product
-orth run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://{user_company_domain}",
-  "user_prompt": "What does this company sell? Describe the product in one sentence."
-}'
-
-# Find competitors
-orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "competitors and alternatives to {user_product} for {industry}",
-  "num_results": 5
-}'
-
-# Check each prospect's website for competing products (parallel)
-orth run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://{prospect_domain}",
-  "user_prompt": "Does this company use or mention: {competitor_1}, {competitor_2}, {competitor_3}? Check page content, footer, and embedded widgets."
-}'
-```
-
-Flag prospects: **Greenfield** (no competitor detected) > **Competitive displacement** (uses a competitor — note which one) > **Unknown**.
-
-### 8. Present Results
+### 8. Present results
 
 Output a prioritized table with **full URLs** (not markdown links — users need to copy-paste):
 
 ```
 ## Prospect List: {Title} at {Industry} Companies in {Location}
 
-Found {N} companies with {M} decision makers identified.
+Found {N} decision makers across {M} companies in ~{T} seconds.
 
 ### High Priority — Hiring Signal Detected
-| # | Company | Website | Employees | Decision Maker | Title | Email | Email Status | Phone | Signal |
-|---|---------|---------|-----------|---------------|-------|-------|-------------|-------|--------|
-| 1 | Acme Staffing | https://acmestaffing.com | 250 | Jane Smith | COO | jane@acme.com | Verified | (555) 123-4567 | Hiring Scheduling Coordinator |
+| # | Company | Website | Employees | Decision Maker | Title | Email | Email Status | Phone | LinkedIn | Hiring | Quant Signal |
+|---|---------|---------|-----------|----------------|-------|-------|-------------|-------|----------|--------|--------------|
+| 1 | Acme Staffing | https://acmestaffing.com | 250 | Jane Smith | COO | jane@acme.com | Verified (94) | (555) 123-4567 | https://linkedin.com/in/janesmith | Recruiting Coordinator (×3) | 12 postings |
 
 ### Medium Priority — Matches ICP, No Signal Detected
-| # | Company | Website | Employees | Decision Maker | Title | Email | Email Status | Phone | Notes |
-|---|---------|---------|-----------|---------------|-------|-------|-------------|-------|-------|
-| 5 | Beta Corp | https://betacorp.com | 180 | John Doe | VP Ops | john@beta.com | Verified | — | Growing 25% YoY |
+| # | Company | Website | Employees | Decision Maker | Title | Email | Email Status | Phone | LinkedIn |
+|---|---------|---------|-----------|----------------|-------|-------|-------------|-------|----------|
+| 5 | Beta Corp | https://betacorp.com | 180 | John Doe | VP Ops | john@beta.com | Verified (88) | (555) 987-6543 | https://linkedin.com/in/johndoe |
 
-### Lower Priority — Limited Data or Below Target Size
-| # | Company | Website | Employees | Decision Maker | Title | Email | Phone | Notes |
-|---|---------|---------|-----------|---------------|-------|-------|-------|-------|
-| 10 | Small Co | https://smallco.com | 85 | — | — | — | — | Below 100 employee threshold |
+### Lower Priority — Below Threshold or Limited Data
+| # | Company | Decision Maker | Title | Notes |
+|---|---------|----------------|-------|-------|
+| 12 | Globex | Maria Schmidt | COO, EMEA | LinkedIn location: Germany — likely not the US-specific decision maker |
 
 ### Summary
-- **Companies found**: {N}
-- **Decision makers identified**: {count}/{N}
-- **With verified email**: {count}
-- **With phone**: {count}
-- **High priority (hiring signal)**: {count}
-- **Medium priority (right profile)**: {count}
-- **Lower priority (limited data)**: {count}
+- Decision makers identified: {N}
+- Verified emails: {count} (incl. {accept_all_count} accept-all)
+- Phones found: {count}
+- High priority: {count} | Medium: {count} | Lower: {count}
+- Wall clock: ~{T}s
 ```
 
-## APIs Used
+## APIs used
 
 | API | Endpoint | Purpose |
 |-----|----------|---------|
-| **Fiber** | `/v1/natural-language-search/companies` | Find companies by industry + size |
-| **Fiber** | `/v1/natural-language-search/profiles` | Find decision makers by title + company |
-| **Fiber** | `/v1/kitchen-sink/person` | Enrich person by LinkedIn URL or name+company |
-| **Fiber** | `/v1/kitchen-sink/company` | Enrich company data |
-| **Fiber** | `/v1/job-search` | Job postings (unreliable, attempt only) |
-| **Fiber** | `/v1/validate-email/single` | Email verification |
-| **Nyne** | `/company/search` | Async company search by industry |
-| **Nyne** | `/person/search` | Async person search by company + role |
-| **Scrapegraph** | `/v1/searchscraper` | Web search for companies + hiring signals |
-| **Scrapegraph** | `/v1/smartscraper` | Scrape websites for leadership/competitive intel |
-| **Tavily** | `/search` | Supplemental web search for job boards |
-| **Hunter** | `/v2/email-finder` | Find email by name + domain |
-| **Hunter** | `/v2/email-verifier` | Email verification |
-| **Tomba** | `/v1/email-finder` | Find email by name + domain |
-| **Tomba** | `/v1/linkedin` | Email from LinkedIn URL |
-| **Tomba** | `/v1/email-verifier` | Email verification |
-| **Sixtyfour** | `/find-email` | AI email finder |
-| **Sixtyfour** | `/find-phone` | AI phone finder |
-| **Sixtyfour** | `/enrich-lead` | AI deep enrichment |
-| **Brand.dev** | `/v1/brand/retrieve` | Company overview/context |
+| **Apollo** | `/api/v1/mixed_people/api_search` | Find decision makers by title + industry + size + location |
+| **Apollo** | `/api/v1/people/match` | Reveal full name + email + LinkedIn + company data |
+| **Apollo** | `/api/v1/organizations/{id}/job_postings` | Per-company hiring-signal detection |
+| **Hunter** | `/v2/email-verifier` | Email deliverability verification |
+| **Sixtyfour** | `/find-phone` | Direct phone numbers (proven 100% hit rate) |
+
+Five endpoints across four providers. All run in parallel within each step.
 
 ## Examples
 
-**Example 1 — Staffing/recruiting (the Clay use case):**
+**Example 1 — Staffing/recruiting (the canonical use case):**
 
-"Find COOs at US staffing firms with 100+ employees that are hiring Scheduling Coordinators"
+> "Find COOs at US staffing firms with 100+ employees that are hiring Scheduling Coordinators or Recruiting Coordinators"
 
+Step 2:
 ```bash
-# Step 2: Find staffing companies (parallel)
-orth run fiber /v1/natural-language-search/companies --body '{
-  "query": "staffing and recruiting companies in the United States with 100 or more employees",
-  "pageSize": 20
+orth run apollo /api/v1/mixed_people/api_search --body '{
+  "person_titles": ["Chief Operating Officer", "Head of Operations", "COO"],
+  "organization_locations": ["United States"],
+  "organization_num_employees_ranges": ["100,500", "500,1000", "1000,5000", "5000,10000"],
+  "q_keywords": "staffing",
+  "per_page": 100
 }'
+```
 
-orth run nyne /company/search -d '{"query": "staffing recruiting firms US 100+ employees"}'
+**Note for staffing/recruiting vertical specifically:** Apollo's `/job_postings` for staffing agencies returns the *client requisitions they are filling*, not the agency's own internal hires. So a staffing firm with 990 listed postings might have 0 in-house Recruiting Coordinator openings. For this vertical, expect strict in-house hiring signals to be sparse — most prospects land in Medium Priority.
 
-orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "top staffing and recruiting companies in the US with company name, website, employee count, and headquarters",
-  "num_results": 15
-}'
-
-# Step 4: Find COOs (parallel, per company)
-orth run fiber /v1/natural-language-search/profiles --body '{
-  "query": "COO or Chief Operating Officer or Head of Operations at {company_name}",
-  "pageSize": 3
-}'
-
-# Step 5: Enrich (parallel, per person)
-orth run hunter /v2/email-finder --query 'domain={domain}&first_name={first}&last_name={last}'
-orth run sixtyfour /find-email --body '{"lead": {"first_name": "{first}", "last_name": "{last}", "domain": "{domain}"}}'
-orth run sixtyfour /find-phone --body '{"lead": {"first_name": "{first}", "last_name": "{last}", "company": "{company}"}}'
-
-# Step 6: Hiring signals
-orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "staffing companies hiring Scheduling Coordinator or Recruiting Coordinator in the US, list company name, job title, and location",
-  "num_results": 15
-}'
+Step 5 (per company, parallel):
+```bash
+orth run apollo /api/v1/organizations/{organization_id}/job_postings -q organization_id={id}
 ```
 
 **Example 2 — SaaS sales (fintech):**
 
-"Find VP Engineering or CTO at fintech startups with 50-200 employees in the US that are hiring DevOps engineers"
+> "Find VP Engineering or CTO at fintech startups with 50–200 employees in the US that are hiring DevOps engineers"
 
 ```bash
-# Companies
-orth run fiber /v1/natural-language-search/companies --body '{
-  "query": "fintech startups in the United States with 50 to 200 employees",
-  "pageSize": 20
-}'
-
-# Decision makers (per company)
-orth run fiber /v1/natural-language-search/profiles --body '{
-  "query": "VP Engineering or CTO at {company_name}",
-  "pageSize": 3
-}'
-
-# Hiring signal
-orth run scrapegraph /v1/searchscraper --body '{
-  "user_prompt": "fintech companies hiring DevOps Engineer or Site Reliability Engineer in the US, list company name and job title",
-  "num_results": 15
+orth run apollo /api/v1/mixed_people/api_search --body '{
+  "person_titles": ["VP Engineering", "Vice President of Engineering", "CTO", "Chief Technology Officer"],
+  "organization_locations": ["United States"],
+  "organization_num_employees_ranges": ["51,200"],
+  "q_keywords": "fintech",
+  "per_page": 25
 }'
 ```
 
-**Example 3 — Recruiting (healthcare in Texas):**
+**Example 3 — Healthcare HR (Texas):**
 
-"Find HR Directors at healthcare companies in Texas with 500+ employees"
+> "Find HR Directors at healthcare companies in Texas with 500+ employees"
 
 ```bash
-# Companies
-orth run fiber /v1/natural-language-search/companies --body '{
-  "query": "healthcare companies in Texas with 500 or more employees",
-  "pageSize": 20
-}'
-
-# Decision makers
-orth run fiber /v1/natural-language-search/profiles --body '{
-  "query": "HR Director or VP Human Resources at {company_name}",
-  "pageSize": 3
+orth run apollo /api/v1/mixed_people/api_search --body '{
+  "person_titles": ["HR Director", "VP Human Resources", "Head of HR"],
+  "organization_locations": ["Texas, US"],
+  "organization_num_employees_ranges": ["500,1000", "1000,5000", "5000,10000"],
+  "q_keywords": "healthcare",
+  "per_page": 25
 }'
 ```
 
-**Example 4 — Simple, no hiring signals (construction):**
+## Error handling
 
-"Build a prospect list of construction companies in California with Head of Safety as decision maker"
-
-```bash
-# Companies
-orth run fiber /v1/natural-language-search/companies --body '{
-  "query": "construction companies in California",
-  "pageSize": 15
-}'
-
-# Decision makers
-orth run fiber /v1/natural-language-search/profiles --body '{
-  "query": "Head of Safety or Safety Director or VP Safety at {company_name}",
-  "pageSize": 3
-}'
-```
-
-## Error Handling
-
-- **Fiber NL company search returns noisy results** — For niche industries, Fiber often returns unrelated companies mixed in (e.g., tech giants alongside staffing firms). Filter results by `li_industries`, `crunchbase_categories`, or keywords in `short_description`. If too noisy, use Scrapegraph searchscraper as primary source instead
-- **Fiber NL profile search returns empty per-company** — Per-company queries often return 0 results, especially for large enterprises. Use a broad industry-wide query instead (e.g., "COO at a staffing company in the US") which yields 10-15x more results
-- **Fiber kitchen-sink returns 400** — Can fail intermittently regardless of parameter format (`profileIdentifier`, slug, or full URL all tested). This appears to be an API reliability issue, not a format issue. Proceed with Sixtyfour + Hunter + Tomba for enrichment
-- **Nyne returns 400** — Nyne company and person search can return 400 errors. Query format sensitivity is unclear. Don't block on Nyne — proceed with Scrapegraph + Fiber results
-- **Fiber job-search returns 400** — Known issue with searchParams filters. Use Scrapegraph searchscraper for hiring signals instead
-- **Smartscraper 422 on /about path** — Fall back to scraping the homepage URL (no path appended)
-- **Hunter/Tomba return null for email** — Expected for small/mid-market company domains. In testing, Hunter and Tomba returned null for most staffing firms while Sixtyfour found 9/12. Always run Sixtyfour as primary email source
-- **No hiring signal found** — Not every industry/location has active job postings for specific roles. Mark as "No signal detected" — these are still valid medium-priority prospects
+- **Apollo people search returns 0 results.** Most likely the filter combination is too tight. Drop `person_seniorities` first (the title list already encodes seniority), then `organization_num_employees_ranges`, then simplify `q_keywords` to a single word.
+- **Apollo `/people/match` doesn't return revenue data.** The `organization` payload has `estimated_num_employees` but no revenue field. Treat user's revenue floors as best-effort using employee count as a proxy (100+ FTE staffing firms typically gross $10M+).
+- **Hunter verifier returns null `data`.** Treat as `Unverified` and continue.
+- **Apollo `/people/match` requires `webhook_url` for `reveal_phone_number`.** Don't pass that flag — Sixtyfour handles phones.
+- **Apollo `/organizations/{id}/job_postings` returns empty `job_postings: []`.** Means the company isn't hiring or Apollo's index is stale. Treat as "no signal detected" — still a valid Medium Priority lead.
+- **Hunter verifier returns `accept_all`.** Catch-all domain — flag the email but don't claim verified.
+- **Sixtyfour `/find-phone` returns `{}`.** Phone discovery missed this person. Skill should not retry — accept the gap.
 
 ## Tips
 
-- **Scrapegraph is the best company finder for niche industries** — In testing, Scrapegraph returned 28 targeted staffing companies vs Fiber's noisy mix. Use Scrapegraph as primary for industry-specific lists, Fiber as co-primary for structured data (employee counts, domains)
-- **Broad profile search beats per-company search** — One query for "COO at staffing companies in the US" returned 15 profiles. The same search run per-company (8 companies) returned only 2 profiles total. Always start with a broad industry-wide NL profile search
-- **Sixtyfour is the #1 email finder** — Found 9/12 emails in testing where Hunter and Tomba returned null. For small/mid-market company domains, Sixtyfour's AI approach dramatically outperforms pattern-based tools. Still run all sources in parallel for maximum coverage
-- **Sixtyfour find-phone is highly reliable** — 100% hit rate in testing (10/10 prospects). Always include phone discovery
-- **Hiring signals are the #1 prioritization tool** — A company actively hiring for a role your product replaces/supports is 3-5x more likely to buy. Scrapegraph searchscraper is the best source — found Randstad and Robert Half hiring for Scheduling Coordinators in a single call
-- **Employee count is the best size proxy** — Revenue data is rarely available from APIs. Use employee count: 50+ ≈ established, 100+ ≈ mid-market, 500+ ≈ enterprise
-- **Fiber kitchen-sink may be unreliable** — Can return 400 errors intermittently. Don't depend on it as the sole enrichment source — always have Sixtyfour running in parallel as fallback
-- **LinkedIn URLs dramatically improve enrichment** — When Fiber NL profile search returns LinkedIn URLs, feed them into Tomba-LinkedIn for email and Sixtyfour enrich-lead for deep context
-- **Deduplicate aggressively** — Multiple search strategies will return overlapping results. Dedup by domain first (most reliable), then by normalized company name
-- **Hunter email-verifier is fast and reliable** — Even when Hunter email-finder returns null, Hunter email-verifier is excellent for verifying emails found by Sixtyfour. Every email verified came back with score 89-100
-- **Include title variations** — Search for "COO OR Chief Operating Officer OR Head of Operations" to catch different title formats at the same level
-- **Filter Fiber company results by industry** — Use `li_industries`, `crunchbase_categories`, or keywords in `short_description` to filter out irrelevant companies from Fiber NL results
+- **Apollo is the primary unlock.** It collapses what used to be 4 separate steps (find companies, find decision makers, get email, get title) into 2 calls. Don't add other people-search providers unless Apollo misses entirely.
+- **Industry keyword > tag IDs.** Apollo exposes industry tag IDs, but in practice `q_keywords` like "staffing agency" or "fintech" works fine and avoids the lookup-table problem.
+- **Last names are obfuscated in `/mixed_people/api_search`.** Always call `/people/match` to get the real name. Don't try to deobfuscate.
+- **Filter company size post-hoc.** Apollo's `organization_num_employees_ranges` is best-effort; sometimes surfaces below-range orgs. Re-filter using `organization.estimated_num_employees` from `/people/match`.
+- **Hunter verifier is fast and cheap.** Run for every email even when Apollo's data is high-quality — adds ~10s, gives the user a confidence signal.
+- **Sixtyfour is the slowest call.** Always launch it concurrently with Steps 3 + 4, never after them. The wall clock is determined by Sixtyfour's tail latency.
+- **For 50+ results, paginate Step 2.** Apollo caps at 100 per page; for larger lists, page 1 + page 2 in parallel.
+- **Skip Step 5 (job postings) when no hiring signal role specified.** It saves N calls and adds nothing — every prospect just becomes Medium Priority.
+- **Don't add scraping fallbacks.** ScrapeGraphAI/Olostep/etc. are blocked by Cloudflare on careers pages and produce 0 useful job-posting data. Apollo's structured job_postings endpoint replaces them.
