@@ -1,176 +1,258 @@
 ---
 name: scrapegraph
-description: AI-powered web scraping - extract data using natural language prompts
+description: “Use when the user needs to extract data from websites using natural language prompts, scrape raw HTML, crawl multi-page sites, convert pages to markdown, discover sitemap URLs, or search the web with AI-powered extraction. ScrapeGraph handles JavaScript-heavy SPAs, bot-protected pages (stealth mode), pagination, and infinite scroll without writing CSS selectors or XPath.”
 ---
 
-# ScrapeGraph AI - Intelligent Web Scraping
+# ScrapeGraph AI
 
-Extract web content using AI with natural language prompts.
+ScrapeGraph provides six action endpoints and five free status-check endpoints. The agent should select the endpoint that matches the task — single-page extraction, multi-page crawling, raw HTML retrieval, web search, sitemap discovery, or markdown conversion — then poll the corresponding status endpoint for results.
 
-## Capabilities
+## Workflow
 
-- **Start SmartScraper**: Extract content from a webpage using AI by providing a natural language prompt and a URL
-- **Start SearchScraper**: Start a new AI-powered web search request
-- **Scrape**: Extract raw HTML content from web pages with JavaScript rendering support
-- **Start SmartCrawler**: Start a new web crawl request with AI extraction or markdown conversion
-- **Start Sitemap**: Extract all URLs from a website sitemap automatically
-- **Start Markdownify**: Convert any webpage into clean, readable Markdown format
-- **Get SearchScraper Status**: Get the status and results of a previous search request (free)
-- **Get Markdownify Status**: Check the status and retrieve results of a Markdownify request (free)
-- **Get Sitemap Status**: Check the status and retrieve results of a Sitemap request (free)
-- **Get SmartCrawler Status**: Get the status and results of a previous smartcrawl request (free)
-- **Get SmartScraper Status**: Check the status and retrieve results of a SmartScraper request (free)
+1. **Identify the task type.** Determine which category the user request falls into:
+   - Extract structured data from a known URL → SmartScraper (`/v1/smartscraper`)
+   - Search the web and extract answers without a specific URL → SearchScraper (`/v1/searchscraper`)
+   - Retrieve raw HTML (with optional JS rendering) → Scrape (`/v1/scrape`)
+   - Crawl multiple pages from a site with AI extraction → SmartCrawler (`/v1/crawl`)
+   - List all URLs on a site → Sitemap (`/v1/sitemap`)
+   - Convert a page to clean markdown → Markdownify (`/v1/markdownify`)
+2. **Build the request body.** Include required parameters (marked with `*`) and any optional parameters relevant to the task. If the target site is JavaScript-heavy or bot-protected, the agent should set `render_heavy_js` and/or `stealth` as needed.
+3. **Submit the request.** Call the appropriate action endpoint via `orth api run scrapegraph <path> --body ‘<json>’`.
+4. **Poll for results.** For async endpoints (SmartScraper, SearchScraper, SmartCrawler, Sitemap, Markdownify), capture the `request_id` or `task_id` from the response, then call the matching status endpoint until the status is complete. Status checks are free.
+5. **Return results to the user.** Parse the response and present the extracted data, HTML, markdown, or URL list as appropriate.
 
-## Usage
+## Extracting Structured Data from a URL
 
-### Start SmartScraper
-Extract content from a webpage using AI by providing a natural language prompt and a URL.
+**Endpoint:** `/v1/smartscraper` (POST)
 
-Parameters:
-- user_prompt* (string) - Natural language description of what information you want to extract from the webpage.
-- website_url* (string) - The URL of the webpage you want to extract information from. You must provide exactly one of: website_url, website_html, or website_markdown.
-- website_html (string) - Raw HTML content to process directly (max 2MB). Mutually exclusive with website_url and website_markdown. Useful when you already have HTML content cached or want to process modified HTML.
-- headers (object) - Optional custom HTTP headers to send with the request. Useful for setting User-Agent, cookies, authentication tokens, and other request metadata. Example: {"User-Agent": "Mozilla/5.0...", "Cookie": "session=abc123"}
-- output_schema (object) - Optional schema to structure the output. If provided, the AI will attempt to format the results according to this schema.
-- stealth (boolean) - Enable stealth mode to bypass bot protection using advanced anti-detection techniques. Adds +4 credits to the request cost
--  website_markdown (string) - Raw Markdown content to process directly (max 2MB). Mutually exclusive with website_url and website_html. Perfect for extracting structured data from Markdown documentation, README files, or any content already in Markdown format.
-- total_pages (number) - Optional parameter to enable pagination and scrape multiple pages. Specify the number of pages to extract data from. Default: 1 Range: 1-100
--  number_of_scrolls (number) - Optional parameter for infinite scroll pages. Specify how many times to scroll down to load more content before extraction. Default: 0 Range: 0-50
--  render_heavy_js (boolean) - Optional parameter to enable enhanced JavaScript rendering for heavy JS websites (React, Vue, Angular, SPAs). Use when standard rendering doesn’t capture all content. Default: false
--  mock (boolean) - Optional parameter to enable mock mode. When set to true, the request will return mock data instead of performing an actual extraction. Useful for testing and development. Default: false
--  cookies (object) - Optional cookies object for authentication and session management. Useful for accessing authenticated pages or maintaining session state. Example: {"session_id": "abc123", "auth_token": "xyz789"}
--  steps (array) - Optional array of interaction steps to perform on the webpage before extraction. Each step is a string describing the action to take (e.g., “click on filter button”, “wait for results to load”). Example: ["click on search button", "type query in search box", "wait for results"]
+The agent uses SmartScraper when the user provides a URL and wants specific data extracted using a natural language prompt. Supports pagination, infinite scroll, page interaction steps, and structured output schemas.
 
-```bash
-orth api run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://example.com/products",
-  "user_prompt": "Extract all product names and prices"
-}'
-```
+**Required parameters:**
+- `user_prompt` (string) — natural language description of what to extract
+- One of `website_url` (string), `website_html` (string, max 2MB), or `website_markdown` (string, max 2MB) — mutually exclusive content sources
 
-### Start SearchScraper
-Start a new AI-powered web search request
+**Optional parameters:**
+- `headers` (object) — custom HTTP headers (User-Agent, cookies, auth tokens)
+- `cookies` (object) — cookies for authentication/session management
+- `output_schema` (object) — JSON schema to structure output
+- `stealth` (boolean) — bypass bot protection (+4 credits). Default: false
+- `total_pages` (number) — paginate across multiple pages. Range: 1–100. Default: 1
+- `number_of_scrolls` (number) — scroll to load dynamic content. Range: 0–50. Default: 0
+- `render_heavy_js` (boolean) — enhanced JS rendering for SPAs (React, Vue, Angular). Default: false
+- `steps` (array of strings) — interaction steps before extraction (e.g., `[“click on filter button”, “wait for results”]`)
+- `mock` (boolean) — return mock data for testing. Default: false
 
-Parameters:
-- user_prompt* (string) - The search query or question you want to ask. This should be a clear and specific prompt that will guide the AI in finding and extracting relevant information. Example: “What is the latest version of Python and what are its main features?”
-- headers (object) - Optional headers to customize the search behavior. This can include user agent, cookies, or other HTTP headers. Example: {   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",   "Cookie": "cookie1=value1; cookie2=value2" }
-- output_schema (object) - Optional schema to structure the output. If provided, the AI will attempt to format the results according to this schema. Example: {   "properties": {     "version": {"type": "string"},     "release_date": {"type": "string"},     "major_features": {"type": "array", "items": {"type": "string"}}   },   "required": ["version", "release_date", "major_features"] }
-- mock (string) - Optional parameter to enable mock mode. When set to true, the request will return mock data instead of performing an actual search. Useful for testing and development. Default: false
-- stealth (boolean) - Optional parameter to enable stealth mode. When set to true, the scraper will use advanced anti-detection techniques to bypass bot protection and access protected websites. Adds +4 credits to the request cost. Default: false
+**Status check:** `GET /v1/smartscraper/{request_id}` (free)
 
 ```bash
-orth api run scrapegraph /v1/searchscraper --body '{"user_prompt": "Find the latest iPhone prices from major retailers"}'
-```
-
-### Scrape
-Extract raw HTML content from web pages with JavaScript rendering support
-
-Parameters:
-- website_url* (string) - The URL of the webpage to scrape. Example: "https://example.com"
-- render_heavy_js (boolean) - Set to true for heavy JavaScript rendering. Default: false
-- branding (boolean) - Return extracted brand design and metadata. Default: false
-- stealth (string) - Enable stealth mode for anti-bot protection. Adds additional credits. Default: false
-
-```bash
-orth api run scrapegraph /v1/scrape --body '{"website_url": "https://example.com"}'
-```
-
-### Start SmartCrawler
-Start a new web crawl request with AI extraction or markdown conversion
-
-Parameters:
-- url* (string)
-- prompt (string)
-- extraction_mode (boolean)
-- cache_website (boolean)
-- depth (number)
-- max_pages (number)
-- same_domain_only (boolean)
-- batch_size (integer)
-- schema (object)
-- rules (object)
-- sitemap (string)
-- render_heavy_js (string)
-- stealth (string)
-
-```bash
-orth api run scrapegraph /v1/crawl --body '{
-  "url": "https://docs.example.com",
-  "prompt": "Extract all API endpoints and their descriptions"
-}'
-```
-
-### Start Sitemap
-Extract all URLs from a website sitemap automatically.
-
-Parameters:
-- website_url* (string) - The URL of the website you want to extract the sitemap from. The API will automatically locate the sitemap.xml file.
-- headers (object) - Optional headers to customize the request behavior. This can include user agent, cookies, or other HTTP headers.
-- mock (boolean) - Optional parameter to enable mock mode. When set to true, the request will return mock data instead of performing an actual extraction. Useful for testing and development.
-- stealth (boolean) - Optional parameter to enable stealth mode. When set to true, the scraper will use advanced anti-detection techniques to bypass bot protection and access protected websites. Adds +4 credits to the request cost.
-
-```bash
-orth api run scrapegraph /v1/sitemap --body '{"website_url": "https://example.com"}'
-```
-
-### Start Markdownify
-Convert any webpage into clean, readable Markdown format.
-
-Parameters:
-- website_url* (string) - The URL of the webpage you want to convert to markdown.
-- headers (object) - Optional headers to send with the request, including cookies and user agent
-- stealth (boolean) - Enable stealth mode to bypass bot protection using advanced anti-detection techniques. Adds +4 credits to the request cost
-
-```bash
-orth api run scrapegraph /v1/markdownify --body '{"website_url": "https://example.com/article"}'
-```
-
-### Get SearchScraper Status (free)
-Get the status and results of a previous search request
-
-```bash
-orth api run scrapegraph /v1/searchscraper/{request_id}
-```
-
-### Get Markdownify Status (free)
-Check the status and retrieve results of a Markdownify request.
-
-```bash
-orth api run scrapegraph /v1/markdownify/{request_id}
-```
-
-### Get Sitemap Status (free)
-Check the status and retrieve results of a Sitemap request.
-
-```bash
-orth api run scrapegraph /v1/sitemap/{request_id}
-```
-
-### Get SmartCrawler Status (free)
-Get the status and results of a previous smartcrawl request
-
-```bash
-orth api run scrapegraph /v1/crawl/{task_id}
-```
-
-### Get SmartScraper Status (free)
-Check the status and retrieve results of a SmartScraper request.
-
-```bash
+orth api run scrapegraph /v1/smartscraper --body ‘{
+  “website_url”: “https://example.com/products”,
+  “user_prompt”: “Extract all product names and prices”
+}’
+# Poll for results:
 orth api run scrapegraph /v1/smartscraper/{request_id}
 ```
 
-## Use Cases
+## Searching the Web with AI
 
-1. **Data Extraction**: Extract structured data without writing selectors
-2. **Research**: Gather information from multiple sources
-3. **Price Monitoring**: Track prices across e-commerce sites
-4. **Content Conversion**: Convert web pages to markdown for LLMs
-5. **Site Analysis**: Map site structure and content
+**Endpoint:** `/v1/searchscraper` (POST)
+
+The agent uses SearchScraper when the user wants to find and extract information from the web without specifying a particular URL. The AI searches, finds relevant sources, and extracts structured answers.
+
+**Required parameters:**
+- `user_prompt` (string) — the search query or question to answer
+
+**Optional parameters:**
+- `headers` (object) — custom HTTP headers
+- `output_schema` (object) — JSON schema to structure output
+- `stealth` (boolean) — anti-detection techniques (+4 credits). Default: false
+- `mock` (string) — return mock data for testing. Default: false
+
+**Status check:** `GET /v1/searchscraper/{request_id}` (free)
+
+```bash
+orth api run scrapegraph /v1/searchscraper --body ‘{
+  “user_prompt”: “Find the latest iPhone prices from major retailers”
+}’
+# Poll for results:
+orth api run scrapegraph /v1/searchscraper/{request_id}
+```
+
+## Retrieving Raw HTML
+
+**Endpoint:** `/v1/scrape` (POST)
+
+The agent uses Scrape when raw HTML is needed rather than AI-extracted data — useful for downstream processing, caching, or brand metadata extraction.
+
+**Required parameters:**
+- `website_url` (string) — the URL to scrape
+
+**Optional parameters:**
+- `render_heavy_js` (boolean) — enable heavy JS rendering for SPAs. Default: false
+- `branding` (boolean) — return extracted brand design and metadata. Default: false
+- `stealth` (string) — anti-bot protection (+additional credits). Default: false
+
+```bash
+orth api run scrapegraph /v1/scrape --body ‘{“website_url”: “https://example.com”}’
+```
+
+## Crawling Multiple Pages
+
+**Endpoint:** `/v1/crawl` (POST)
+
+The agent uses SmartCrawler to traverse a website and extract data or convert pages to markdown across multiple pages and depth levels. Ideal for documentation sites, knowledge bases, or any multi-page extraction.
+
+**Required parameters:**
+- `url` (string) — the starting URL for the crawl
+
+**Optional parameters:**
+- `prompt` (string) — natural language extraction instructions
+- `extraction_mode` (boolean) — enable AI-based extraction
+- `depth` (number) — how many link levels deep to crawl
+- `max_pages` (number) — maximum pages to process
+- `same_domain_only` (boolean) — restrict crawl to the same domain
+- `batch_size` (integer) — number of pages to process per batch
+- `schema` (object) — JSON schema for structured output
+- `rules` (object) — crawling rules and filters
+- `sitemap` (string) — provide a sitemap URL to guide crawling
+- `cache_website` (boolean) — cache pages during the crawl
+- `render_heavy_js` (string) — enhanced JS rendering
+- `stealth` (string) — anti-bot protection
+
+**Status check:** `GET /v1/crawl/{task_id}` (free)
+
+```bash
+orth api run scrapegraph /v1/crawl --body ‘{
+  “url”: “https://docs.example.com”,
+  “prompt”: “Extract all API endpoints and their descriptions”,
+  “depth”: 2,
+  “same_domain_only”: true
+}’
+# Poll for results:
+orth api run scrapegraph /v1/crawl/{task_id}
+```
+
+## Discovering Sitemap URLs
+
+**Endpoint:** `/v1/sitemap` (POST)
+
+The agent uses Sitemap to extract all URLs from a website’s sitemap. The API automatically locates the sitemap.xml file. Useful for auditing site structure or planning a targeted crawl.
+
+**Required parameters:**
+- `website_url` (string) — the website to extract the sitemap from
+
+**Optional parameters:**
+- `headers` (object) — custom HTTP headers
+- `stealth` (boolean) — anti-bot protection (+4 credits)
+- `mock` (boolean) — return mock data for testing
+
+**Status check:** `GET /v1/sitemap/{request_id}` (free)
+
+```bash
+orth api run scrapegraph /v1/sitemap --body ‘{“website_url”: “https://example.com”}’
+# Poll for results:
+orth api run scrapegraph /v1/sitemap/{request_id}
+```
+
+## Converting Pages to Markdown
+
+**Endpoint:** `/v1/markdownify` (POST)
+
+The agent uses Markdownify to convert any webpage into clean, readable markdown. Ideal for feeding web content into LLMs, storing documentation, or creating readable archives.
+
+**Required parameters:**
+- `website_url` (string) — the URL to convert
+
+**Optional parameters:**
+- `headers` (object) — custom HTTP headers (cookies, user agent)
+- `stealth` (boolean) — bypass bot protection (+4 credits)
+
+**Status check:** `GET /v1/markdownify/{request_id}` (free)
+
+```bash
+orth api run scrapegraph /v1/markdownify --body ‘{“website_url”: “https://example.com/article”}’
+# Poll for results:
+orth api run scrapegraph /v1/markdownify/{request_id}
+```
+
+## Examples
+
+### Example 1: Extract product data with a structured schema
+
+The user asks: “Get me all product names, prices, and ratings from this store page.”
+
+```bash
+orth api run scrapegraph /v1/smartscraper --body ‘{
+  “website_url”: “https://store.example.com/electronics”,
+  “user_prompt”: “Extract every product with its name, price, and star rating”,
+  “output_schema”: {
+    “properties”: {
+      “products”: {
+        “type”: “array”,
+        “items”: {
+          “type”: “object”,
+          “properties”: {
+            “name”: {“type”: “string”},
+            “price”: {“type”: “string”},
+            “rating”: {“type”: “number”}
+          }
+        }
+      }
+    }
+  }
+}’
+```
+
+The agent then polls `/v1/smartscraper/{request_id}` until the response contains the structured product list.
+
+### Example 2: Research a topic without a specific URL
+
+The user asks: “What are the current mortgage rates from the top 5 US lenders?”
+
+```bash
+orth api run scrapegraph /v1/searchscraper --body ‘{
+  “user_prompt”: “What are the current 30-year fixed mortgage rates from the top 5 US lenders?”,
+  “output_schema”: {
+    “properties”: {
+      “lenders”: {
+        “type”: “array”,
+        “items”: {
+          “type”: “object”,
+          “properties”: {
+            “name”: {“type”: “string”},
+            “rate”: {“type”: “string”}
+          }
+        }
+      }
+    }
+  }
+}’
+```
+
+The agent polls `/v1/searchscraper/{request_id}` and returns the comparison table to the user.
+
+### Example 3: Crawl documentation and convert to markdown
+
+The user asks: “Download the entire API docs from this site as markdown for our knowledge base.”
+
+```bash
+# Step 1: Discover all pages via sitemap
+orth api run scrapegraph /v1/sitemap --body ‘{“website_url”: “https://docs.example.com”}’
+# Step 2: Crawl with markdown conversion
+orth api run scrapegraph /v1/crawl --body ‘{
+  “url”: “https://docs.example.com”,
+  “prompt”: “Convert each page to clean markdown preserving code blocks and headings”,
+  “depth”: 3,
+  “same_domain_only”: true,
+  “max_pages”: 50
+}’
+# Step 3: Poll for results
+orth api run scrapegraph /v1/crawl/{task_id}
+```
 
 ## Discover More
 
-For full endpoint details and parameters:
+The agent can inspect all available endpoints and their full parameter details:
 
 ```bash
 orth api show scrapegraph              # List all endpoints

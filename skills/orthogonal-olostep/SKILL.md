@@ -1,94 +1,111 @@
 ---
 name: olostep
-description: Web scraping, crawling, and AI-powered answer extraction at scale
+description: "Web scraping, crawling, and AI-powered answer extraction via the Olostep API. Use when the agent needs to scrape a web page for its content, crawl an entire website or section, discover all URLs on a site via sitemap mapping, get AI-synthesized answers from web sources, or process multiple URLs in batch. Supports geo-targeted requests, structured data extraction, LLM-based extraction, and content format selection."
 ---
 
-# Olostep - Web Scraping & Crawling API
+# Olostep API
 
-Powerful web scraping, crawling, and AI-powered content extraction.
+## Workflow
 
-## Capabilities
+1. **Identify the task type.** The agent determines which operation fits the request:
+   - Single page content needed → **Scrape** (`/v1/scrapes`)
+   - AI-researched answer to a question → **Answer** (`/v1/answers`)
+   - Discover all URLs on a website → **Maps** (`/v1/maps`)
+   - Crawl multiple linked pages from a start URL → **Crawl** (`/v1/crawls`)
+   - Process a known list of URLs at once → **Batch** (`/v1/batches`)
+2. **Submit the request.** The agent calls the appropriate creation endpoint with required and optional parameters.
+3. **Poll or retrieve results.** For asynchronous operations (crawls, batches), the agent checks status via the info endpoint, then fetches page-level results.
+4. **Extract content.** The agent uses `/v1/retrieve` with the `retrieve_id` from crawl pages, scrape results, or batch items to get the final page content in the desired format.
 
-- **Create Scrape**: Initiate a web page scrape
-- **Create Answer**: The AI will perform actions like searching and browsing web pages to find the answer to the provided task
-- **Maps**: This endpoint allows users to get all the urls on a certain website
-- **Start Crawl**: Starts a new crawl
-- **Start Batch**: Starts a new batch
-- **Batch Items**: Retrieves the list of items processed for a batch
-- **Crawl Info**: Fetches information about a specific crawl
-- **Crawl Pages**: Fetches the list of pages for a specific crawl
-- **Get Answer**: This endpoint retrieves a previously completed answer by its ID
-- **Get Scrape**: Can be used to retrieve response for a scrape
-- **Batch Info**: Retrieves the status and progress information about a batch
-- **Retrieve Content**: Retrieve page content of processed batches and crawls urls
+## Scraping a Single Page
 
-## Usage
+The agent initiates a scrape to extract content from one URL.
 
-### Create Scrape
-Initiate a web page scrape
+**Endpoint:** `POST /v1/scrapes`
 
 Parameters:
 - url_to_scrape* (string) - The URL to start scraping from.
 - wait_before_scraping (integer) - Time to wait in milliseconds before starting the scraping.
-- formats (string[]) - Formats in which you want the content.
-- remove_css_selectors (string) - Option to remove certain CSS selectors from the content. Optionally, you can also pass a JSON stringified array of specific selectors you want to remove. The CSS selectors removed when this option is set to default are ['nav','footer','script','style','noscript','svg',[role=alert],[role=banner],[role=dialog],[role=alertdialog],[role=region][aria-label*=skip i],[aria-modal=true]] Available options: `default`, `none`, `array`
+- formats (string[]) - Formats in which the content should be returned.
+- remove_css_selectors (string) - Remove certain CSS selectors from the content. Pass `"default"` to strip nav, footer, script, style, noscript, svg, and ARIA role elements. Pass `"none"` to keep all, or a JSON-stringified array of specific selectors. Available options: `default`, `none`, `array`
 - actions (object[]) - Actions to perform on the page before getting the content.
-- country (string) - Residential country to load the request from. Supported values are: * US (United States) * CA (Canada) * IT (Italy) * IN (India) * GB (England) * JP (Japan) * MX (Mexico) * AU (Australia) * ID (Indonesia) * UA (UAE) * RU (Russia) * RANDOM Some operations, like scraping Google Search and Google News, support all countries.
-- transformer (string) - Specify the HTML transformer to use, if any. Postlight's Mercury Parser library is used to remove ads and other unwanted content from the scraped content. Available options: `postlight`, `none`
-- remove_images (boolean) - Option to remove images from the scraped content. Defaults to false.
+- country (string) - Residential country to load the request from. Supported values: US, CA, IT, IN, GB, JP, MX, AU, ID, UA, RU, RANDOM. Google Search and Google News support all countries.
+- transformer (string) - HTML transformer. `"postlight"` uses Mercury Parser to remove ads and unwanted content. Available options: `postlight`, `none`
+- remove_images (boolean) - Remove images from scraped content. Defaults to false.
 - remove_class_names (string[]) - List of class names to remove from the content.
-- parser (object) - When defining json as a format, you can use this parameter to specify the parser to use. Parsers are useful to extract structured content from web pages. Olostep has a few parsers built in for most common web pages, and you can also create your own parsers.
-- llm_extract (object)
-- links_on_page (object) - With this option, you can get all the links present on the page you scrape.
-- screen_size (object) - Configuration for screen size. Preset dimensions are available through screen_type: desktop (1920x1080), mobile (414x896), or default (768x1024).
-- metadata (object) - User-defined metadata. Not supported yet
+- parser (object) - When using `json` format, specify the parser for structured content extraction. Olostep includes built-in parsers for common web pages; custom parsers are also supported.
+- llm_extract (object) - LLM-based extraction configuration.
+- links_on_page (object) - Get all links present on the scraped page.
+- screen_size (object) - Screen size configuration. Presets via screen_type: desktop (1920x1080), mobile (414x896), or default (768x1024).
+- metadata (object) - User-defined metadata. Not supported yet.
 
 ```bash
 orth api run olostep /v1/scrapes --body '{"url_to_scrape": "https://example.com/page"}'
 ```
 
-### Create Answer
-The AI will perform actions like searching and browsing web pages to find the answer to the provided task. Execution time is 3-30s depending upon complexity. For longer tasks, use the agent endpoint instead.
+**Retrieve a completed scrape:**
+
+```bash
+orth api run olostep /v1/scrapes/{scrape_id}
+```
+
+## Getting AI-Powered Answers
+
+The agent submits a research question and Olostep's AI searches and browses the web to produce an answer. Execution time is 3-30 seconds depending on complexity.
+
+**Endpoint:** `POST /v1/answers`
 
 Parameters:
-- task* (string) - The task to be performed.
-- json_format (object) - The desired output JSON object with empty values as a schema, or simply describe the data you want as a string.
+- task* (string) - The task or question to be answered.
+- json_format (object) - Desired output JSON schema with empty values, or a string describing the data structure needed.
 
 ```bash
 orth api run olostep /v1/answers --body '{"task": "What are the latest AI developments?"}'
 ```
 
-### Maps
-This endpoint allows users to get all the urls on a certain website. It can take up to 120 seconds for complex websites. For large websites, results are paginated using cursor-based pagination
+**Retrieve a completed answer:**
+
+```bash
+orth api run olostep /v1/answers/{answer_id}
+```
+
+## Discovering URLs on a Website (Maps)
+
+The agent retrieves all URLs on a given website. Processing can take up to 120 seconds for complex sites. Large result sets use cursor-based pagination.
+
+**Endpoint:** `POST /v1/maps`
 
 Parameters:
-- url* (string) - The URL of the website for which you want the links
-- search_query (string) - An optional search query to sort the links by search relevance.
-- top_n (number) - An optional number to limit to only top n links for a search query.
-- include_subdomain (boolean) - Include subdomains of the given URL. `true` by default.
-- include_urls (string[]) - URL path patterns to include using glob syntax. For example: `/blog/**` to only include blog URLs. Only URLs matching these patterns will be returned.
-- exclude_urls (string[]) - URL path patterns to exclude using glob syntax. For example: `/careers/**`. Excluded URLs will supersede included URLs.
-- cursor (string) - OPTIONAL: Pagination cursor from a previous response. When provided, returns the next set of URLs from where the previous request left off due to response size limit.
+- url* (string) - The URL of the website to map.
+- search_query (string) - Sort returned links by search relevance.
+- top_n (number) - Limit to only the top N links for a search query.
+- include_subdomain (boolean) - Include subdomains. `true` by default.
+- include_urls (string[]) - URL path patterns to include using glob syntax (e.g., `/blog/**`). Only matching URLs are returned.
+- exclude_urls (string[]) - URL path patterns to exclude using glob syntax (e.g., `/careers/**`). Exclusions supersede inclusions.
+- cursor (string) - Pagination cursor from a previous response for fetching the next set of URLs.
 
 ```bash
 orth api run olostep /v1/maps --body '{"url": "https://example.com"}'
 ```
 
-### Start Crawl
-Starts a new crawl. You receive a `id` to track the progress. The operation may take 1-10 mins depending upon the site and depth and pages parameters.
+## Crawling a Website
+
+The agent starts an asynchronous crawl from a URL. The crawl returns an `id` for tracking progress. Processing takes 1-10 minutes depending on site size, depth, and page count.
+
+**Endpoint:** `POST /v1/crawls`
 
 Parameters:
 - start_url* (string) - The starting point of the crawl.
-- max_pages* (number) - Maximum number of pages to crawl. Recommended for most use cases like crawling an entire website.
-- include_urls (string[]) - URL path patterns to include in the crawl using glob syntax. Defaults to `/**` which includes all URLs. Use patterns like `/blog/**` to crawl specific sections (e.g., only blog pages), `/products/*.html` for product pages, or multiple patterns for different sections. Supports standard glob features like * (any characters) and ** (recursive matching).
-- exclude_urls (string[]) - URL path names in glob pattern to exclude. For example: `/careers/**`. Excluded URLs will supersede included URLs.
-- max_depth (number) - Maximum depth of the crawl. Useful to extract only up to n-degree of links.
+- max_pages* (number) - Maximum number of pages to crawl.
+- include_urls (string[]) - URL path patterns to include using glob syntax. Defaults to `/**` (all URLs). Examples: `/blog/**` for blog pages, `/products/*.html` for product pages.
+- exclude_urls (string[]) - URL path patterns to exclude using glob syntax (e.g., `/careers/**`). Exclusions supersede inclusions.
+- max_depth (number) - Maximum link depth to crawl.
 - include_external (boolean) - Crawl first-degree external links.
-- include_subdomain (boolean) - Include subdomains of the website. `false` by default.
-- search_query (string) - An optional search query to find specific links and also sort the results by relevance.
-- top_n (number) - An optional number to only crawl the top N most relevant links on every page as per search query.
-- webhook_url (string) - An optional POST request endpoint called when this crawl is completed. The body of the request will be same as the response of this [`v1/crawls/{crawl_id}`](./info#response-created) endpoint.
-- timeout (number) - End the crawl after n seconds with the pages completed until then. May take ~10s extra from provided timeout.
+- include_subdomain (boolean) - Include subdomains. `false` by default.
+- search_query (string) - Find specific links and sort results by relevance.
+- top_n (number) - Crawl only the top N most relevant links per page based on search query.
+- webhook_url (string) - POST endpoint called when the crawl completes. The request body matches the `v1/crawls/{crawl_id}` response.
+- timeout (number) - End the crawl after N seconds with pages completed so far. May take ~10s extra beyond the provided timeout.
 
 ```bash
 orth api run olostep /v1/crawls --body '{
@@ -97,14 +114,29 @@ orth api run olostep /v1/crawls --body '{
 }'
 ```
 
-### Start Batch
-Starts a new batch. You receive an `id` that you can use to track the progress of the batch as shown [here](/api-reference/batches/info). Note: Processing time is constant regardless of batch size
+**Check crawl status:**
+
+```bash
+orth api run olostep /v1/crawls/{crawl_id}
+```
+
+**List crawled pages:**
+
+```bash
+orth api run olostep /v1/crawls/{crawl_id}/pages
+```
+
+## Batch Processing Multiple URLs
+
+The agent submits a list of URLs for parallel processing. Processing time is constant regardless of batch size.
+
+**Endpoint:** `POST /v1/batches`
 
 Parameters:
-- items* (object[]) - Array of items to be processed in the batch.
-- country (string) - Country for the batch execution. Provide in ISO 3166-1 alpha-2 codes like US(USA), IN(India), etc
-- parser (object) - You can use this parameter to specify the parser to use. Parsers are useful to extract structured content from web pages. Olostep has a few parsers built in for most common web pages, and you can also create your own parsers.
-- links_on_page (object) - Get all the links present on each page in the batch.
+- items* (object[]) - Array of items to process. Each item contains a `url_to_scrape` field.
+- country (string) - Country for batch execution in ISO 3166-1 alpha-2 codes (e.g., US, IN).
+- parser (object) - Parser for structured content extraction. Built-in parsers are available for common web pages; custom parsers are also supported.
+- links_on_page (object) - Get all links present on each page in the batch.
 
 ```bash
 orth api run olostep /v1/batches --body '{
@@ -115,69 +147,99 @@ orth api run olostep /v1/batches --body '{
 }'
 ```
 
-### Batch Items
-Retrieves the list of items processed for a batch. You can then use the `retrieve_id` to get the content with the Retrieve Endpoint
-
-```bash
-orth api run olostep /v1/batches/{batch_id}/items
-```
-
-### Crawl Info
-Fetches information about a specific crawl.
-
-```bash
-orth api run olostep /v1/crawls/{crawl_id}
-```
-
-### Crawl Pages
-Fetches the list of pages for a specific crawl.
-
-```bash
-orth api run olostep /v1/crawls/{crawl_id}/pages
-```
-
-### Get Answer
-This endpoint retrieves a previously completed answer by its ID.
-
-```bash
-orth api run olostep /v1/answers/{answer_id}
-```
-
-### Get Scrape
-Can be used to retrieve response for a scrape.
-
-```bash
-orth api run olostep /v1/scrapes/{scrape_id}
-```
-
-### Batch Info
-Retrieves the status and progress information about a batch. To retrieve the content for a batch, see here
+**Check batch status:**
 
 ```bash
 orth api run olostep /v1/batches/{batch_id}
 ```
 
-### Retrieve Content
-Retrieve page content of processed batches and crawls urls.
+**List processed batch items** (each item provides a `retrieve_id` for content retrieval):
+
+```bash
+orth api run olostep /v1/batches/{batch_id}/items
+```
+
+## Retrieving Page Content
+
+After a scrape, crawl, or batch completes, the agent uses this endpoint to fetch the actual page content.
+
+**Endpoint:** `POST /v1/retrieve`
 
 Parameters:
-- retrieve_id* (string) - The ID of the page content to retrieve. Available in the response of `/v1/crawls/{crawl_id}/pages`, `/v1/scrapes/{scrape_id}` or `/v1/batches/{batch_id}/items` endpoints
-- formats (string[]) - Optional array to retrieve only specific formats in production. If not provided, all formats will be returned.
+- retrieve_id* (string) - The ID of the page content to retrieve. Available in responses from `/v1/crawls/{crawl_id}/pages`, `/v1/scrapes/{scrape_id}`, or `/v1/batches/{batch_id}/items`.
+- formats (string[]) - Optional array to retrieve only specific formats. If not provided, all formats are returned.
 
 ```bash
 orth api run olostep /v1/retrieve --body '{"retrieve_id": "abc123"}'
 ```
 
-## Use Cases
+## Examples
 
-1. **Data Collection**: Gather data from websites at scale
-2. **Content Monitoring**: Track changes on competitor sites
-3. **Research Automation**: Get AI-synthesized answers from web sources
-4. **SEO Analysis**: Crawl and analyze site structure
+### Research a topic with AI answers
+
+The agent needs to answer a user question using live web data:
+
+```bash
+orth api run olostep /v1/answers --body '{
+  "task": "What are the top 3 trending JavaScript frameworks in 2025?",
+  "json_format": {"frameworks": [{"name": "", "description": "", "github_stars": ""}]}
+}'
+```
+
+The response contains a structured JSON answer. If the agent needs to reference the answer later, it stores the `answer_id` and retrieves it with `GET /v1/answers/{answer_id}`.
+
+### Crawl a documentation site and extract content
+
+The agent needs to index all pages under a docs section:
+
+```bash
+# Step 1: Start the crawl scoped to /docs/
+orth api run olostep /v1/crawls --body '{
+  "start_url": "https://example.com/docs",
+  "max_pages": 50,
+  "include_urls": ["/docs/**"]
+}'
+# Response includes crawl_id, e.g. "crawl_abc123"
+
+# Step 2: Poll until status is "completed"
+orth api run olostep /v1/crawls/crawl_abc123
+
+# Step 3: List crawled pages to get retrieve_ids
+orth api run olostep /v1/crawls/crawl_abc123/pages
+
+# Step 4: Retrieve content for each page
+orth api run olostep /v1/retrieve --body '{"retrieve_id": "page_xyz", "formats": ["markdown"]}'
+```
+
+### Batch-scrape product pages with structured extraction
+
+The agent has a list of product URLs and needs pricing data:
+
+```bash
+# Step 1: Submit the batch
+orth api run olostep /v1/batches --body '{
+  "items": [
+    {"url_to_scrape": "https://store.example.com/product/1"},
+    {"url_to_scrape": "https://store.example.com/product/2"},
+    {"url_to_scrape": "https://store.example.com/product/3"}
+  ],
+  "parser": {"type": "custom", "schema": {"name": "", "price": "", "availability": ""}}
+}'
+# Response includes batch_id
+
+# Step 2: Check batch status
+orth api run olostep /v1/batches/{batch_id}
+
+# Step 3: Get items with retrieve_ids
+orth api run olostep /v1/batches/{batch_id}/items
+
+# Step 4: Retrieve each item's content
+orth api run olostep /v1/retrieve --body '{"retrieve_id": "item_001"}'
+```
 
 ## Discover More
 
-For full endpoint details and parameters:
+The agent can list all available endpoints and inspect parameter details:
 
 ```bash
 orth api show olostep              # List all endpoints
