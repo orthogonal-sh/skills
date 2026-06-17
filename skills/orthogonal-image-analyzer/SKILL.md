@@ -20,9 +20,9 @@ orth api run linkup /fetch --body '{"url": "https://example.com/image.jpg"}'
 Use AI to extract text from images:
 
 ```bash
-orth api run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://example.com/screenshot.png",
-  "user_prompt": "Extract all visible text from this image"
+orth api run scrapegraph /api/extract --body '{
+  "url": "https://example.com/screenshot.png",
+  "prompt": "Extract all visible text from this image"
 }'
 ```
 
@@ -54,9 +54,9 @@ orth api run brand-dev /v1/brand/screenshot --query 'domain=stripe.com'
 
 ```bash
 # Extract receipt data
-orth api run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://example.com/receipt.jpg",
-  "user_prompt": "Extract store name, date, all items with prices, and total amount"
+orth api run scrapegraph /api/extract --body '{
+  "url": "https://example.com/receipt.jpg",
+  "prompt": "Extract store name, date, all items with prices, and total amount"
 }'
 
 # Get website screenshot

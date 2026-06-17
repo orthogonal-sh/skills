@@ -32,9 +32,9 @@ orth api run fiber /v1/people-search --body '{
 Analyze products and pricing:
 
 ```bash
-orth api run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://stripe.com/pricing",
-  "user_prompt": "Extract all products, pricing tiers, and features"
+orth api run scrapegraph /api/extract --body '{
+  "url": "https://stripe.com/pricing",
+  "prompt": "Extract all products, pricing tiers, and features"
 }'
 ```
 
@@ -63,7 +63,7 @@ orth api run brand-dev /v1/brand/retrieve --query "domain=$DOMAIN"
 orth api run fiber /v1/people-search --body "{\"searchParams\": {\"company_names\": [\"$COMPANY\"], \"job_titles\": [\"CEO\", \"CTO\", \"CFO\"]}}"
 
 # 3. Products & pricing
-orth api run scrapegraph /v1/smartscraper --body "{\"website_url\": \"https://$DOMAIN/pricing\", \"user_prompt\": \"Extract all products, pricing tiers, and features\"}"
+orth api run scrapegraph /api/extract --body "{\"url\": \"https://$DOMAIN/pricing\", \"prompt\": \"Extract all products, pricing tiers, and features\"}"
 
 # 4. Company data
 orth api run fiber /v1/company-search --body "{\"searchParams\": {\"company_names\": [\"$COMPANY\"]}}"

@@ -20,9 +20,9 @@ orth api run linkup /fetch --body '{"url": "https://api.example.com/health"}'
 Test POST requests by fetching API docs:
 
 ```bash
-orth api run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://api.example.com/docs",
-  "user_prompt": "Extract all API endpoints, methods, parameters, and example responses"
+orth api run scrapegraph /api/extract --body '{
+  "url": "https://api.example.com/docs",
+  "prompt": "Extract all API endpoints, methods, parameters, and example responses"
 }'
 ```
 
@@ -30,7 +30,7 @@ orth api run scrapegraph /v1/smartscraper --body '{
 Fetch and parse API docs:
 
 ```bash
-orth api run scrapegraph /v1/markdownify --body '{"website_url": "https://api.example.com/docs"}'
+orth api run scrapegraph /api/scrape --body '{"url": "https://api.example.com/docs", "formats": [{"type": "markdown"}]}'
 ```
 
 ### Step 4: Validate Response Schema
@@ -51,9 +51,9 @@ orth api run riveter /v1/run --body '{
 
 ```bash
 # Extract API spec from docs
-orth api run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://stripe.com/docs/api",
-  "user_prompt": "Extract API authentication methods and example curl commands"
+orth api run scrapegraph /api/extract --body '{
+  "url": "https://stripe.com/docs/api",
+  "prompt": "Extract API authentication methods and example curl commands"
 }'
 
 # Fetch API page

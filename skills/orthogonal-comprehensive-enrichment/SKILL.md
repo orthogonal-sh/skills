@@ -193,9 +193,9 @@ orth run brand-dev /v1/brand/ai/products --body '{"domain": "stripe.com"}'
 
 **Scrape for pricing/features:**
 ```bash
-orth run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://stripe.com/pricing",
-  "user_prompt": "Extract all products, pricing tiers, and features"
+orth run scrapegraph /api/extract --body '{
+  "url": "https://stripe.com/pricing",
+  "prompt": "Extract all products, pricing tiers, and features"
 }'
 ```
 
@@ -274,7 +274,7 @@ orth run -X POST nyne /company/funders -d '{"company_domain": "stripe.com"}'
 
 # Products & competitors
 orth run brand-dev /v1/brand/ai/products --body '{"domain": "stripe.com"}'
-orth run scrapegraph /v1/smartscraper --body '{"website_url": "https://stripe.com/pricing", "user_prompt": "Extract all products, pricing tiers, and features"}'
+orth run scrapegraph /api/extract --body '{"url": "https://stripe.com/pricing", "prompt": "Extract all products, pricing tiers, and features"}'
 orth run exa /findSimilar --body '{"url": "https://stripe.com", "numResults": 10}'
 
 # News

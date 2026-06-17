@@ -50,9 +50,9 @@ orth run scrapecreators /v1/linkedin/company -q 'url=https://linkedin.com/compan
 Extract structured data from specific pages found in Steps 1-2:
 
 ```bash
-orth run scrapegraph /v1/smartscraper -d '{
-  "website_url": "https://example.com/review-page",
-  "user_prompt": "Extract sentiment, key complaints, and praise about the product"
+orth run scrapegraph /api/extract -d '{
+  "url": "https://example.com/review-page",
+  "prompt": "Extract sentiment, key complaints, and praise about the product"
 }'
 ```
 
