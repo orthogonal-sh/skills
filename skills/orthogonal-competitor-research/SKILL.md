@@ -30,9 +30,9 @@ orth api run exa /findSimilar --body '{
 Scrape pricing and features:
 
 ```bash
-orth api run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://notion.so/pricing",
-  "user_prompt": "Extract all pricing tiers, features per tier, and any enterprise options"
+orth api run scrapegraph /api/extract --body '{
+  "url": "https://notion.so/pricing",
+  "prompt": "Extract all pricing tiers, features per tier, and any enterprise options"
 }'
 ```
 

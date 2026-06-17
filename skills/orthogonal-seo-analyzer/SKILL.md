@@ -20,9 +20,9 @@ orth api run tavily /map --body '{"url": "https://example.com"}'
 Get content for analysis:
 
 ```bash
-orth api run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://example.com",
-  "user_prompt": "Extract page title, meta description, headings (H1, H2, H3), main content, and internal links"
+orth api run scrapegraph /api/extract --body '{
+  "url": "https://example.com",
+  "prompt": "Extract page title, meta description, headings (H1, H2, H3), main content, and internal links"
 }'
 ```
 
@@ -40,9 +40,9 @@ orth api run exa /search --body '{
 
 ```bash
 # Quick site analysis
-orth api run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://mysite.com",
-  "user_prompt": "Analyze this page for SEO: title tag, meta description, heading structure, keyword usage, content length"
+orth api run scrapegraph /api/extract --body '{
+  "url": "https://mysite.com",
+  "prompt": "Analyze this page for SEO: title tag, meta description, heading structure, keyword usage, content length"
 }'
 ```
 

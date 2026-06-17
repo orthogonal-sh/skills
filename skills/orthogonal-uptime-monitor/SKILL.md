@@ -20,9 +20,9 @@ orth api run linkup /fetch --body '{"url": "https://yoursite.com"}'
 Ensure page loads correctly:
 
 ```bash
-orth api run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://yoursite.com",
-  "user_prompt": "Check if page loads and contains expected content. Report any error messages."
+orth api run scrapegraph /api/extract --body '{
+  "url": "https://yoursite.com",
+  "prompt": "Check if page loads and contains expected content. Report any error messages."
 }'
 ```
 
@@ -51,9 +51,9 @@ orth api run olostep /v1/batches --body '{
 Check official status:
 
 ```bash
-orth api run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://status.yoursite.com",
-  "user_prompt": "Extract current service status, any incidents, and affected components"
+orth api run scrapegraph /api/extract --body '{
+  "url": "https://status.yoursite.com",
+  "prompt": "Extract current service status, any incidents, and affected components"
 }'
 ```
 
@@ -64,6 +64,19 @@ Use SMS for critical alerts:
 orth api run textbelt /text --body '{
   "phone": "+1234567890",
   "message": "ALERT: yoursite.com is down! Check immediately."
+}'
+```
+
+### Step 7: Schedule Recurring Monitoring (optional)
+For continuous, hands-off monitoring, register a scheduled scrape that runs on a cron interval and notifies a webhook on each run:
+
+```bash
+orth api run scrapegraph /api/monitor --body '{
+  "url": "https://yoursite.com",
+  "name": "yoursite-uptime",
+  "interval": "*/5 * * * *",
+  "formats": [{"type": "markdown"}],
+  "webhookUrl": "https://hooks.yoursite.com/uptime"
 }'
 ```
 
@@ -85,9 +98,9 @@ done
 orth api run linkup /fetch --body '{"url": "https://stripe.com"}'
 
 # Check status page
-orth api run scrapegraph /v1/smartscraper --body '{
-  "website_url": "https://status.github.com",
-  "user_prompt": "What is the current status of GitHub services?"
+orth api run scrapegraph /api/extract --body '{
+  "url": "https://status.github.com",
+  "prompt": "What is the current status of GitHub services?"
 }'
 
 # Monitor competitor uptime

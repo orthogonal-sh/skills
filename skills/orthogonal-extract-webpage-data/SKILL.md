@@ -30,7 +30,7 @@ orth run olostep /v1/scrapes -d '{"url_to_scrape":"https://example.com/products"
 ### AI-Powered Extraction with Scrapegraph
 
 ```bash
-orth run scrapegraph /v1/smartscraper -d '{"website_url":"https://example.com/team","user_prompt":"Extract all team members with their names, titles, and LinkedIn URLs"}'
+orth run scrapegraph /api/extract -d '{"url":"https://example.com/team","prompt":"Extract all team members with their names, titles, and LinkedIn URLs"}'
 ```
 
 ### Schema-Based Extraction with Riveter
@@ -58,8 +58,8 @@ orth run olostep /v1/crawls -d '{"start_url":"https://example.com","max_pages":1
 - **formats** - Output formats (markdown, html, text)
 
 ### Scrapegraph
-- **website_url** (required) - URL to scrape
-- **user_prompt** (required) - Natural language description of what to extract
+- **url** (required) - URL to scrape
+- **prompt** (required) - Natural language description of what to extract
 
 ### Riveter
 - **url** (required) - URL to scrape
@@ -85,13 +85,12 @@ Returns a scrape object:
 **Async crawls**: POST `/v1/crawls` returns an `id`. Poll with GET `/v1/crawls/{id}` until complete.
 
 ### Scrapegraph Response
-Returns structured extraction result:
-- **request_id** (string) - Unique request identifier
-- **status** (string) - `completed` or `pending`
-- **result** (object) - AI-extracted data matching your prompt (dynamic keys)
-- **error** (string) - Empty on success, error message on failure
-
-**Note**: For large pages, the POST may return `status: "pending"`. Poll with GET `/v1/smartscraper/{request_id}` until `status` is `completed`.
+`/api/extract` is synchronous — the structured result is returned directly:
+- **id** (string) - UUID for the extraction call
+- **json** (object) - AI-extracted data matching your prompt/schema (dynamic keys)
+- **raw** (string) - Raw model output before JSON parsing, when available
+- **usage** (object) - Token accounting (`promptTokens`, `completionTokens`)
+- **metadata** (object) - Diagnostic info (chunker, fetch details)
 
 ### Riveter Response
 Returns scrape result:
@@ -109,12 +108,12 @@ Returns scrape result:
 
 **User:** "Get all the product names and prices from this page"
 ```bash
-orth run scrapegraph /v1/smartscraper -d '{"website_url":"https://example.com/products","user_prompt":"Extract all products with name, price, and description"}'
+orth run scrapegraph /api/extract -d '{"url":"https://example.com/products","prompt":"Extract all products with name, price, and description"}'
 ```
 
 **User:** "Scrape the team page and get everyone's info"
 ```bash
-orth run scrapegraph /v1/smartscraper -d '{"website_url":"https://example.com/about/team","user_prompt":"Extract team members: name, role, bio, photo URL, LinkedIn"}'
+orth run scrapegraph /api/extract -d '{"url":"https://example.com/about/team","prompt":"Extract team members: name, role, bio, photo URL, LinkedIn"}'
 ```
 
 **User:** "What are Stripe's API pricing details?"
@@ -130,7 +129,7 @@ orth run riveter /v1/scrape -d '{"url":"https://blog.example.com","schema":{"pos
 ## Error Handling
 
 - **504** - Olostep timeout on slow pages — retry or try a simpler URL
-- **400** - Missing required parameters (`url_to_scrape` for Olostep, `website_url` + `user_prompt` for Scrapegraph, `url` for Riveter)
+- **400** - Missing required parameters (`url_to_scrape` for Olostep, `url` + `prompt` for Scrapegraph, `url` for Riveter)
 - Scrapegraph returns `error` field in response body — check it even on 200 status
 - Riveter returns `request_status: "error"` with details in `message`
 - Some sites block automated scraping — try a different API if one fails
