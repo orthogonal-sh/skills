@@ -67,7 +67,15 @@ orth skills add restaurant-booking
 orth skills add weather && cat ~/.openclaw/skills/weather/SKILL.md
 ```
 
-Skills are installed to `~/.openclaw/skills/<slug>/`
+The CLI installs skills for all supported agents:
+- **Cursor** — `~/.cursor/skills/`
+- **Claude Code** — `~/.claude/skills/`
+- **Copilot** — `~/.github/skills/`
+- **Windsurf** — `~/.codeium/windsurf/skills/`
+- **Codex** — `~/.agents/skills/`
+- **Gemini** — `~/.gemini/skills/`
+- **OpenClaw** — `~/.openclaw/skills/`
+- **Hermes** — `~/.hermes/skills/`
 
 ## Using Installed Skills
 
