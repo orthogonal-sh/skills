@@ -50,6 +50,7 @@ A skill is a `SKILL.md` file that tells an AI agent how to do something. When yo
 | [perplexity](skills/orthogonal-perplexity) | AI search and chat with real-time web data |
 | [tavily](skills/orthogonal-tavily) | AI-powered web search, crawling, and deep research |
 | [valyu](skills/orthogonal-valyu) | Web search, AI answers, and async deep research |
+| [scrapegraph](skills/orthogonal-scrapegraph) | AI-powered web search and data extraction using natural language |
 | [searchapi](skills/orthogonal-searchapi) | Multi-platform search: YouTube, Amazon, eBay, TikTok, and more |
 | [prediction-market-odds](skills/orthogonal-prediction-market-odds) | Polymarket and Kalshi odds and prices |
 | [dome](skills/orthogonal-dome) | Prediction markets data, positions, and trades |
