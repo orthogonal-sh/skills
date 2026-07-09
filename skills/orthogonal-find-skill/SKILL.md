@@ -23,10 +23,10 @@ orth skills search "browser automation"
 orth skills list
 
 # Get details about a specific skill
-orth skills info <slug>
+orth skills show <owner/slug>
 
-# Install a skill
-orth skills add <slug>
+# Install a skill (use full slug with namespace)
+orth skills add <owner/slug>
 ```
 
 ## Finding Skills
@@ -59,15 +59,19 @@ Browse all skills at: https://orthogonal.com/skills
 
 ## Installing Skills
 
+Skills use a namespaced slug format: `owner/skill-name` (e.g. `orthogonal/find-skill`).
+
 ```bash
-# Install by slug
-orth skills add restaurant-booking
+# Install by full slug (namespace/name)
+orth skills add orthogonal/restaurant-booking
 
 # Install and view the skill file
-orth skills add weather && cat ~/.openclaw/skills/weather/SKILL.md
+orth skills add orthogonal/weather && cat <your-skills-directory>/orthogonal-weather/SKILL.md
 ```
 
-Skills are installed to `~/.openclaw/skills/<slug>/`
+> **Note:** The CLI expects the full slug with namespace prefix (e.g. `orthogonal/find-skill`), not just the short name.
+
+Skills are installed to your agent's skills directory (e.g. `~/.openclaw/skills/`, `~/.claude/skills/`, `.agent/skills/`, or wherever your agent reads skill files).
 
 ## Using Installed Skills
 
@@ -80,20 +84,8 @@ After installing, the skill's `SKILL.md` contains:
 Read the skill file to understand how to use it:
 
 ```bash
-cat ~/.openclaw/skills/<slug>/SKILL.md
+cat <your-skills-directory>/<slug>/SKILL.md
 ```
-
-## Popular Skills
-
-| Skill | Description |
-|-------|-------------|
-| `weather` | Get weather forecasts |
-| `weather-forecast` | Precipitation and temperature data via Precip API |
-| `restaurant-booking` | Book restaurant reservations via Notte |
-| `company-intel` | Research companies |
-| `person-lookup` | Look up professional backgrounds |
-| `verify-email` | Check if an email is valid and deliverable |
-| `extract-webpage-data` | AI-powered web scraping |
 
 ## Tips
 
