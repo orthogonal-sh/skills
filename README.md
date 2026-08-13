@@ -50,6 +50,7 @@ A skill is a `SKILL.md` file that tells an AI agent how to do something. When yo
 | [perplexity](skills/orthogonal-perplexity) | AI search and chat with real-time web data |
 | [tavily](skills/orthogonal-tavily) | AI-powered web search, crawling, and deep research |
 | [valyu](skills/orthogonal-valyu) | Web search, AI answers, and async deep research |
+| [deep-research](skills/deep-research) | Multi-step research with source collection and synthesis |
 | [searchapi](skills/orthogonal-searchapi) | Multi-platform search: YouTube, Amazon, eBay, TikTok, and more |
 | [prediction-market-odds](skills/orthogonal-prediction-market-odds) | Polymarket and Kalshi odds and prices |
 | [dome](skills/orthogonal-dome) | Prediction markets data, positions, and trades |
@@ -65,6 +66,7 @@ A skill is a `SKILL.md` file that tells an AI agent how to do something. When yo
 | [riveter](skills/orthogonal-riveter) | Structured data extraction with custom schemas |
 | [extract-webpage-data](skills/orthogonal-extract-webpage-data) | Extract structured data from web pages using AI |
 | [website-screenshot](skills/orthogonal-website-screenshot) | Take screenshots of websites |
+| [agent-browser](skills/agent-browser) | Headless browser automation with structured page inspection |
 
 ### 👤 People & Contact Data
 
@@ -114,6 +116,7 @@ A skill is a `SKILL.md` file that tells an AI agent how to do something. When yo
 |-------|-------------|
 | [sales-prospecting](skills/orthogonal-sales-prospecting) | Build targeted prospect lists with verified contacts |
 | [email-campaign](skills/orthogonal-email-campaign) | Find emails, verify them, prepare outreach |
+| [agentmail](skills/agentmail) | Dedicated programmable email inboxes for agents |
 | [send-text-message](skills/orthogonal-send-text-message) | Send SMS text messages |
 | [textbelt](skills/orthogonal-textbelt) | SMS via HTTP API |
 | [job-search](skills/orthogonal-job-search) | Search jobs by skills, experience, preferences |
@@ -145,6 +148,9 @@ A skill is a `SKILL.md` file that tells an AI agent how to do something. When yo
 | [uptime-monitor](skills/orthogonal-uptime-monitor) | Monitor website availability and response times |
 | [didit](skills/orthogonal-didit) | Identity verification via phone/email OTP |
 | [phone-verification](skills/orthogonal-phone-verification) | Verify phone numbers via SMS codes |
+| [context7](skills/context7) | Fetch current library documentation before implementation |
+| [mcp-atlassian](skills/mcp-atlassian) | Jira and Confluence workflows through Atlassian MCP |
+| [n8n-automation](skills/n8n-automation) | Inspect, trigger, and debug n8n workflows |
 
 ### 🎬 Media & Creative
 
@@ -160,6 +166,20 @@ A skill is a `SKILL.md` file that tells an AI agent how to do something. When yo
 |-------|-------------|
 | [find-skill](skills/orthogonal-find-skill) | Search and install skills from the Orthogonal library |
 | [skill-creator](skills/orthogonal-skill-creator) | Create and package new skills |
+| [byterover](skills/byterover) | Query and curate durable project knowledge |
+| [proactive-agent](skills/proactive-agent) | Background checks and helpful proactive workflows |
+| [memory-setup](skills/memory-setup) | Configure and test persistent agent memory |
+| [prompt-guard](skills/prompt-guard) | Detect and handle prompt injection in untrusted content |
+| [compound-engineering](skills/compound-engineering) | Convert recent work into durable lessons and procedures |
+| [ontology](skills/ontology) | Typed knowledge graphs for people, projects, tasks, and events |
+| [codex-orchestration](skills/codex-orchestration) | Coordinate parallel Codex workers |
+| [memory-hygiene](skills/memory-hygiene) | Audit and prune noisy or stale memory |
+| [llm-council](skills/llm-council) | Compare independent model critiques and recommendations |
+| [claude-team](skills/claude-team) | Coordinate Claude Code workers across worktrees |
+| [reflect](skills/reflect) | Turn corrections and lessons into durable behavior changes |
+| [git-notes-memory](skills/git-notes-memory) | Store branch-aware repo memory in git notes |
+| [para-second-brain](skills/para-second-brain) | Organize workspace knowledge with PARA |
+| [topic-monitor](skills/topic-monitor) | Monitor topics over time and alert on meaningful changes |
 
 ## Create Your Own Skill
 
