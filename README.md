@@ -161,6 +161,33 @@ A skill is a `SKILL.md` file that tells an AI agent how to do something. When yo
 | [find-skill](skills/orthogonal-find-skill) | Search and install skills from the Orthogonal library |
 | [skill-creator](skills/orthogonal-skill-creator) | Create and package new skills |
 
+### Discovered OpenClaw Skill Stubs
+
+These are newly discovered upstream skills with initial stubs. They still need concrete tool/API wiring before being treated as production-ready integrations.
+
+| Skill | Description |
+|-------|-------------|
+| [agent-browser](skills/agent-browser) | Headless browser automation for agents using accessibility snapshots and structured page actions |
+| [agentmail](skills/agentmail) | API-first email inboxes for agents, including sending, receiving, webhooks, and workflow mailboxes |
+| [answeroverflow](skills/answeroverflow) | Search indexed Discord community discussions for library issues, bugs, and community Q&A |
+| [api-designer](skills/api-designer) | Design REST or GraphQL APIs, resource models, OpenAPI specs, pagination, errors, and versioning |
+| [byterover](skills/byterover) | Project knowledge management with ByteRover query and curate operations |
+| [claude-team](skills/claude-team) | Orchestrate multiple Claude Code workers across git worktrees and coordinated task assignments |
+| [clickup-mcp](skills/clickup-mcp) | Manage ClickUp tasks, docs, time tracking, comments, chat, and search through MCP |
+| [codex-orchestration](skills/codex-orchestration) | Coordinate parallel Codex workers for implementation, review, testing, and research tasks |
+| [frontend-design-extractor](skills/frontend-design-extractor) | Extract reusable frontend design systems, tokens, components, and interaction patterns from codebases |
+| [git-notes-memory](skills/git-notes-memory) | Branch-aware persistent project memory using git notes and lightweight knowledge graph links |
+| [linearis](skills/linearis) | Linear issue tracking through a CLI with JSON output for search, create, update, and comments |
+| [llm-council](skills/llm-council) | Run multi-model planning councils across Codex, Claude Code, Gemini, OpenCode, or custom CLIs |
+| [manus](skills/manus) | Create and manage autonomous Manus AI agent tasks through the Manus API |
+| [memory-hygiene](skills/memory-hygiene) | Audit, clean, and optimize agent memory stores to reduce stale, duplicated, or irrelevant recall |
+| [obsidian-daily](skills/obsidian-daily) | Manage Obsidian daily notes, append logs, search vault content, and handle date-aware notes |
+| [ontology](skills/ontology) | Typed knowledge graph for structured agent memory with entities, relationships, and constraints |
+| [prompt-guard](skills/prompt-guard) | Detect and respond to direct or indirect prompt injection attempts in chats, pages, and documents |
+| [supermemory](skills/supermemory) | Store, search, and chat with long-term memory through the SuperMemory API |
+| [swiftui-performance-audit](skills/swiftui-performance-audit) | Audit SwiftUI performance issues including rendering churn, janky scrolling, CPU, and memory usage |
+| [web-perf](skills/web-perf) | Analyze web performance, Core Web Vitals, render blocking, network waterfalls, caching, and layout shifts |
+
 ## Create Your Own Skill
 
 ```bash
